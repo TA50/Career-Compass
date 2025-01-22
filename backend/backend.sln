@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Api", "CareerCompass.Api\CareerCompass.Api.csproj", "{911D60DF-5133-4C47-A06B-385F467669CB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Playground", "CareerCompass.Playground\CareerCompass.Playground.csproj", "{341C88CC-081F-4147-AB50-A6592E36D15A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,5 +23,9 @@ Global
 		{911D60DF-5133-4C47-A06B-385F467669CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{911D60DF-5133-4C47-A06B-385F467669CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{911D60DF-5133-4C47-A06B-385F467669CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{341C88CC-081F-4147-AB50-A6592E36D15A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{341C88CC-081F-4147-AB50-A6592E36D15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{341C88CC-081F-4147-AB50-A6592E36D15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{341C88CC-081F-4147-AB50-A6592E36D15A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
