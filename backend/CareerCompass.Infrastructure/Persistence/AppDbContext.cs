@@ -2,20 +2,19 @@ using CareerCompass.Infrastructure.Common;
 using CareerCompass.Infrastructure.Fields;
 using CareerCompass.Infrastructure.Scenarios;
 using CareerCompass.Infrastructure.Tags;
+using CareerCompass.Infrastructure.Users;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CareerCompass.Infrastructure.Persistence;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext(options)
+internal class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<UserTable>(options)
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        base.OnModelCreating(builder);
         builder.Entity<ScenarioFieldTable>()
-            .HasKey(e => new
-            {
-                FieldId = e.Field.Id, ScenarioId = e.Scenario.Id
-            });
+            .HasKey(entity => new { entity.ScenarioId, entity.FieldId });
     }
 
 

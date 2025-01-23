@@ -8,11 +8,13 @@ namespace CareerCompass.Infrastructure.Scenarios;
 internal class ScenarioFieldTable : IAuditable
 {
     public required string Value { get; set; }
+
+    public Guid ScenarioId { get; set; }
+    public Guid FieldId { get; set; }
     
-    [Key, Column(Order = 0)] 
     public required ScenarioTable Scenario { get; set; }
 
-    [Key, Column(Order = 1)]
+    
     public required FieldTable Field { get; set; }
 
 
