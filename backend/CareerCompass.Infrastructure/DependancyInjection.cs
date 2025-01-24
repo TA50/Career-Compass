@@ -1,5 +1,5 @@
 using CareerCompass.Infrastructure.Persistence;
-using CareerCompass.Infrastructure.Users;
+using CareerCompass.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +18,11 @@ public static class DependencyInjection
         });
 
         services.AddIdentityCore<IdentityUser>()
-            .AddEntityFrameworkStores<AppDbContext>();
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+        services.AddTransient<IEmailSender<IdentityUser>, ConsoleEmailSender>();
+
+        services.Configure<IdentityOptions>(opts => { opts.User.RequireUniqueEmail = true; });
     }
 }

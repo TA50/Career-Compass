@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CareerCompass.Infrastructure.Common;
-using CareerCompass.Infrastructure.Scenarios;
-using CareerCompass.Infrastructure.Users;
-using Microsoft.AspNetCore.Identity;
+using CareerCompass.Infrastructure.Persistence.Scenarios;
+using CareerCompass.Infrastructure.Persistence.Users;
 
-namespace CareerCompass.Infrastructure.Fields;
+
+namespace CareerCompass.Infrastructure.Persistence.Fields;
 
 [Table("Fields")]
 internal class FieldTable : IAuditable

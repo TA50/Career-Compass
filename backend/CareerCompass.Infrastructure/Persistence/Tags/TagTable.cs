@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CareerCompass.Infrastructure.Common;
-using CareerCompass.Infrastructure.Scenarios;
-using CareerCompass.Infrastructure.Users;
+using CareerCompass.Infrastructure.Persistence.Scenarios;
+using CareerCompass.Infrastructure.Persistence.Users;
 
-namespace CareerCompass.Infrastructure.Tags;
+
+namespace CareerCompass.Infrastructure.Persistence.Tags;
 
 [Table("Tags")]
 internal class TagTable : IAuditable

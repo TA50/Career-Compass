@@ -1,8 +1,8 @@
 using CareerCompass.Infrastructure.Common;
-using CareerCompass.Infrastructure.Fields;
-using CareerCompass.Infrastructure.Scenarios;
-using CareerCompass.Infrastructure.Tags;
-using CareerCompass.Infrastructure.Users;
+using CareerCompass.Infrastructure.Persistence.Fields;
+using CareerCompass.Infrastructure.Persistence.Scenarios;
+using CareerCompass.Infrastructure.Persistence.Tags;
+using CareerCompass.Infrastructure.Persistence.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +10,22 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CareerCompass.Infrastructure.Persistence;
 
-internal class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext(options)
+internal class AppDbContext(DbContextOptions<AppDbContext> options)
+    : IdentityDbContext(options)
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AgentTable>()
+            .HasOne<IdentityUser>(e => e.User)
+            .WithOne();
+        modelBuilder.Entity<AgentTable>()
+            .HasOne(u => u.User) // User has one UserProfile
+            .WithOne() // UserProfile has one User
+            .HasForeignKey<AgentTable>(up => up.UserId); // FK in UserProfile
+
+
         // Define the ScenarioId foreign key relationship
         modelBuilder.Entity<ScenarioFieldTable>()
             .HasOne(s => s.Scenario)
@@ -28,7 +39,7 @@ internal class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDb
             .WithMany()
             .HasForeignKey(f => f.FieldId)
             .OnDelete(DeleteBehavior.Restrict); // Avoid cascade delete
-        
+
         modelBuilder.Entity<ScenarioTable>()
             .HasMany(s => s.Tags)
             .WithMany(t => t.Scenarios)
@@ -45,20 +56,22 @@ internal class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDb
                     .HasForeignKey("ScenarioId")
                     .OnDelete(DeleteBehavior.Restrict) // Prevent cascade delete on Scenarios
             );
-
     }
 
     public override EntityEntry<TEntity> Add<TEntity>(TEntity entity)
     {
-        if (entity is not IdentityUser) return base.Add(entity);
-
-        var agent = new AgentTable
+        if (entity is IdentityUser user)
         {
-            Id = Guid.NewGuid(),
-            CreatedAt = DateTime.Now,
-            UpdatedAt = DateTime.Now
-        };
-        Add(agent);
+            Add(new AgentTable
+            {
+                Id = Guid.NewGuid(),
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                UserId = user.Id
+            });
+        }
+
+
         return base.Add(entity);
     }
 

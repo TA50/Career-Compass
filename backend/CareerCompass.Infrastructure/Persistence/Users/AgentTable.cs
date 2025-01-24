@@ -1,17 +1,17 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CareerCompass.Infrastructure.Common;
-using CareerCompass.Infrastructure.Fields;
-using CareerCompass.Infrastructure.Scenarios;
-using CareerCompass.Infrastructure.Tags;
+using CareerCompass.Infrastructure.Persistence.Fields;
+using CareerCompass.Infrastructure.Persistence.Scenarios;
+using CareerCompass.Infrastructure.Persistence.Tags;
 using Microsoft.AspNetCore.Identity;
 
-namespace CareerCompass.Infrastructure.Users;
-
+namespace CareerCompass.Infrastructure.Persistence.Users;
 
 [Table("Agents")]
 internal class AgentTable : IAuditable
 {
     public Guid Id { get; set; }
+    public string UserId { get; set; }
 
     #region Navigation
 

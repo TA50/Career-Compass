@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CareerCompass.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250124180139_Initial")]
+    [Migration("20250124184847_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace CareerCompass.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Fields.FieldTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.ToTable("Fields");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioFieldTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioFieldTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,7 +92,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.ToTable("ScenarioFields");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,7 +121,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.ToTable("Scenarios");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Tags.TagTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Tags.TagTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -147,7 +147,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Users.AgentTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Users.AgentTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -160,11 +160,13 @@ namespace CareerCompass.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Agents");
                 });
@@ -382,9 +384,9 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.ToTable("ScenarioTags");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Fields.FieldTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.AgentTable", "Agent")
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Users.AgentTable", "Agent")
                         .WithMany("Fields")
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -393,25 +395,25 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Navigation("Agent");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioFieldTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioFieldTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Fields.FieldTable", "Field")
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", "Field")
                         .WithMany()
                         .HasForeignKey("FieldId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CareerCompass.Infrastructure.Fields.FieldTable", null)
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", null)
                         .WithMany("ScenarioFields")
                         .HasForeignKey("FieldTableId");
 
-                    b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", "Scenario")
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", "Scenario")
                         .WithMany()
                         .HasForeignKey("ScenarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", null)
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", null)
                         .WithMany("ScenarioFields")
                         .HasForeignKey("ScenarioTableId");
 
@@ -420,9 +422,9 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Navigation("Scenario");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.AgentTable", "Agent")
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Users.AgentTable", "Agent")
                         .WithMany("Scenarios")
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -431,9 +433,9 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Navigation("Agent");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Tags.TagTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Tags.TagTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.AgentTable", "Agent")
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Users.AgentTable", "Agent")
                         .WithMany("Tags")
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -442,11 +444,13 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Navigation("Agent");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Users.AgentTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Users.AgentTable", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
+                        .WithOne()
+                        .HasForeignKey("CareerCompass.Infrastructure.Persistence.Users.AgentTable", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -504,30 +508,30 @@ namespace CareerCompass.Infrastructure.Migrations
 
             modelBuilder.Entity("ScenarioTags", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", null)
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", null)
                         .WithMany()
                         .HasForeignKey("ScenarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CareerCompass.Infrastructure.Tags.TagTable", null)
+                    b.HasOne("CareerCompass.Infrastructure.Persistence.Tags.TagTable", null)
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Fields.FieldTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", b =>
                 {
                     b.Navigation("ScenarioFields");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", b =>
                 {
                     b.Navigation("ScenarioFields");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Users.AgentTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Users.AgentTable", b =>
                 {
                     b.Navigation("Fields");
 

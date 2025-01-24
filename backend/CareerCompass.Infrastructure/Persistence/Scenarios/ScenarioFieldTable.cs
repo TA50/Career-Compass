@@ -1,9 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CareerCompass.Infrastructure.Common;
-using CareerCompass.Infrastructure.Fields;
+using CareerCompass.Infrastructure.Persistence.Fields;
 
-namespace CareerCompass.Infrastructure.Scenarios;
+
+namespace CareerCompass.Infrastructure.Persistence.Scenarios;
 
 [Table("ScenarioFields")]
 internal class ScenarioFieldTable : IAuditable
