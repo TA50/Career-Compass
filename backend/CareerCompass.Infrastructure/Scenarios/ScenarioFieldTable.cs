@@ -5,17 +5,20 @@ using CareerCompass.Infrastructure.Fields;
 
 namespace CareerCompass.Infrastructure.Scenarios;
 
+[Table("ScenarioFields")]
 internal class ScenarioFieldTable : IAuditable
 {
+    public Guid Id { get; set; }
+    
     public required string Value { get; set; }
 
     public Guid ScenarioId { get; set; }
     public Guid FieldId { get; set; }
     
-    public required ScenarioTable Scenario { get; set; }
+    public  ScenarioTable Scenario { get; set; }
 
     
-    public required FieldTable Field { get; set; }
+    public  FieldTable Field { get; set; }
 
 
     #region IAuditable

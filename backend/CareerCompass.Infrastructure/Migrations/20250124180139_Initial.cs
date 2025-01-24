@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CareerCompass.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,10 +30,6 @@ namespace CareerCompass.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -73,6 +69,25 @@ namespace CareerCompass.Infrastructure.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Agents",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Agents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Agents_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -166,7 +181,7 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -174,10 +189,11 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Fields", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Fields_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        name: "FK_Fields_Agents_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -187,7 +203,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -195,10 +211,11 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Scenarios", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Scenarios_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        name: "FK_Scenarios_Agents_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -207,7 +224,7 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -215,62 +232,81 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Tags", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tags_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        name: "FK_Tags_Agents_AgentId",
+                        column: x => x.AgentId,
+                        principalTable: "Agents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ScenarioFields",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ScenarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FieldId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FieldTableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ScenarioTableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScenarioFields", x => new { x.ScenarioId, x.FieldId });
+                    table.PrimaryKey("PK_ScenarioFields", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ScenarioFields_Fields_FieldId",
                         column: x => x.FieldId,
                         principalTable: "Fields",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ScenarioFields_Fields_FieldTableId",
+                        column: x => x.FieldTableId,
+                        principalTable: "Fields",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ScenarioFields_Scenarios_ScenarioId",
                         column: x => x.ScenarioId,
                         principalTable: "Scenarios",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ScenarioFields_Scenarios_ScenarioTableId",
+                        column: x => x.ScenarioTableId,
+                        principalTable: "Scenarios",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "ScenarioTableTagTable",
+                name: "ScenarioTags",
                 columns: table => new
                 {
-                    ScenariosId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ScenarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScenarioTableTagTable", x => new { x.ScenariosId, x.TagsId });
+                    table.PrimaryKey("PK_ScenarioTags", x => new { x.ScenarioId, x.TagId });
                     table.ForeignKey(
-                        name: "FK_ScenarioTableTagTable_Scenarios_ScenariosId",
-                        column: x => x.ScenariosId,
+                        name: "FK_ScenarioTags_Scenarios_ScenarioId",
+                        column: x => x.ScenarioId,
                         principalTable: "Scenarios",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ScenarioTableTagTable_Tags_TagsId",
-                        column: x => x.TagsId,
+                        name: "FK_ScenarioTags_Tags_TagId",
+                        column: x => x.TagId,
                         principalTable: "Tags",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Agents_UserId",
+                table: "Agents",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -312,9 +348,9 @@ namespace CareerCompass.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fields_UserId",
+                name: "IX_Fields_AgentId",
                 table: "Fields",
-                column: "UserId");
+                column: "AgentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScenarioFields_FieldId",
@@ -322,19 +358,34 @@ namespace CareerCompass.Infrastructure.Migrations
                 column: "FieldId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Scenarios_UserId",
+                name: "IX_ScenarioFields_FieldTableId",
+                table: "ScenarioFields",
+                column: "FieldTableId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScenarioFields_ScenarioId",
+                table: "ScenarioFields",
+                column: "ScenarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScenarioFields_ScenarioTableId",
+                table: "ScenarioFields",
+                column: "ScenarioTableId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Scenarios_AgentId",
                 table: "Scenarios",
-                column: "UserId");
+                column: "AgentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ScenarioTableTagTable_TagsId",
-                table: "ScenarioTableTagTable",
-                column: "TagsId");
+                name: "IX_ScenarioTags_TagId",
+                table: "ScenarioTags",
+                column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_UserId",
+                name: "IX_Tags_AgentId",
                 table: "Tags",
-                column: "UserId");
+                column: "AgentId");
         }
 
         /// <inheritdoc />
@@ -359,7 +410,7 @@ namespace CareerCompass.Infrastructure.Migrations
                 name: "ScenarioFields");
 
             migrationBuilder.DropTable(
-                name: "ScenarioTableTagTable");
+                name: "ScenarioTags");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -372,6 +423,9 @@ namespace CareerCompass.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "Agents");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

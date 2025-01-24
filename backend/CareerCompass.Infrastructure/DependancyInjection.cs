@@ -1,5 +1,6 @@
 using CareerCompass.Infrastructure.Persistence;
 using CareerCompass.Infrastructure.Users;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,7 @@ public static class DependencyInjection
             opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         });
 
-        services.AddIdentityCore<UserTable>()
+        services.AddIdentityCore<IdentityUser>()
             .AddEntityFrameworkStores<AppDbContext>();
     }
 }

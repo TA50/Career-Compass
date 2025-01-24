@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using CareerCompass.Infrastructure.Common;
 using CareerCompass.Infrastructure.Fields;
 using CareerCompass.Infrastructure.Scenarios;
@@ -6,14 +7,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CareerCompass.Infrastructure.Users;
 
-internal class UserTable : IdentityUser, IAuditable
-{
-    public string? FirstName { get; set; }
 
-    public string? LastName { get; set; }
+[Table("Agents")]
+internal class AgentTable : IAuditable
+{
+    public Guid Id { get; set; }
 
     #region Navigation
 
+    public IdentityUser User { get; set; }
     public ICollection<ScenarioTable> Scenarios { get; set; } = [];
     public ICollection<TagTable> Tags { get; set; } = [];
     public ICollection<FieldTable> Fields { get; set; } = [];

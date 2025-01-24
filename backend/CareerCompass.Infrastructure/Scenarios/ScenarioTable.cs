@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using CareerCompass.Infrastructure.Common;
 using CareerCompass.Infrastructure.Tags;
 using CareerCompass.Infrastructure.Users;
 
 namespace CareerCompass.Infrastructure.Scenarios;
 
+[Table("Scenarios")]
 internal class ScenarioTable : IAuditable
 {
     public Guid Id { get; set; }
@@ -13,7 +15,7 @@ internal class ScenarioTable : IAuditable
 
     public ICollection<TagTable> Tags { get; set; } = [];
     public ICollection<ScenarioFieldTable> ScenarioFields { get; set; } = [];
-    public required UserTable User { get; set; }
+    public  AgentTable Agent { get; set; }
 
 
     #region IAuditable

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CareerCompass.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250123155910_Init")]
-    partial class Init
+    [Migration("20250124180139_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,6 +31,9 @@ namespace CareerCompass.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("AgentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -41,26 +44,33 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AgentId");
 
                     b.ToTable("Fields");
                 });
 
             modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioFieldTable", b =>
                 {
-                    b.Property<Guid>("ScenarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FieldId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FieldId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FieldTableId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ScenarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ScenarioTableId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -69,9 +79,15 @@ namespace CareerCompass.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ScenarioId", "FieldId");
+                    b.HasKey("Id");
 
                     b.HasIndex("FieldId");
+
+                    b.HasIndex("FieldTableId");
+
+                    b.HasIndex("ScenarioId");
+
+                    b.HasIndex("ScenarioTableId");
 
                     b.ToTable("ScenarioFields");
                 });
@@ -80,6 +96,9 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AgentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -95,12 +114,9 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AgentId");
 
                     b.ToTable("Scenarios");
                 });
@@ -109,6 +125,9 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AgentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -121,6 +140,25 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("CareerCompass.Infrastructure.Users.AgentTable", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -128,84 +166,7 @@ namespace CareerCompass.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("CareerCompass.Infrastructure.Users.UserTable", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Agents");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -258,6 +219,71 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -341,43 +367,53 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ScenarioTableTagTable", b =>
+            modelBuilder.Entity("ScenarioTags", b =>
                 {
-                    b.Property<Guid>("ScenariosId")
+                    b.Property<Guid>("ScenarioId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TagsId")
+                    b.Property<Guid>("TagId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ScenariosId", "TagsId");
+                    b.HasKey("ScenarioId", "TagId");
 
-                    b.HasIndex("TagsId");
+                    b.HasIndex("TagId");
 
-                    b.ToTable("ScenarioTableTagTable");
+                    b.ToTable("ScenarioTags");
                 });
 
             modelBuilder.Entity("CareerCompass.Infrastructure.Fields.FieldTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", "User")
+                    b.HasOne("CareerCompass.Infrastructure.Users.AgentTable", "Agent")
                         .WithMany("Fields")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Agent");
                 });
 
             modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioFieldTable", b =>
                 {
                     b.HasOne("CareerCompass.Infrastructure.Fields.FieldTable", "Field")
-                        .WithMany("ScenarioFields")
+                        .WithMany()
                         .HasForeignKey("FieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", "Scenario")
+                    b.HasOne("CareerCompass.Infrastructure.Fields.FieldTable", null)
                         .WithMany("ScenarioFields")
+                        .HasForeignKey("FieldTableId");
+
+                    b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", "Scenario")
+                        .WithMany()
                         .HasForeignKey("ScenarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", null)
+                        .WithMany("ScenarioFields")
+                        .HasForeignKey("ScenarioTableId");
 
                     b.Navigation("Field");
 
@@ -386,17 +422,30 @@ namespace CareerCompass.Infrastructure.Migrations
 
             modelBuilder.Entity("CareerCompass.Infrastructure.Scenarios.ScenarioTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", "User")
+                    b.HasOne("CareerCompass.Infrastructure.Users.AgentTable", "Agent")
                         .WithMany("Scenarios")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Agent");
                 });
 
             modelBuilder.Entity("CareerCompass.Infrastructure.Tags.TagTable", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", "User")
+                    b.HasOne("CareerCompass.Infrastructure.Users.AgentTable", "Agent")
                         .WithMany("Tags")
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+                });
+
+            modelBuilder.Entity("CareerCompass.Infrastructure.Users.AgentTable", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
@@ -413,7 +462,7 @@ namespace CareerCompass.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -422,7 +471,7 @@ namespace CareerCompass.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -437,7 +486,7 @@ namespace CareerCompass.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -446,25 +495,25 @@ namespace CareerCompass.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("CareerCompass.Infrastructure.Users.UserTable", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ScenarioTableTagTable", b =>
+            modelBuilder.Entity("ScenarioTags", b =>
                 {
                     b.HasOne("CareerCompass.Infrastructure.Scenarios.ScenarioTable", null)
                         .WithMany()
-                        .HasForeignKey("ScenariosId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ScenarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CareerCompass.Infrastructure.Tags.TagTable", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -478,7 +527,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Navigation("ScenarioFields");
                 });
 
-            modelBuilder.Entity("CareerCompass.Infrastructure.Users.UserTable", b =>
+            modelBuilder.Entity("CareerCompass.Infrastructure.Users.AgentTable", b =>
                 {
                     b.Navigation("Fields");
 

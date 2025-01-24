@@ -22,4 +22,5 @@ public class User(
     public ICollection<TagId> TagIds { get; private set; } = tagIds;
     public ICollection<FieldId> FieldIds { get; private set; } = fieldIds;
     public ICollection<ScenarioId> ScenarioIds { get; private set; } = scenarioIds;
+    
 }
