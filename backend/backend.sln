@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Infrastructure", "CareerCompass.Infrastructure\CareerCompass.Infrastructure.csproj", "{5E9C00A9-CDE5-434F-8166-EB31DE307103}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Unit", "CareerCompass.Tests.Unit\CareerCompass.Tests.Unit.csproj", "{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,5 +41,9 @@ Global
 		{5E9C00A9-CDE5-434F-8166-EB31DE307103}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E9C00A9-CDE5-434F-8166-EB31DE307103}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E9C00A9-CDE5-434F-8166-EB31DE307103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
