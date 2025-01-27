@@ -3,6 +3,8 @@ using CareerCompass.Application;
 using CareerCompass.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
+using AutoMapper;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([
     Assembly.GetAssembly(typeof(Program)) ?? throw new InvalidOperationException(),
     Assembly.GetAssembly(typeof(ApplicationAssemblyMarker)) ?? throw new InvalidOperationException()
 ]));
+
+
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
