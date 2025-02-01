@@ -1,12 +1,15 @@
 namespace CareerCompass.Application.Common;
 
-public class EntityId(Guid value) : ValueObject
+public class EntityId : ValueObject
 {
-    public Guid Value { get; } = value;
+    public EntityId(Guid value) => Value = value;
 
-    public static implicit operator Guid(EntityId id) => id.Value;
+    protected EntityId()
+    {
+    }
 
-    public static implicit operator EntityId(Guid id) => new(id);
+    public Guid Value { get; protected set; }
+    public override string ToString() => Value.ToString();
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
@@ -15,4 +18,21 @@ public class EntityId(Guid value) : ValueObject
             Value,
         ];
     }
+
+    public EntityId From<T>(string value) where T : EntityId, new()
+    {
+        var id = new T();
+        id.Value = Guid.Parse(value);
+        return id;
+    }
+
+    public EntityId From<T>(Guid value) where T : EntityId, new()
+    {
+        var id = new T();
+        id.Value = value;
+        return id;
+    }
+
+
+    public static EntityId NewId() => new(Guid.CreateVersion7());
 }

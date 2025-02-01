@@ -13,6 +13,11 @@ internal class AgentTable : IAuditable
     public Guid Id { get; set; }
     public string UserId { get; set; }
 
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
+
+
     #region Navigation
 
     public IdentityUser User { get; set; }

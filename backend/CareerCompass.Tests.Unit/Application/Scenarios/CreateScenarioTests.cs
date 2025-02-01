@@ -1,10 +1,8 @@
 using CareerCompass.Application.Fields;
 using CareerCompass.Application.Scenarios;
-using CareerCompass.Application.Scenarios.UseCases;
-using CareerCompass.Application.Scenarios.UseCases.Contracts;
+using CareerCompass.Application.Scenarios.Commands.CreateScenario;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
-using ErrorOr;
 using Moq;
 using Shouldly;
 
@@ -21,7 +19,7 @@ public class CreateScenarioTests
     private readonly Mock<ITagRepository> _mockTagRepository;
     private readonly Mock<IFieldRepository> _mockFieldRepository;
     private readonly Mock<IUserRepository> _mockUserRepository;
-    private readonly CreateScenarioUseCase _useCase;
+    private readonly CreateScenarioCommandHandler _commandHandler;
 
     public CreateScenarioTests()
     {
@@ -29,7 +27,7 @@ public class CreateScenarioTests
         _mockTagRepository = new Mock<ITagRepository>();
         _mockFieldRepository = new Mock<IFieldRepository>();
         _mockUserRepository = new Mock<IUserRepository>();
-        _useCase = new CreateScenarioUseCase(
+        _commandHandler = new CreateScenarioCommandHandler(
             _mockScenarioRepository.Object,
             _mockTagRepository.Object,
             _mockFieldRepository.Object,
@@ -49,15 +47,15 @@ public class CreateScenarioTests
         var title = "Test Scenario";
         var userId = UserId.NewId();
 
-        var input = new CreateScenarioInput(
-            title: title,
-            tagIds: [tagId],
-            scenarioFields:
+        var input = new CreateScenarioCommand(
+            Title: title,
+            TagIds: [tagId],
+            ScenarioFields:
             [
                 new(fieldId, "Test Field 1"),
             ],
-            userId: userId,
-            date: DateTime.UtcNow
+            UserId: userId,
+            Date: DateTime.UtcNow
         );
 
         _mockTagRepository.Setup(repo => repo.Exists(tagId, It.IsAny<CancellationToken>()))
@@ -69,17 +67,17 @@ public class CreateScenarioTests
 
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
-            title: input.title,
-            tagIds: input.tagIds,
-            scenarioFields: input.scenarioFields,
-            userId: input.userId,
-            date: input.date
+            title: input.Title,
+            tagIds: input.TagIds,
+            scenarioFields: input.ScenarioFields,
+            userId: input.UserId,
+            date: input.Date
         );
         _mockScenarioRepository.Setup(repo => repo.Create(It.IsNotNull<Scenario>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdScenario);
 
         // Act
-        var result = await _useCase.Handle(input, CancellationToken.None);
+        var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeFalse();
@@ -99,16 +97,16 @@ public class CreateScenarioTests
         var validTagId = TagId.NewId();
         var title = "Test Scenario";
 
-        var input = new CreateScenarioInput(
-            title: title,
-            tagIds: [inValidTagId, validTagId],
-            scenarioFields:
+        var input = new CreateScenarioCommand(
+            Title: title,
+            TagIds: [inValidTagId, validTagId],
+            ScenarioFields:
             [
                 new(FieldId.NewId(), "Test Field 1"),
                 new(FieldId.NewId(), "Test Field 2"),
             ],
-            userId: UserId.NewId(),
-            date: DateTime.UtcNow
+            UserId: UserId.NewId(),
+            Date: DateTime.UtcNow
         );
 
 
@@ -126,17 +124,17 @@ public class CreateScenarioTests
 
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
-            title: input.title,
-            tagIds: input.tagIds,
-            scenarioFields: input.scenarioFields,
-            userId: input.userId,
-            date: input.date
+            title: input.Title,
+            tagIds: input.TagIds,
+            scenarioFields: input.ScenarioFields,
+            userId: input.UserId,
+            date: input.Date
         );
         _mockScenarioRepository.Setup(repo => repo.Create(createdScenario, It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdScenario);
 
         // Act
-        var result = await _useCase.Handle(input, CancellationToken.None);
+        var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeTrue();
@@ -156,15 +154,15 @@ public class CreateScenarioTests
         var validFieldId = FieldId.NewId();
 
         var title = "Test Scenario Field Not Found";
-        var input = new CreateScenarioInput(
-            title: title, tagIds: [TagId.NewId()], scenarioFields:
+        var input = new CreateScenarioCommand(
+            Title: title, TagIds: [TagId.NewId()], ScenarioFields:
             [
                 new(inValidFieldId, "Test Field 1"),
                 new(secondInValidFieldId, "Test Field 2"),
                 new(validFieldId, "Test Field 3")
             ],
-            userId: UserId.NewId(),
-            date: DateTime.UtcNow
+            UserId: UserId.NewId(),
+            Date: DateTime.UtcNow
         );
 
         _mockTagRepository.Setup(repo => repo.Exists(It.IsAny<TagId>(), It.IsAny<CancellationToken>()))
@@ -180,17 +178,17 @@ public class CreateScenarioTests
 
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
-            title: input.title,
-            tagIds: input.tagIds,
-            scenarioFields: input.scenarioFields,
-            userId: input.userId,
-            date: input.date
+            title: input.Title,
+            tagIds: input.TagIds,
+            scenarioFields: input.ScenarioFields,
+            userId: input.UserId,
+            date: input.Date
         );
         _mockScenarioRepository.Setup(repo => repo.Create(createdScenario, It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdScenario);
 
         // Act
-        var result = await _useCase.Handle(input, CancellationToken.None);
+        var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeTrue();
@@ -207,13 +205,13 @@ public class CreateScenarioTests
     {
         var invalidUserId = UserId.NewId();
         var title = "Test Scenario User Not Found";
-        var input = new CreateScenarioInput(
-            title: title, tagIds: [TagId.NewId()], scenarioFields:
+        var input = new CreateScenarioCommand(
+            Title: title, TagIds: [TagId.NewId()], ScenarioFields:
             [
                 new(FieldId.NewId(), "Test Field 1"),
             ],
-            userId: invalidUserId,
-            date: DateTime.UtcNow
+            UserId: invalidUserId,
+            Date: DateTime.UtcNow
         );
 
         _mockTagRepository.Setup(repo => repo.Exists(It.IsAny<TagId>(), It.IsAny<CancellationToken>()))
@@ -225,17 +223,17 @@ public class CreateScenarioTests
 
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
-            title: input.title,
-            tagIds: input.tagIds,
-            scenarioFields: input.scenarioFields,
-            userId: input.userId,
-            date: input.date
+            title: input.Title,
+            tagIds: input.TagIds,
+            scenarioFields: input.ScenarioFields,
+            userId: input.UserId,
+            date: input.Date
         );
         _mockScenarioRepository.Setup(repo => repo.Create(createdScenario, It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdScenario);
 
         // Act
-        var result = await _useCase.Handle(input, CancellationToken.None);
+        var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeTrue();

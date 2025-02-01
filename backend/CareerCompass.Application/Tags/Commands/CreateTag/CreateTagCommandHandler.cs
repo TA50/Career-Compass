@@ -1,17 +1,15 @@
-using CareerCompass.Application.Tags.UseCases.Contracts;
 using CareerCompass.Application.Users;
-using MediatR;
 using ErrorOr;
+using MediatR;
 
+namespace CareerCompass.Application.Tags.Commands.CreateTag;
 
-namespace CareerCompass.Application.Tags.UseCases;
-
-public class CreateTagUseCase(
+public class CreateTagCommandHandler(
     ITagRepository tagRepository,
     IUserRepository userRepository
-) : IRequestHandler<CreateTagInput, ErrorOr<Tag>>
+) : IRequestHandler<CreateTagCommand, ErrorOr<Tag>>
 {
-    public async Task<ErrorOr<Tag>> Handle(CreateTagInput request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Tag>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
     {
         var errors = new List<Error>();
         // Validate User Id

@@ -1,43 +1,58 @@
-using System.Collections.Immutable;
 using AutoMapper;
+using CareerCompass.Api.Common;
 using CareerCompass.Api.Scenarios.Contracts;
-using CareerCompass.Application.Fields;
 using CareerCompass.Application.Scenarios;
-using CareerCompass.Application.Scenarios.UseCases.Contracts;
+using CareerCompass.Application.Scenarios.Commands.CreateScenario;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
-using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CareerCompass.Api.Scenarios;
 
 [ApiController]
 [Route("scenarios")]
-public class ScenarioController(ISender mediator, IMapper mapper)
-    : ControllerBase
+[Authorize]
+public class ScenarioController(
+    ISender mediator,
+    IMapper mapper,
+    UserContext userContext)
+    : ApiController
 {
     [HttpPost]
-    public async Task<ActionResult<ScenarioDto>> Create([FromBody] CreateScenarioDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateScenarioDto dto)
     {
-        var input = new CreateScenarioInput(
-            title: dto.Title,
-            userId: new UserId(dto.UserId),
-            date: dto.Date,
-            tagIds: dto.TagIds.Select(i => new TagId(i)).ToImmutableList(),
-            scenarioFields: dto.ScenarioFields.Select(sf => new ScenarioField(new FieldId(sf.FieldId), sf.Value))
-                .ToImmutableList()
+        var input = new CreateScenarioCommand(
+            UserId: userContext.UserId,
+            TagIds: dto.TagIds.Select(id => new TagId(id)).ToList(),
+            ScenarioFields:
+            dto.ScenarioFields.Select(mapper.Map<ScenarioField>).ToList(),
+            Title:
+            dto.Title,
+            Date:
+            dto.Date
         );
-        var scenario = await mediator.Send(input);
 
-        if (scenario.IsError)
-        {
-            return BadRequest("Errors");
-        }
+        var result = await mediator.Send(input);
 
-        var url = Url.Action(nameof(Get), nameof(ScenarioController), new { id = scenario.Value.Id }, Request.Scheme);
+        return result.Match(
+            value => CreatedAtAction(
+                nameof(Get),
+                new { id = value.Id },
+                mapper.Map<ScenarioDto>(value)
+            ),
+            error =>
+            {
+                var problemDetails = MapError(error);
 
-        return Created(url, mapper.Map<ScenarioDto>(scenario));
+                return new ObjectResult(problemDetails)
+                {
+                    StatusCode = problemDetails.Status
+                };
+            }
+        );
     }
 
     [HttpGet("{id}")]

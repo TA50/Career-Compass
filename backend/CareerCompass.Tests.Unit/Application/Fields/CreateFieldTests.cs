@@ -1,6 +1,5 @@
 using CareerCompass.Application.Fields;
-using CareerCompass.Application.Fields.UseCases;
-using CareerCompass.Application.Fields.UseCases.Contracts;
+using CareerCompass.Application.Fields.Commands.CreateField;
 using CareerCompass.Application.Users;
 using Moq;
 using Shouldly;
@@ -26,7 +25,7 @@ public class CreateFieldTests
         // Arrange: 
         var userId = UserId.NewId();
         var fieldName = "test field name";
-        var createFieldInput = new CreateFieldInput(userId, fieldName);
+        var createFieldInput = new CreateFieldCommand(userId, fieldName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(false);
 
@@ -52,7 +51,7 @@ public class CreateFieldTests
         // Arrange: 
         var userId = UserId.NewId();
         var fieldName = "test field name";
-        var createFieldInput = new CreateFieldInput(userId, fieldName);
+        var createFieldInput = new CreateFieldCommand(userId, fieldName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(true);
         _fieldRepository.Setup(r => r.Exists(userId, fieldName, CancellationToken.None)).ReturnsAsync(true);
@@ -79,7 +78,7 @@ public class CreateFieldTests
         var userId = UserId.NewId();
         var anotherUserId = UserId.NewId();
         var fieldName = "test field name";
-        var createFieldInput = new CreateFieldInput(userId, fieldName);
+        var createFieldInput = new CreateFieldCommand(userId, fieldName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(true);
         _fieldRepository.Setup(r => r.Exists(anotherUserId, fieldName, CancellationToken.None)).ReturnsAsync(true);
@@ -106,7 +105,7 @@ public class CreateFieldTests
         // Arrange: 
         var userId = UserId.NewId();
         var fieldName = "test field name";
-        var createFieldInput = new CreateFieldInput(userId, fieldName);
+        var createFieldInput = new CreateFieldCommand(userId, fieldName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(true);
         _fieldRepository.Setup(r => r.Exists(userId, fieldName, CancellationToken.None)).ReturnsAsync(false);

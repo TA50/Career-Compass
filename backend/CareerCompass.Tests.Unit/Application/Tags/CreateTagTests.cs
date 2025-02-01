@@ -1,6 +1,5 @@
 using CareerCompass.Application.Tags;
-using CareerCompass.Application.Tags.UseCases;
-using CareerCompass.Application.Tags.UseCases.Contracts;
+using CareerCompass.Application.Tags.Commands.CreateTag;
 using CareerCompass.Application.Users;
 using Moq;
 using Shouldly;
@@ -25,7 +24,7 @@ public class CreateTagTests
         // Arrange: 
         var userId = UserId.NewId();
         var tagName = "test tag name";
-        var createTagInput = new CreateTagInput(userId, tagName);
+        var createTagInput = new CreateTagCommand(userId, tagName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(false);
 
@@ -33,7 +32,7 @@ public class CreateTagTests
         _tagRepository.Setup(r => r.Create(It.IsNotNull<Tag>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdTag);
 
-        var useCase = new CreateTagUseCase(_tagRepository.Object, _userRepository.Object);
+        var useCase = new CreateTagCommandHandler(_tagRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createTagInput, CancellationToken.None);
 
@@ -50,7 +49,7 @@ public class CreateTagTests
         // Arrange: 
         var userId = UserId.NewId();
         var tagName = "test tag name";
-        var createTagInput = new CreateTagInput(userId, tagName);
+        var createTagInput = new CreateTagCommand(userId, tagName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(true);
         _tagRepository.Setup(r => r.Exists(userId, tagName, CancellationToken.None)).ReturnsAsync(true);
@@ -59,7 +58,7 @@ public class CreateTagTests
         _tagRepository.Setup(r => r.Create(It.IsNotNull<Tag>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdTag);
 
-        var useCase = new CreateTagUseCase(_tagRepository.Object, _userRepository.Object);
+        var useCase = new CreateTagCommandHandler(_tagRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createTagInput, CancellationToken.None);
 
@@ -77,7 +76,7 @@ public class CreateTagTests
         var userId = UserId.NewId();
         var anotherUserId = UserId.NewId();
         var tagName = "test tag name";
-        var createTagInput = new CreateTagInput(userId, tagName);
+        var createTagInput = new CreateTagCommand(userId, tagName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(true);
         _tagRepository.Setup(r => r.Exists(anotherUserId, tagName, CancellationToken.None)).ReturnsAsync(true);
@@ -87,7 +86,7 @@ public class CreateTagTests
         _tagRepository.Setup(r => r.Create(It.IsNotNull<Tag>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdTag);
 
-        var useCase = new CreateTagUseCase(_tagRepository.Object, _userRepository.Object);
+        var useCase = new CreateTagCommandHandler(_tagRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createTagInput, CancellationToken.None);
 
@@ -104,7 +103,7 @@ public class CreateTagTests
         // Arrange: 
         var userId = UserId.NewId();
         var tagName = "test tag name";
-        var createTagInput = new CreateTagInput(userId, tagName);
+        var createTagInput = new CreateTagCommand(userId, tagName);
 
         _userRepository.Setup(r => r.Exists(userId, CancellationToken.None)).ReturnsAsync(true);
         _tagRepository.Setup(r => r.Exists(userId, tagName, CancellationToken.None)).ReturnsAsync(false);
@@ -113,7 +112,7 @@ public class CreateTagTests
         _tagRepository.Setup(r => r.Create(It.IsNotNull<Tag>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdTag);
 
-        var useCase = new CreateTagUseCase(_tagRepository.Object, _userRepository.Object);
+        var useCase = new CreateTagCommandHandler(_tagRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createTagInput, CancellationToken.None);
 

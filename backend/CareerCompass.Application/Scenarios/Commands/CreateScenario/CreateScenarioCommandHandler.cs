@@ -1,31 +1,30 @@
 using CareerCompass.Application.Fields;
-using CareerCompass.Application.Scenarios.UseCases.Contracts;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
-using MediatR;
 using ErrorOr;
+using MediatR;
 
-namespace CareerCompass.Application.Scenarios.UseCases;
+namespace CareerCompass.Application.Scenarios.Commands.CreateScenario;
 
-public class CreateScenarioUseCase(
+public class CreateScenarioCommandHandler(
     IScenarioRepository scenarioRepository,
     ITagRepository tagRepository,
     IFieldRepository fieldRepository,
     IUserRepository userRepository
 )
-    : IRequestHandler<CreateScenarioInput, ErrorOr<Scenario>>
+    : IRequestHandler<CreateScenarioCommand, ErrorOr<Scenario>>
 {
     /** Validations
           - Check if user exists.
           - Check if Tags exist.
           - Check if Fields exist (if any).
          */
-    public async Task<ErrorOr<Scenario>> Handle(CreateScenarioInput request,
+    public async Task<ErrorOr<Scenario>> Handle(CreateScenarioCommand request,
         CancellationToken cancellationToken)
     {
         // Validate Tag Ids: 
         var errors = new List<Error>();
-        foreach (var tagId in request.tagIds)
+        foreach (var tagId in request.TagIds)
         {
             var tagExists = await tagRepository.Exists(tagId, cancellationToken);
             if (!tagExists)
@@ -35,7 +34,7 @@ public class CreateScenarioUseCase(
         }
 
         // Validate Field Ids:
-        foreach (var field in request.scenarioFields)
+        foreach (var field in request.ScenarioFields)
         {
             var fieldExists = await fieldRepository.Exists(field.FieldId, cancellationToken);
             if (!fieldExists)
@@ -44,10 +43,10 @@ public class CreateScenarioUseCase(
             }
         }
 
-        var userExists = await userRepository.Exists(request.userId, cancellationToken);
+        var userExists = await userRepository.Exists(request.UserId, cancellationToken);
         if (!userExists)
         {
-            errors.Add(ScenarioError.ScenarioValidation_UserNotFound(request.userId));
+            errors.Add(ScenarioError.ScenarioValidation_UserNotFound(request.UserId));
         }
 
         if (errors.Any())
@@ -58,11 +57,11 @@ public class CreateScenarioUseCase(
 
         var scenario = new Scenario(
             id: ScenarioId.NewId(),
-            title: request.title,
-            tagIds: request.tagIds,
-            scenarioFields: request.scenarioFields,
-            userId: request.userId,
-            date: request.date
+            title: request.Title,
+            tagIds: request.TagIds,
+            scenarioFields: request.ScenarioFields,
+            userId: request.UserId,
+            date: request.Date
         );
 
         return await scenarioRepository.Create(scenario, cancellationToken);
