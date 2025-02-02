@@ -4,22 +4,22 @@ using CareerCompass.Application.Users;
 using ErrorOr;
 using MediatR;
 
-namespace CareerCompass.Application.Scenarios.Commands.CreateScenario;
+namespace CareerCompass.Application.Scenarios.Commands.UpdateScenario;
 
-public class CreateScenarioCommandHandler(
+public class UpdateScenarioCommandHandler(
     IScenarioRepository scenarioRepository,
     ITagRepository tagRepository,
     IFieldRepository fieldRepository,
     IUserRepository userRepository
 )
-    : IRequestHandler<CreateScenarioCommand, ErrorOr<Scenario>>
+    : IRequestHandler<UpdateScenarioCommand, ErrorOr<Scenario>>
 {
     /** Validations
           - Check if user exists.
           - Check if Tags exist.
           - Check if Fields exist (if any).
          */
-    public async Task<ErrorOr<Scenario>> Handle(CreateScenarioCommand request,
+    public async Task<ErrorOr<Scenario>> Handle(UpdateScenarioCommand request,
         CancellationToken cancellationToken)
     {
         // Validate Tag Ids: 
@@ -29,7 +29,7 @@ public class CreateScenarioCommandHandler(
             var tagExists = await tagRepository.Exists(new TagId(tagId), cancellationToken);
             if (!tagExists)
             {
-                errors.Add(ScenarioError.ScenarioCreation_TagNotFound(new TagId(tagId)));
+                errors.Add(ScenarioError.ScenarioModification_TagNotFound(new TagId(tagId)));
             }
         }
 
@@ -39,14 +39,14 @@ public class CreateScenarioCommandHandler(
             var fieldExists = await fieldRepository.Exists(new FieldId(field.FieldId), cancellationToken);
             if (!fieldExists)
             {
-                errors.Add(ScenarioError.ScenarioCreation_FieldNotFound(new FieldId(field.FieldId)));
+                errors.Add(ScenarioError.ScenarioModification_FieldNotFound(new FieldId(field.FieldId)));
             }
         }
 
         var userExists = await userRepository.Exists(new UserId(request.UserId), cancellationToken);
         if (!userExists)
         {
-            errors.Add(ScenarioError.ScenarioCreation_UserNotFound(new UserId(request.UserId)));
+            errors.Add(ScenarioError.ScenarioModification_UserNotFound(new UserId(request.UserId)));
         }
 
         if (errors.Any())
@@ -56,7 +56,7 @@ public class CreateScenarioCommandHandler(
 
 
         var scenario = new Scenario(
-            id: ScenarioId.NewId(),
+            id: request.Id,
             title: request.Title,
             tagIds: request.TagIds.Select(t => new TagId(t)).ToList(),
             scenarioFields: request.ScenarioFields.Select(
@@ -66,6 +66,6 @@ public class CreateScenarioCommandHandler(
             date: request.Date
         );
 
-        return await scenarioRepository.Create(scenario, cancellationToken);
+        return await scenarioRepository.Update(scenario, cancellationToken);
     }
 }

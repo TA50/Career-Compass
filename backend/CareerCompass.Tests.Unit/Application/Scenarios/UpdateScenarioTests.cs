@@ -1,6 +1,6 @@
 using CareerCompass.Application.Fields;
 using CareerCompass.Application.Scenarios;
-using CareerCompass.Application.Scenarios.Commands.CreateScenario;
+using CareerCompass.Application.Scenarios.Commands.UpdateScenario;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
 using CareerCompass.Tests.Unit.Common;
@@ -12,23 +12,23 @@ namespace CareerCompass.Tests.Unit.Application.Scenarios;
 /**
      * Given a scenario input
      * When Input Tag exists, and Fields exist
-     * Then Scenario is created
+     * Then Scenario is Updated
      */
-public class CreateScenarioTests
+public class UpdateScenarioTests
 {
     private readonly Mock<IScenarioRepository> _mockScenarioRepository;
     private readonly Mock<ITagRepository> _mockTagRepository;
     private readonly Mock<IFieldRepository> _mockFieldRepository;
     private readonly Mock<IUserRepository> _mockUserRepository;
-    private readonly CreateScenarioCommandHandler _commandHandler;
+    private readonly UpdateScenarioCommandHandler _commandHandler;
 
-    public CreateScenarioTests()
+    public UpdateScenarioTests()
     {
         _mockScenarioRepository = new Mock<IScenarioRepository>();
         _mockTagRepository = new Mock<ITagRepository>();
         _mockFieldRepository = new Mock<IFieldRepository>();
         _mockUserRepository = new Mock<IUserRepository>();
-        _commandHandler = new CreateScenarioCommandHandler(
+        _commandHandler = new UpdateScenarioCommandHandler(
             _mockScenarioRepository.Object,
             _mockTagRepository.Object,
             _mockFieldRepository.Object,
@@ -40,15 +40,17 @@ public class CreateScenarioTests
      * Input is Valid (Success)
      */
     [Fact]
-    public async Task GivenValidScenarioInput_ThenScenarioIsCreated()
+    public async Task GivenValidScenarioInput_ThenScenarioIsUpdated()
     {
         // Arrange
         var tagId = TagId.NewId();
         var fieldId = FieldId.NewId();
         var title = "Test Scenario";
         var userId = UserId.NewId();
+        var scenarioId = ScenarioId.NewId();
 
-        var input = new CreateScenarioCommand(
+        var input = new UpdateScenarioCommand(
+            Id: scenarioId.ToString(),
             Title: title,
             TagIds: [tagId],
             ScenarioFields:
@@ -66,7 +68,7 @@ public class CreateScenarioTests
         _mockFieldRepository.Setup(repo =>
             repo.Exists(fieldId, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-        var createdScenario = new Scenario(
+        var updatedScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
             tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
@@ -76,31 +78,33 @@ public class CreateScenarioTests
             userId: input.UserId,
             date: input.Date
         );
-        _mockScenarioRepository.Setup(repo => repo.Create(It.IsNotNull<Scenario>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(createdScenario);
+        _mockScenarioRepository.Setup(repo => repo.Update(It.IsNotNull<Scenario>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedScenario);
 
         // Act
         var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeFalse();
-        result.Value.ShouldBe(createdScenario);
+        result.Value.ShouldBe(updatedScenario);
     }
 
     /**
      * Input is Invalid (Tag does not exist)
      */
     [Fact(DisplayName =
-        "Given Invalid Scenario Input With Non Existent Tags, Then Scenario Is `ScenarioCreation_TagNotFound` Errors Are Returned")]
-    public async Task GivenInvalidScenarioInputWithNonExistentTag_ThenScenarioIsNotCreatedAndErrorIsReturned()
+        "Given Invalid Scenario Input With Non Existent Tags, Then Scenario Is `ScenarioModification_TagNotFound` Errors Are Returned")]
+    public async Task GivenInvalidScenarioInputWithNonExistentTag_ThenScenarioIsNotUpdatedAndErrorIsReturned()
     {
         // Arrange
         var inValidTagId = TagId.NewId();
         var secondInValidTagId = TagId.NewId();
         var validTagId = TagId.NewId();
         var title = "Test Scenario";
+        var scenarioId = ScenarioId.NewId();
 
-        var input = new CreateScenarioCommand(
+        var input = new UpdateScenarioCommand(
+            Id: scenarioId.ToString(),
             Title: title,
             TagIds: [inValidTagId, validTagId],
             ScenarioFields:
@@ -125,7 +129,7 @@ public class CreateScenarioTests
         _mockUserRepository.Setup(repo => repo.Exists(It.IsAny<UserId>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
-        var createdScenario = new Scenario(
+        var updatedScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
             tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
@@ -135,30 +139,33 @@ public class CreateScenarioTests
             userId: input.UserId,
             date: input.Date
         );
-        _mockScenarioRepository.Setup(repo => repo.Create(createdScenario, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(createdScenario);
+        _mockScenarioRepository.Setup(repo => repo.Update(updatedScenario, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedScenario);
 
         // Act
         var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_TagNotFound(inValidTagId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_TagNotFound(inValidTagId));
     }
 
     /**
      * Input is Invalid (Field does not exist)
      */
     [Fact(DisplayName =
-        "Given Invalid Scenario Input With Non Existent Field, Then Scenario Is Not Created And `ScenarioCreation_FieldNotFound` Error Is Returned")]
-    public async Task GivenInvalidScenarioInputWithNonExistentField_ThenScenarioIsNotCreatedAndErrorIsReturned()
+        "Given Invalid Scenario Input With Non Existent Field, Then Scenario Is Not Updated And `ScenarioModification_FieldNotFound` Error Is Returned")]
+    public async Task GivenInvalidScenarioInputWithNonExistentField_ThenScenarioIsNotUpdatedAndErrorIsReturned()
     {
         var inValidFieldId = FieldId.NewId();
         var secondInValidFieldId = FieldId.NewId();
         var validFieldId = FieldId.NewId();
 
         var title = "Test Scenario Field Not Found";
-        var input = new CreateScenarioCommand(
+        var scenarioId = ScenarioId.NewId();
+
+        var input = new UpdateScenarioCommand(
+            Id: scenarioId.ToString(),
             Title: title, TagIds: [TagId.NewId()], ScenarioFields:
             [
                 new(inValidFieldId.ToString(), "Test Field 1"),
@@ -180,7 +187,7 @@ public class CreateScenarioTests
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        var createdScenario = new Scenario(
+        var updatedScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
             tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
@@ -190,28 +197,31 @@ public class CreateScenarioTests
             userId: input.UserId,
             date: input.Date
         );
-        _mockScenarioRepository.Setup(repo => repo.Create(createdScenario, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(createdScenario);
+        _mockScenarioRepository.Setup(repo => repo.Update(updatedScenario, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedScenario);
 
         // Act
         var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_FieldNotFound(inValidFieldId));
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_FieldNotFound(secondInValidFieldId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_FieldNotFound(inValidFieldId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_FieldNotFound(secondInValidFieldId));
     }
 
     /**
      * Input is Invalid (User does not exist)
      */
     [Fact(DisplayName =
-        "Given Invalid Scenario Input With Non Existent User, Then Scenario Is Not Created And `ScenarioCreation_UserNotFound` Error Is Returned")]
-    public async Task GivenInvalidScenarioInputWithNonExistentUser_ThenScenarioIsNotCreatedAndErrorIsReturned()
+        "Given Invalid Scenario Input With Non Existent User, Then Scenario Is Not Updated And `ScenarioModification_UserNotFound` Error Is Returned")]
+    public async Task GivenInvalidScenarioInputWithNonExistentUser_ThenScenarioIsNotUpdatedAndErrorIsReturned()
     {
         var invalidUserId = UserId.NewId();
         var title = "Test Scenario User Not Found";
-        var input = new CreateScenarioCommand(
+        var scenarioId = ScenarioId.NewId();
+
+        var input = new UpdateScenarioCommand(
+            Id: scenarioId.ToString(),
             Title: title, TagIds: [TagId.NewId()], ScenarioFields:
             [
                 new(FieldId.NewId().ToString(), "Test Field 1"),
@@ -227,7 +237,7 @@ public class CreateScenarioTests
         _mockUserRepository.Setup(repo => repo.Exists(invalidUserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
-        var createdScenario = new Scenario(
+        var updatedScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
             tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
@@ -237,14 +247,14 @@ public class CreateScenarioTests
             userId: input.UserId,
             date: input.Date
         );
-        _mockScenarioRepository.Setup(repo => repo.Create(createdScenario, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(createdScenario);
+        _mockScenarioRepository.Setup(repo => repo.Update(updatedScenario, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedScenario);
 
         // Act
         var result = await _commandHandler.Handle(input, CancellationToken.None);
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_UserNotFound(invalidUserId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_UserNotFound(invalidUserId));
     }
 }

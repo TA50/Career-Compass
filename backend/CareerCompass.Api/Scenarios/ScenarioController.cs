@@ -30,6 +30,21 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
                 .ToActionResult<ScenarioDto>());
     }
 
+
+    [HttpPut]
+    public async Task<ActionResult<ScenarioDto>> Update([FromBody] UpdateScenarioDto dto)
+    {
+        var input = dto.ToUpdateScenarioCommand(Context.UserContext.UserId);
+        var result = await Context.Sender.Send(input);
+
+        return result.Match(
+            value => Ok(
+                Context.Mapper.Map<ScenarioDto>(value)
+            ),
+            error => error.ToProblemDetails()
+                .ToActionResult<ScenarioDto>());
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ScenarioDto>> Get(Guid id)
     {
