@@ -2,6 +2,7 @@ using CareerCompass.Api.Common;
 using CareerCompass.Api.Scenarios.Contracts;
 using CareerCompass.Application.Scenarios;
 using CareerCompass.Application.Scenarios.Commands.CreateScenario;
+using CareerCompass.Application.Scenarios.Queries.GetScenariosQuery;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -58,5 +59,19 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
         );
 
         return Ok(scenario);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IList<ScenarioDto>>> Get()
+    {
+        var query = new GetScenariosQuery(Context.UserContext.UserId);
+
+        var result = await Context.Sender.Send(query);
+
+        return result.Match(
+            value => Ok(Context.Mapper.Map<IList<ScenarioDto>>(value)),
+            error => error.ToProblemDetails()
+                .ToActionResult<IList<ScenarioDto>>()
+        );
     }
 }

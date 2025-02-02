@@ -57,11 +57,48 @@ internal class ScenarioRepository(AppDbContext dbContext) : IScenarioRepository
         return await Get(new ScenarioId(result.Entity.Id), cancellationToken);
     }
 
+    public async Task<Scenario> Get(ScenarioId id, CancellationToken cancellationToken)
+    {
+        var entity = await dbContext.Scenarios
+            .AsNoTracking()
+            .Include(s => s.Agent)
+            .Include(s => s.ScenarioFields)
+            .Include(s => s.Tags)
+            .FirstOrDefaultAsync(f => f.Id.ToString() == id, cancellationToken);
+
+        if (entity is null)
+        {
+            throw new EntityNotFoundException(id, nameof(Scenario));
+        }
+
+        return MapScenario(entity);
+    }
+
     public Task<bool> Exists(ScenarioId id, CancellationToken cancellationToken)
     {
         return dbContext.Scenarios
             .AsNoTracking()
             .AnyAsync(f => f.Id.ToString() == id, cancellationToken);
+    }
+
+    public async Task<IList<Scenario>> Get(UserId userId, CancellationToken? cancellationToken = null)
+    {
+        var result = await dbContext
+            .Scenarios
+            .AsNoTracking()
+            .Include(s => s.ScenarioFields)
+            .Include(s => s.Agent)
+            .Include(s => s.Tags)
+            .Where(s => s.Agent.Id.ToString() == userId)
+            .ToListAsync();
+
+
+        return result.Select(MapScenario).ToList();
+    }
+
+    public Task<Scenario> Get(ScenarioId id, CancellationToken? cancellationToken = null)
+    {
+        return Get(Guid.Parse(id), cancellationToken ?? CancellationToken.None);
     }
 
     public async Task<Scenario> Update(Scenario scenario, CancellationToken? cancellationToken = null)
@@ -212,23 +249,6 @@ internal class ScenarioRepository(AppDbContext dbContext) : IScenarioRepository
     private Task<Scenario> Get(Guid id, CancellationToken cancellationToken)
     {
         return Get(new ScenarioId(id), cancellationToken);
-    }
-
-    public async Task<Scenario> Get(ScenarioId id, CancellationToken cancellationToken)
-    {
-        var entity = await dbContext.Scenarios
-            .AsNoTracking()
-            .Include(s => s.Agent)
-            .Include(s => s.ScenarioFields)
-            .Include(s => s.Tags)
-            .FirstOrDefaultAsync(f => f.Id.ToString() == id, cancellationToken);
-
-        if (entity is null)
-        {
-            throw new EntityNotFoundException(id, nameof(Scenario));
-        }
-
-        return MapScenario(entity);
     }
 
 

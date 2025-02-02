@@ -19,9 +19,16 @@ public static class ScenarioErrorCode
         public static string UserNotFound = $"{_prefix}.{40}";
     }
 
-    public static class Modification
+    public static class Read
     {
         private static string _prefix = $"{ScenarioErrorPrefix}.{20}";
+        public static string UserNotFound = $"{_prefix}.{10}";
+        public static string ScenarioNotFound = $"{_prefix}.{20}";
+    }
+
+    public static class Modification
+    {
+        private static string _prefix = $"{ScenarioErrorPrefix}.{30}";
         public static string TagNotFound = $"{_prefix}.{20}";
         public static string FieldNotFound = $"{_prefix}.{30}";
         public static string UserNotFound = $"{_prefix}.{40}";
@@ -123,6 +130,24 @@ public static class ScenarioError
             }
         };
         return Error.Validation(ScenarioErrorCode.Creation.UserNotFound,
+            $"User with id {userId} does not exist", metadata);
+    }
+
+    #endregion
+
+    #region Read
+
+    public static Error ScenarioRead_UserNotFound(UserId userId)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            { "UserId", userId.ToString() },
+            {
+                ErrorMetaDataKey.Title,
+                "Scenario Read Validation: The provided user id for this scenario does not exist"
+            }
+        };
+        return Error.Validation(ScenarioErrorCode.Read.UserNotFound,
             $"User with id {userId} does not exist", metadata);
     }
 
