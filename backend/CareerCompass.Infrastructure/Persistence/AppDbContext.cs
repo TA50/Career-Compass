@@ -26,19 +26,34 @@ internal class AppDbContext(DbContextOptions<AppDbContext> options)
             .HasForeignKey<AgentTable>(up => up.UserId); // FK in UserProfile
 
 
-        // Define the ScenarioId foreign key relationship
-        modelBuilder.Entity<ScenarioFieldTable>()
-            .HasOne(s => s.Scenario)
-            .WithMany()
-            .HasForeignKey(s => s.ScenarioId)
-            .OnDelete(DeleteBehavior.Restrict); // Avoid cascade delete
+        modelBuilder.Entity<ScenarioFieldTable>(entity =>
+        {
+            entity.HasKey(e => e.Id); // Primary Key
 
-        // Define the FieldId foreign key relationship
-        modelBuilder.Entity<ScenarioFieldTable>()
-            .HasOne(f => f.Field)
-            .WithMany()
-            .HasForeignKey(f => f.FieldId)
-            .OnDelete(DeleteBehavior.Restrict); // Avoid cascade delete
+            // Configure Scenario relationship
+            entity.HasOne(e => e.Scenario)
+                .WithMany(s => s.ScenarioFields) // This links back to ScenarioTable's navigation property
+                .HasForeignKey(e => e.ScenarioId)
+                ;
+
+            // Configure Field relationship
+            entity.HasOne(e => e.Field)
+                .WithMany(f => f.ScenarioFields) // This links back to FieldTable's navigation property
+                .HasForeignKey(e => e.FieldId);
+        });
+        // Configuration in ScenarioTable
+        modelBuilder.Entity<ScenarioTable>()
+            .HasMany(s => s.ScenarioFields)
+            .WithOne(sf => sf.Scenario)
+            .HasForeignKey(sf => sf.ScenarioId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Configuration in FieldTable
+        modelBuilder.Entity<FieldTable>()
+            .HasMany(f => f.ScenarioFields)
+            .WithOne(sf => sf.Field)
+            .HasForeignKey(sf => sf.FieldId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ScenarioTable>()
             .HasMany(s => s.Tags)
@@ -67,7 +82,9 @@ internal class AppDbContext(DbContextOptions<AppDbContext> options)
                 Id = Guid.NewGuid(),
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
-                UserId = user.Id
+                UserId = user.Id,
+                FirstName = "",
+                LastName = "",
             });
         }
 

@@ -1,15 +1,33 @@
+using ErrorOr;
+
 namespace CareerCompass.Application.Common;
 
 public class EntityId : ValueObject
 {
-    public EntityId(Guid value) => Value = value;
-
-    protected EntityId()
+    public EntityId(Guid _guid)
     {
+        Value = _guid.ToString();
     }
 
-    public Guid Value { get; protected set; }
+    public EntityId(string _str)
+    {
+        Value = _str;
+    }
+
+
+    public string Value { get; protected set; }
     public override string ToString() => Value.ToString();
+
+
+    public static ErrorOr<bool> Validate(string id)
+    {
+        if (Guid.TryParse(id, out _))
+        {
+            return true;
+        }
+
+        return Error.Failure("Invalid Guid Value", $"Value {id} is not a valid Guid");
+    }
 
     protected override IEnumerable<object?> GetEqualityComponents()
     {
@@ -17,20 +35,6 @@ public class EntityId : ValueObject
         [
             Value,
         ];
-    }
-
-    public EntityId From<T>(string value) where T : EntityId, new()
-    {
-        var id = new T();
-        id.Value = Guid.Parse(value);
-        return id;
-    }
-
-    public EntityId From<T>(Guid value) where T : EntityId, new()
-    {
-        var id = new T();
-        id.Value = value;
-        return id;
     }
 
 

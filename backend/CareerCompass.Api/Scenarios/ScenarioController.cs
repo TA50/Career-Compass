@@ -1,13 +1,10 @@
-using AutoMapper;
 using CareerCompass.Api.Common;
 using CareerCompass.Api.Scenarios.Contracts;
 using CareerCompass.Application.Scenarios;
 using CareerCompass.Application.Scenarios.Commands.CreateScenario;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CareerCompass.Api.Scenarios;
@@ -15,44 +12,22 @@ namespace CareerCompass.Api.Scenarios;
 [ApiController]
 [Route("scenarios")]
 [Authorize]
-public class ScenarioController(
-    ISender mediator,
-    IMapper mapper,
-    UserContext userContext)
-    : ApiController
+public class ScenarioController(ApiControllerContext context) : ApiController(context)
 {
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateScenarioDto dto)
+    public async Task<ActionResult<ScenarioDto>> Create([FromBody] CreateScenarioDto dto)
     {
-        var input = new CreateScenarioCommand(
-            UserId: userContext.UserId,
-            TagIds: dto.TagIds.Select(id => new TagId(id)).ToList(),
-            ScenarioFields:
-            dto.ScenarioFields.Select(mapper.Map<ScenarioField>).ToList(),
-            Title:
-            dto.Title,
-            Date:
-            dto.Date
-        );
-
-        var result = await mediator.Send(input);
+        var input = dto.ToCreateScenarioCommand(Context.UserContext.UserId);
+        var result = await Context.Sender.Send(input);
 
         return result.Match(
             value => CreatedAtAction(
                 nameof(Get),
                 new { id = value.Id },
-                mapper.Map<ScenarioDto>(value)
+                Context.Mapper.Map<ScenarioDto>(value)
             ),
-            error =>
-            {
-                var problemDetails = MapError(error);
-
-                return new ObjectResult(problemDetails)
-                {
-                    StatusCode = problemDetails.Status
-                };
-            }
-        );
+            error => error.ToProblemDetails()
+                .ToActionResult<ScenarioDto>());
     }
 
     [HttpGet("{id}")]

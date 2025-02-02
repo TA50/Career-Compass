@@ -11,7 +11,7 @@ internal class UserRepository(AppDbContext dbContext) : IUserRepository
 {
     public Task<bool> Exists(UserId id, CancellationToken cancellationToken)
     {
-        return dbContext.Agents.AnyAsync(a => a.Id == id, cancellationToken);
+        return dbContext.Agents.AnyAsync(a => a.Id.ToString() == id, cancellationToken);
     }
 
     public async Task<User> Get(UserId id, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ internal class UserRepository(AppDbContext dbContext) : IUserRepository
             .Include(a => a.Tags)
             .Include(a => a.Fields)
             .Include(a => a.Scenarios)
-            .FirstAsync(a => a.Id == id, cancellationToken);
+            .FirstAsync(a => a.Id.ToString() == id, cancellationToken);
 
         return MapToUser(result);
     }
@@ -44,13 +44,15 @@ internal class UserRepository(AppDbContext dbContext) : IUserRepository
     private User MapToUser(AgentTable agent)
     {
         return new User(
-            id: agent.Id,
+            id: agent.Id.ToString(),
             email: agent.User.Email ?? agent.User.UserName ?? "",
             firstName: agent.FirstName,
             lastName: agent.LastName,
             tagIds: agent.Tags.Select(t => (TagId)t.Id).ToList(),
             fieldIds: agent.Fields.Select(f => (FieldId)f.Id).ToList(),
-            scenarioIds: agent.Scenarios.Select(f => (ScenarioId)f.Id).ToList()
+            scenarioIds: agent.Scenarios
+                .Select(f => new ScenarioId(f.Id))
+                .ToList()
         );
     }
 }

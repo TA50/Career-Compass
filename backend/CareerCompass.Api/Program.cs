@@ -2,6 +2,7 @@ using CareerCompass.Api.Common;
 using CareerCompass.Application;
 using CareerCompass.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(o => { o.Filters.Add(new AuthorizeFilter()); });
+builder.Services.AddScoped<ApiControllerContext>();
 
 builder.Services.AddScoped<UserContext>();
 
@@ -23,6 +25,7 @@ builder.Services.AddScoped<SetUserContextMiddleware>();
 
 var app = builder.Build();
 
+app.UseExceptionHandler("/error");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -77,6 +77,8 @@ namespace CareerCompass.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -249,9 +251,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     ScenarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FieldId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FieldTableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ScenarioTableId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -263,21 +263,11 @@ namespace CareerCompass.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ScenarioFields_Fields_FieldTableId",
-                        column: x => x.FieldTableId,
-                        principalTable: "Fields",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_ScenarioFields_Scenarios_ScenarioId",
                         column: x => x.ScenarioId,
                         principalTable: "Scenarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ScenarioFields_Scenarios_ScenarioTableId",
-                        column: x => x.ScenarioTableId,
-                        principalTable: "Scenarios",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -360,19 +350,9 @@ namespace CareerCompass.Infrastructure.Migrations
                 column: "FieldId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ScenarioFields_FieldTableId",
-                table: "ScenarioFields",
-                column: "FieldTableId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ScenarioFields_ScenarioId",
                 table: "ScenarioFields",
                 column: "ScenarioId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ScenarioFields_ScenarioTableId",
-                table: "ScenarioFields",
-                column: "ScenarioTableId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Scenarios_AgentId",

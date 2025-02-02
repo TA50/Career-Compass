@@ -4,7 +4,7 @@ using MediatR;
 
 namespace CareerCompass.Application.Fields.Commands.CreateField;
 
-public class CreateFieldUseCase(IFieldRepository fieldRepository, IUserRepository userRepository)
+public class CreateFieldCommandHandler(IFieldRepository fieldRepository, IUserRepository userRepository)
     : IRequestHandler<CreateFieldCommand, ErrorOr<Field>>
 {
     public async Task<ErrorOr<Field>> Handle(CreateFieldCommand request, CancellationToken cancellationToken)

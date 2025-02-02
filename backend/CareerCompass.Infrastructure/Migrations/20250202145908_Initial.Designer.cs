@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CareerCompass.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250201131623_AddFirstnameAndLastname")]
-    partial class AddFirstnameAndLastname
+    [Migration("20250202145908_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,13 +63,7 @@ namespace CareerCompass.Infrastructure.Migrations
                     b.Property<Guid>("FieldId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FieldTableId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ScenarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ScenarioTableId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -83,11 +77,7 @@ namespace CareerCompass.Infrastructure.Migrations
 
                     b.HasIndex("FieldId");
 
-                    b.HasIndex("FieldTableId");
-
                     b.HasIndex("ScenarioId");
-
-                    b.HasIndex("ScenarioTableId");
 
                     b.ToTable("ScenarioFields");
                 });
@@ -406,24 +396,16 @@ namespace CareerCompass.Infrastructure.Migrations
             modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioFieldTable", b =>
                 {
                     b.HasOne("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", "Field")
-                        .WithMany()
+                        .WithMany("ScenarioFields")
                         .HasForeignKey("FieldId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CareerCompass.Infrastructure.Persistence.Fields.FieldTable", null)
-                        .WithMany("ScenarioFields")
-                        .HasForeignKey("FieldTableId");
-
                     b.HasOne("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", "Scenario")
-                        .WithMany()
+                        .WithMany("ScenarioFields")
                         .HasForeignKey("ScenarioId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("CareerCompass.Infrastructure.Persistence.Scenarios.ScenarioTable", null)
-                        .WithMany("ScenarioFields")
-                        .HasForeignKey("ScenarioTableId");
 
                     b.Navigation("Field");
 

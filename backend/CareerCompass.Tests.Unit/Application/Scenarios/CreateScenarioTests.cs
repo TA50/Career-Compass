@@ -3,6 +3,7 @@ using CareerCompass.Application.Scenarios;
 using CareerCompass.Application.Scenarios.Commands.CreateScenario;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Users;
+using CareerCompass.Tests.Unit.Common;
 using Moq;
 using Shouldly;
 
@@ -52,7 +53,7 @@ public class CreateScenarioTests
             TagIds: [tagId],
             ScenarioFields:
             [
-                new(fieldId, "Test Field 1"),
+                new(fieldId.ToString(), "Test Field 1"),
             ],
             UserId: userId,
             Date: DateTime.UtcNow
@@ -68,8 +69,10 @@ public class CreateScenarioTests
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
-            tagIds: input.TagIds,
-            scenarioFields: input.ScenarioFields,
+            tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
+            scenarioFields: input.ScenarioFields.Select(
+                sf => new ScenarioField(sf.FieldId, sf.Value)
+            ).ToList(),
             userId: input.UserId,
             date: input.Date
         );
@@ -102,8 +105,8 @@ public class CreateScenarioTests
             TagIds: [inValidTagId, validTagId],
             ScenarioFields:
             [
-                new(FieldId.NewId(), "Test Field 1"),
-                new(FieldId.NewId(), "Test Field 2"),
+                new(FieldId.NewId().ToString(), "Test Field 1"),
+                new(FieldId.NewId().ToString(), "Test Field 2"),
             ],
             UserId: UserId.NewId(),
             Date: DateTime.UtcNow
@@ -125,8 +128,10 @@ public class CreateScenarioTests
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
-            tagIds: input.TagIds,
-            scenarioFields: input.ScenarioFields,
+            tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
+            scenarioFields: input.ScenarioFields.Select(
+                sf => new ScenarioField(sf.FieldId, sf.Value)
+            ).ToList(),
             userId: input.UserId,
             date: input.Date
         );
@@ -138,8 +143,7 @@ public class CreateScenarioTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContain(ScenarioError.ScenarioValidation_TagNotFound(inValidTagId));
-        result.Errors.ShouldContain(ScenarioError.ScenarioValidation_TagNotFound(secondInValidTagId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_TagNotFound(inValidTagId));
     }
 
     /**
@@ -157,9 +161,9 @@ public class CreateScenarioTests
         var input = new CreateScenarioCommand(
             Title: title, TagIds: [TagId.NewId()], ScenarioFields:
             [
-                new(inValidFieldId, "Test Field 1"),
-                new(secondInValidFieldId, "Test Field 2"),
-                new(validFieldId, "Test Field 3")
+                new(inValidFieldId.ToString(), "Test Field 1"),
+                new(secondInValidFieldId.ToString(), "Test Field 2"),
+                new(validFieldId.ToString(), "Test Field 3")
             ],
             UserId: UserId.NewId(),
             Date: DateTime.UtcNow
@@ -179,8 +183,10 @@ public class CreateScenarioTests
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
-            tagIds: input.TagIds,
-            scenarioFields: input.ScenarioFields,
+            tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
+            scenarioFields: input.ScenarioFields.Select(
+                sf => new ScenarioField(sf.FieldId, sf.Value)
+            ).ToList(),
             userId: input.UserId,
             date: input.Date
         );
@@ -192,8 +198,8 @@ public class CreateScenarioTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContain(ScenarioError.ScenarioValidation_FieldNotFound(inValidFieldId));
-        result.Errors.ShouldContain(ScenarioError.ScenarioValidation_FieldNotFound(secondInValidFieldId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioValidation_FieldNotFound(inValidFieldId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioValidation_FieldNotFound(secondInValidFieldId));
     }
 
     /**
@@ -208,7 +214,7 @@ public class CreateScenarioTests
         var input = new CreateScenarioCommand(
             Title: title, TagIds: [TagId.NewId()], ScenarioFields:
             [
-                new(FieldId.NewId(), "Test Field 1"),
+                new(FieldId.NewId().ToString(), "Test Field 1"),
             ],
             UserId: invalidUserId,
             Date: DateTime.UtcNow
@@ -224,8 +230,10 @@ public class CreateScenarioTests
         var createdScenario = new Scenario(
             id: ScenarioId.NewId(),
             title: input.Title,
-            tagIds: input.TagIds,
-            scenarioFields: input.ScenarioFields,
+            tagIds: input.TagIds.Select(a => new TagId(a)).ToList(),
+            scenarioFields: input.ScenarioFields.Select(
+                sf => new ScenarioField(sf.FieldId, sf.Value)
+            ).ToList(),
             userId: input.UserId,
             date: input.Date
         );
@@ -237,6 +245,6 @@ public class CreateScenarioTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContain(ScenarioError.ScenarioValidation_UserNotFound(invalidUserId));
+        result.Errors.ShouldContainError(ScenarioError.ScenarioValidation_UserNotFound(invalidUserId));
     }
 }

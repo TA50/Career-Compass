@@ -1,3 +1,4 @@
+using CareerCompass.Application.Tags;
 using MediatR;
 using ErrorOr;
 
@@ -12,9 +13,9 @@ public class GetUserByIdentityIdQueryHandler(IUserRepository userRepository)
 
         if (user == null)
         {
-            return UserErrors.UserNotFound((UserId)request.IdentityId);
+            return UserErrors.UserQuery_UserNotFound( new UserId(request.IdentityId));
         }
-        
+
         return user;
     }
 }

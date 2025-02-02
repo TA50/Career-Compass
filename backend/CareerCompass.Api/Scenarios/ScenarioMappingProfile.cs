@@ -9,25 +9,18 @@ public class ScenarioMappingProfile : Profile
 {
     public ScenarioMappingProfile()
     {
+// CreateScenarioDto => CreateScenarioCommand
 
 
-        CreateMap<Scenario, ScenarioDto>()
-            .ForMember(d => d.Id, o => o.MapFrom(src => src.Id.Value))
-            .ForMember(d => d.ScenarioFields, o => o.MapFrom(src => src.ScenarioFields));
+        // CreateScenarioFieldDto => ScenarioField
+
+        CreateMap<Scenario, ScenarioDto>();
 
         // ScenarioField  < - >  ScenarioFieldDto
 
         CreateMap<ScenarioField, ScenarioFieldDto>()
             .ForMember(d => d.FieldId, o => o.MapFrom(src => src.FieldId.Value))
             .ReverseMap();
-        
-        // Guid  < - >  ScenarioId
-        CreateMap<ScenarioId, Guid>()
-            .ConvertUsing(src => src.Value);
-
-        CreateMap<Guid, ScenarioId>()
-            .ConvertUsing(src => new ScenarioId(src));
-
 
         CreateMap<string, ScenarioId>()
             .ConvertUsing(src => new ScenarioId(Guid.Parse(src)));

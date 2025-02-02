@@ -1,12 +1,20 @@
+using System.Runtime.InteropServices.JavaScript;
 using CareerCompass.Application.Common;
+using ErrorOr;
 
 namespace CareerCompass.Application.Users;
 
-public class UserId(Guid value) : EntityId(value)
+public class UserId : EntityId
 {
-    public new static UserId NewId() => new(Guid.CreateVersion7());
-    public static implicit operator Guid(UserId id) => id.Value;
+    public UserId(Guid value) : base(value)
+    {
+    }
 
-    public static implicit operator UserId(string id) => new(Guid.Parse(id));
-    public static implicit operator UserId(Guid id) => new(id);
+    public UserId(string value) : base(value)
+    {
+    }
+
+    public new static UserId NewId() => new(Guid.CreateVersion7());
+    public static implicit operator string(UserId id) => id.Value;
+    public static implicit operator UserId(string id) => new(id);
 }

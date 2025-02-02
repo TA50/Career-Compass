@@ -30,4 +30,8 @@
       <ProjectReference Include="..\CareerCompass.Application\CareerCompass.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
+
 </Project>

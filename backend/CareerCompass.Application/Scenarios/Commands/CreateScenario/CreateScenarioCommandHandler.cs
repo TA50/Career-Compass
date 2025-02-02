@@ -26,27 +26,27 @@ public class CreateScenarioCommandHandler(
         var errors = new List<Error>();
         foreach (var tagId in request.TagIds)
         {
-            var tagExists = await tagRepository.Exists(tagId, cancellationToken);
+            var tagExists = await tagRepository.Exists(new TagId(tagId), cancellationToken);
             if (!tagExists)
             {
-                errors.Add(ScenarioError.ScenarioValidation_TagNotFound(tagId));
+                errors.Add(ScenarioError.ScenarioCreation_TagNotFound(new TagId(tagId)));
             }
         }
 
         // Validate Field Ids:
         foreach (var field in request.ScenarioFields)
         {
-            var fieldExists = await fieldRepository.Exists(field.FieldId, cancellationToken);
+            var fieldExists = await fieldRepository.Exists(new FieldId(field.FieldId), cancellationToken);
             if (!fieldExists)
             {
-                errors.Add(ScenarioError.ScenarioValidation_FieldNotFound(field.FieldId));
+                errors.Add(ScenarioError.ScenarioValidation_FieldNotFound(new FieldId(field.FieldId)));
             }
         }
 
-        var userExists = await userRepository.Exists(request.UserId, cancellationToken);
+        var userExists = await userRepository.Exists(new UserId(request.UserId), cancellationToken);
         if (!userExists)
         {
-            errors.Add(ScenarioError.ScenarioValidation_UserNotFound(request.UserId));
+            errors.Add(ScenarioError.ScenarioValidation_UserNotFound(new UserId(request.UserId)));
         }
 
         if (errors.Any())
@@ -58,9 +58,11 @@ public class CreateScenarioCommandHandler(
         var scenario = new Scenario(
             id: ScenarioId.NewId(),
             title: request.Title,
-            tagIds: request.TagIds,
-            scenarioFields: request.ScenarioFields,
-            userId: request.UserId,
+            tagIds: request.TagIds.Select(t => new TagId(t)).ToList(),
+            scenarioFields: request.ScenarioFields.Select(
+                sf => new ScenarioField(new FieldId(sf.FieldId), sf.Value)
+            ).ToList(),
+            userId: new UserId(request.UserId),
             date: request.Date
         );
 

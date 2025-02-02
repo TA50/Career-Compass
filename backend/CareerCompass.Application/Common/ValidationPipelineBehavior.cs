@@ -9,14 +9,14 @@ public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior
     where TRequest : IRequest<TResponse>
     where TResponse : IErrorOr
 {
-    private AbstractValidator<TRequest>? _validator;
+    private IValidator<TRequest>? _validator;
 
-    public ValidationPipelineBehavior()
-    {
-        _validator = null;
-    }
+    // public ValidationPipelineBehavior()
+    // {
+    //     _validator = null;
+    // }
 
-    public ValidationPipelineBehavior(AbstractValidator<TRequest>? validator)
+    public ValidationPipelineBehavior(IValidator<TRequest>? validator)
     {
         _validator = validator;
     }

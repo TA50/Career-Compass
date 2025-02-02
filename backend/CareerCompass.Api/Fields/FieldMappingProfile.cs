@@ -1,20 +1,16 @@
 using AutoMapper;
+using CareerCompass.Api.Fields.Contracts;
 using CareerCompass.Application.Fields;
 
 namespace CareerCompass.Api.Fields;
 
 public class FieldMappingProfile : Profile
 {
-
     public FieldMappingProfile()
     {
-        
-        // Guid  < - >  FieldId
-        CreateMap<FieldId, Guid>()
-            .ConvertUsing(src => src.Value);
-
-        CreateMap<Guid, FieldId>()
-            .ConvertUsing(src => new FieldId(src));
+        CreateMap<Field, FieldDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
 
         CreateMap<string, FieldId>()

@@ -1,6 +1,7 @@
 using CareerCompass.Application.Fields;
 using CareerCompass.Application.Fields.Commands.CreateField;
 using CareerCompass.Application.Users;
+using CareerCompass.Tests.Unit.Common;
 using Moq;
 using Shouldly;
 
@@ -34,14 +35,15 @@ public class CreateFieldTests
         _fieldRepository.Setup(r => r.Create(It.IsNotNull<Field>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdField);
 
-        var useCase = new CreateFieldUseCase(_fieldRepository.Object, _userRepository.Object);
+        var useCase = new CreateFieldCommandHandler(_fieldRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createFieldInput, CancellationToken.None);
 
         // Assert:
 
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContain(FieldErrors.FieldValidation_UserNotFound(userId));
+        result.FirstError
+            .ShouldBe(FieldErrors.FieldValidation_UserNotFound(userId));
     }
 
     [Fact(DisplayName =
@@ -60,14 +62,16 @@ public class CreateFieldTests
         _fieldRepository.Setup(r => r.Create(It.IsNotNull<Field>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdField);
 
-        var useCase = new CreateFieldUseCase(_fieldRepository.Object, _userRepository.Object);
+        var useCase = new CreateFieldCommandHandler(_fieldRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createFieldInput, CancellationToken.None);
 
         // Assert:
 
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContain(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName));
+
+        result.FirstError
+            .ShouldBe(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName));
     }
 
     [Fact(DisplayName =
@@ -88,12 +92,11 @@ public class CreateFieldTests
         _fieldRepository.Setup(r => r.Create(It.IsNotNull<Field>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdField);
 
-        var useCase = new CreateFieldUseCase(_fieldRepository.Object, _userRepository.Object);
+        var useCase = new CreateFieldCommandHandler(_fieldRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createFieldInput, CancellationToken.None);
 
         // Assert:
-        result.Errors.ShouldNotContain(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName));
         result.IsError.ShouldBeFalse();
         result.Value.Name.ShouldBe(createFieldInput.Name);
         result.Value.UserId.ShouldBe(createFieldInput.UserId);
@@ -114,7 +117,7 @@ public class CreateFieldTests
         _fieldRepository.Setup(r => r.Create(It.IsNotNull<Field>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(createdField);
 
-        var useCase = new CreateFieldUseCase(_fieldRepository.Object, _userRepository.Object);
+        var useCase = new CreateFieldCommandHandler(_fieldRepository.Object, _userRepository.Object);
         // Act: 
         var result = await useCase.Handle(createFieldInput, CancellationToken.None);
 

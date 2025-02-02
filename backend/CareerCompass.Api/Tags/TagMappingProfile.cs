@@ -1,4 +1,5 @@
 using AutoMapper;
+using CareerCompass.Api.Tags.Contracts;
 using CareerCompass.Application.Scenarios;
 using CareerCompass.Application.Tags;
 
@@ -8,12 +9,9 @@ public class TagMappingProfile : Profile
 {
     public TagMappingProfile()
     {
-        // Guid  < - >  TagId
-        CreateMap<TagId, Guid>()
-            .ConvertUsing(src => src.Value);
-
-        CreateMap<Guid, TagId>()
-            .ConvertUsing(src => new TagId(src));
+        CreateMap<Tag, TagDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
 
         CreateMap<string, TagId>()
