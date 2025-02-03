@@ -14,7 +14,6 @@ builder.Services.AddInfrastructure(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddApplication();
-
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddAuthorization();

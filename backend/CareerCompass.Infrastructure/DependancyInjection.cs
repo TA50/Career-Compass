@@ -39,7 +39,7 @@ public static class DependencyInjection
 
         services.AddTransient<IFieldRepository, FieldRepository>();
         services.AddTransient<ITagRepository, TagRepository>();
-        services.AddScoped<IScenarioRepository, ScenarioRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddTransient<IScenarioRepository, ScenarioRepository>();
+        services.AddTransient<IUserRepository, UserRepository>();
     }
 }
