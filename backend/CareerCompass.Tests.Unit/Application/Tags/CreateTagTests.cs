@@ -40,7 +40,7 @@ public class CreateTagTests
         // Assert:
 
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(TagErrors.TagValidation_UserNotFound(userId));
+        result.Errors.ShouldContainError(TagErrors.TagCreation_UserNotFound(userId));
     }
 
     [Fact(DisplayName =
@@ -66,7 +66,7 @@ public class CreateTagTests
         // Assert:
 
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(TagErrors.TagValidation_TagNameAlreadyExists(userId, tagName));
+        result.Errors.ShouldContainError(TagErrors.TagCreation_TagNameAlreadyExists(userId, tagName));
     }
 
     [Fact(DisplayName =
@@ -92,7 +92,7 @@ public class CreateTagTests
         var result = await useCase.Handle(createTagInput, CancellationToken.None);
 
         // Assert:
-        result.Errors.ShouldNotContainError(TagErrors.TagValidation_TagNameAlreadyExists(userId, tagName));
+        result.Errors.ShouldNotContainError(TagErrors.TagCreation_TagNameAlreadyExists(userId, tagName));
         result.IsError.ShouldBeFalse();
         result.Value.Name.ShouldBe(createTagInput.Name);
         result.Value.UserId.ShouldBe(createTagInput.UserId);

@@ -18,19 +18,20 @@ namespace CareerCompass.Infrastructure;
 public static class DependencyInjection
 {
     public static void AddInfrastructure(this IServiceCollection services,
-        IConfiguration configuration)
+        Action<DbContextOptionsBuilder> optionBuilder)
     {
-        services.AddDbContext<AppDbContext>(opts =>
-        {
-            opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        });
+        services.AddDbContext<AppDbContext>(optionBuilder);
+        // services.AddDbContext<AppDbContext>(opts =>
+        // {
+        //     opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        // });
 
         services.AddIdentityCore<IdentityUser>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
         services.AddIdentityApiEndpoints<IdentityUser>();
-        
+
         services.AddTransient<IEmailSender<IdentityUser>, ConsoleEmailSender>();
 
         services.Configure<IdentityOptions>(opts => { opts.User.RequireUniqueEmail = true; });

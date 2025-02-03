@@ -3,12 +3,16 @@ using CareerCompass.Application;
 using CareerCompass.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(opts =>
+{
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 builder.Services.AddApplication();
 
 builder.Services.AddAutoMapper(typeof(Program));

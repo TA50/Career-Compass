@@ -3,6 +3,8 @@ using CareerCompass.Api.Fields.Contracts;
 using CareerCompass.Api.Tags.Contracts;
 using CareerCompass.Application.Fields;
 using CareerCompass.Application.Fields.Commands.CreateField;
+using CareerCompass.Application.Fields.Queries.GetFieldByIdQuery;
+using CareerCompass.Application.Fields.Queries.GetFieldsQuery;
 using CareerCompass.Application.Tags.Commands.CreateTag;
 using CareerCompass.Application.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +33,29 @@ public class FieldController(ApiControllerContext context) : ApiController(conte
                 .ToActionResult<FieldDto>());
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<FieldDto>> Get(Guid id)
     {
-        var tag = new FieldDto(
-            Id: id.ToString(),
-            Name: "Field Name"
-        );
+        var query = new GetFieldByIdQuery(Context.UserContext.UserId, id.ToString());
 
-        return Ok(tag);
+        var result = await Context.Sender.Send(query);
+
+        return result.Match(
+            value => Ok(Context.Mapper.Map<FieldDto>(value)),
+            error => error.ToProblemDetails().ToActionResult<FieldDto>()
+        );
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IList<FieldDto>>> Get()
+    {
+        var query = new GetFieldsQuery(Context.UserContext.UserId);
+
+        var result = await Context.Sender.Send(query);
+
+        return result.Match(
+            value => Ok(Context.Mapper.Map<IList<FieldDto>>(value)),
+            error => error.ToProblemDetails().ToActionResult<IList<FieldDto>>()
+        );
     }
 }

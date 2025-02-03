@@ -16,10 +16,18 @@ public static class FieldErrorCode
         public static string NameAlreadyExists = $"{_prefix}.{10}";
         public static string UserNotFound = $"{_prefix}.{20}";
     }
+
+    public static class Read
+    {
+        private static string _prefix = $"{_fieldPrefix}.{20}";
+        public static string TagNotFound = $"{_prefix}.{20}";
+    }
 }
 
 public static class FieldErrors
 {
+    #region Creation
+
     public static Error FieldValidation_NameAlreadyExists(UserId userId, string name)
     {
         return Error.Conflict(FieldErrorCode.Creation.NameAlreadyExists,
@@ -41,4 +49,19 @@ public static class FieldErrors
                 { "UserId", userId.ToString() },
                 { ErrorMetaDataKey.Title, "FieldCreation:The provided user id for this field does not exist" }
             });
+
+    #endregion
+
+    #region Read
+
+    public static Error FieldRead_FieldNotFound(UserId userId, FieldId fieldId) =>
+        Error.Validation(FieldErrorCode.Read.TagNotFound,
+            $" with user id : {userId} and field id : {fieldId} does not exist", new Dictionary<string, object>
+            {
+                { "UserId", userId.ToString() },
+                { "FieldId", userId.ToString() },
+                { ErrorMetaDataKey.Title, $"FieldRead: Field with the given user id and field id was not found!" }
+            });
+
+    #endregion
 }

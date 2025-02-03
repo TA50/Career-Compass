@@ -39,17 +39,38 @@ internal class FieldRepository(AppDbContext dbContext) : IFieldRepository
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return new Field(result.Entity.Id,
+        return new Field(new FieldId(result.Entity.Id),
             result.Entity.Name,
             result.Entity.Agent.Id.ToString());
     }
 
-    public Task<Field> Get(FieldId id, CancellationToken cancellationToken)
+    public Task<Field?> Get(UserId userId, FieldId id, CancellationToken cancellationToken)
     {
         return dbContext.Fields
             .Where(f => f.Id.ToString() == id.ToString())
+            .Where(f => f.Agent.Id.ToString() == userId.ToString())
             .AsNoTracking()
-            .Select(f => new Field(f.Id, f.Name, f.Agent.Id.ToString()))
-            .FirstAsync(cancellationToken);
+            .Select(f => new Field(new FieldId(f.Id), f.Name, f.Agent.Id.ToString()))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IList<Field>> Get(UserId id, CancellationToken cancellationToken)
+    {
+        return await dbContext.Fields
+            .AsNoTracking()
+            .Where(f => f.Agent.Id.ToString() == id)
+            .Select(x => Map(x))
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<IList<Field>> Get(UserId id)
+    {
+        return Get(id, CancellationToken.None);
+    }
+
+
+    private Field Map(FieldTable table)
+    {
+        return new Field(new FieldId(table.Id), table.Name, table.Agent.Id.ToString());
     }
 }

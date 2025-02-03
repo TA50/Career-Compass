@@ -17,7 +17,7 @@ public class CreateTagCommandHandler(
 
         if (!userExists)
         {
-            errors.Add(TagErrors.TagValidation_UserNotFound(request.UserId));
+            errors.Add(TagErrors.TagCreation_UserNotFound(request.UserId));
         }
 
         // Validate Tag Name
@@ -25,7 +25,7 @@ public class CreateTagCommandHandler(
 
         if (tagExists)
         {
-            errors.Add(TagErrors.TagValidation_TagNameAlreadyExists(request.UserId, request.Name));
+            errors.Add(TagErrors.TagCreation_TagNameAlreadyExists(request.UserId, request.Name));
         }
 
         if (errors.Any())

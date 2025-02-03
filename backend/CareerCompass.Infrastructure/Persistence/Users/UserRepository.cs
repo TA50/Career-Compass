@@ -49,7 +49,7 @@ internal class UserRepository(AppDbContext dbContext) : IUserRepository
             firstName: agent.FirstName,
             lastName: agent.LastName,
             tagIds: agent.Tags.Select(t => (TagId)t.Id).ToList(),
-            fieldIds: agent.Fields.Select(f => (FieldId)f.Id).ToList(),
+            fieldIds: agent.Fields.Select(f => new FieldId(f.Id)).ToList(),
             scenarioIds: agent.Scenarios
                 .Select(f => new ScenarioId(f.Id))
                 .ToList()

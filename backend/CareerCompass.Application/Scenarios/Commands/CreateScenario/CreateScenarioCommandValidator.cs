@@ -33,7 +33,7 @@ public class CreateScenarioCommandValidator : AbstractValidator<CreateScenarioCo
 
         // Field Ids are distinct: 
         RuleFor(x => x.ScenarioFields)
-            .Must(x => x.IsDistinct(t => t.FieldId))
+            .IsDistinct(t => t.FieldId)
             .WithMessage("Scenario Field Ids must be distinct");
     }
 }

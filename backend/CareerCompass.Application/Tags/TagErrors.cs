@@ -13,14 +13,22 @@ public static class TagErrorCode
     {
         private static readonly string _prefix = $"{_tagErrorPrefix}.{10}";
 
-        public static string UserNotFound => $"{_prefix}.10";
-        public static string TagNameAlreadyExists => $"{_prefix}.20";
+        public static string UserNotFound => $"{_prefix}.{10}";
+        public static string TagNameAlreadyExists => $"{_prefix}.{20}";
+    }
+
+    public static class Read
+    {
+        private static readonly string _prefix = $"{_tagErrorPrefix}.{20}";
+        public static string TagNotFound => $"{_prefix}.10";
     }
 }
 
 public static class TagErrors
 {
-    public static Error TagValidation_UserNotFound(UserId userId)
+    #region Creation
+
+    public static Error TagCreation_UserNotFound(UserId userId)
     {
         var metadata = new Dictionary<string, object>
         {
@@ -32,7 +40,7 @@ public static class TagErrors
     }
 
 
-    public static Error TagValidation_TagNameAlreadyExists(UserId userId, string tagName)
+    public static Error TagCreation_TagNameAlreadyExists(UserId userId, string tagName)
     {
         var metadata = new Dictionary<string, object>
         {
@@ -45,4 +53,22 @@ public static class TagErrors
             $"Tag with name {tagName} already exists for user with id {userId}",
             metadata);
     }
+
+    #endregion
+
+    #region Read
+
+    public static Error TagRead_TagNotFound(UserId userId, TagId tagId)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            { "UserId", userId.ToString() },
+            { "TagId", tagId.ToString() },
+            { ErrorMetaDataKey.Title, "Tag Read: Tag was not found " }
+        };
+        return Error.Validation(TagErrorCode.Read.TagNotFound,
+            $"Tag with  userId {userId} and tagId {tagId} was not found.", metadata);
+    }
+
+    #endregion
 }

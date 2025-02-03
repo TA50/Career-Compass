@@ -2,6 +2,8 @@ using CareerCompass.Api.Common;
 using CareerCompass.Api.Tags.Contracts;
 using CareerCompass.Application.Tags;
 using CareerCompass.Application.Tags.Commands.CreateTag;
+using CareerCompass.Application.Tags.Queries.GetTagByIdQuery;
+using CareerCompass.Application.Tags.Queries.GetTagsQuery;
 using CareerCompass.Application.Users;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,15 +30,29 @@ public class TagController(ApiControllerContext context) : ApiController(context
                 .ToActionResult<TagDto>());
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<TagDto>> Get(Guid id)
     {
-        var tag = new Tag(
-            id: new TagId(id),
-            userId: UserId.NewId(),
-            name: "Tag Name"
-        );
+        var query = new GetTagByIdQuery(Context.UserContext.UserId, id.ToString());
 
-        return Ok(tag);
+        var result = await Context.Sender.Send(query);
+
+        return result.Match(
+            value => Ok(Context.Mapper.Map<TagDto>(value)),
+            error => error.ToProblemDetails().ToActionResult<TagDto>()
+        );
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IList<TagDto>>> Get()
+    {
+        var query = new GetTagsQuery(Context.UserContext.UserId);
+
+        var result = await Context.Sender.Send(query);
+
+        return result.Match(
+            value => Ok(Context.Mapper.Map<IList<TagDto>>(value)),
+            error => error.ToProblemDetails().ToActionResult<IList<TagDto>>()
+        );
     }
 }

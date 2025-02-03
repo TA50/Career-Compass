@@ -258,7 +258,8 @@ internal class ScenarioRepository(AppDbContext dbContext) : IScenarioRepository
             id: scenarioTable.Id.ToString(),
             title: scenarioTable.Title,
             tagIds: scenarioTable.Tags.Select(t => new TagId(t.Id)).ToList(),
-            scenarioFields: scenarioTable.ScenarioFields.Select(f => new ScenarioField(f.FieldId, f.Value)).ToList(),
+            scenarioFields: scenarioTable.ScenarioFields.Select(f => new ScenarioField(new(f.FieldId), f.Value))
+                .ToList(),
             userId: new UserId(scenarioTable.Agent.Id),
             date: scenarioTable.Date
         );

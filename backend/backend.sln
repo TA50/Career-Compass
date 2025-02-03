@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Infrastructur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Unit", "CareerCompass.Tests.Unit\CareerCompass.Tests.Unit.csproj", "{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Integration", "CareerCompass.Tests.Integration\CareerCompass.Tests.Integration.csproj", "{18F3AFD2-F149-461D-BF8F-E05243CC713E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,5 +47,9 @@ Global
 		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E84C9BA8-A51C-4DE6-9DBA-DEC70C8D18D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F3AFD2-F149-461D-BF8F-E05243CC713E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F3AFD2-F149-461D-BF8F-E05243CC713E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F3AFD2-F149-461D-BF8F-E05243CC713E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F3AFD2-F149-461D-BF8F-E05243CC713E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -13,6 +13,7 @@ public class FieldId : EntityId
     }
 
     public new static FieldId NewId() => new(Guid.CreateVersion7());
-    public static implicit operator FieldId(Guid id) => new(id);
+
+    public static implicit operator string(FieldId id) => id.Value;
     public static implicit operator FieldId(string id) => new(id);
 }

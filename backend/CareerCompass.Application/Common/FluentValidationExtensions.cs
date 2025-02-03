@@ -1,3 +1,6 @@
+using System.Collections;
+using FluentValidation;
+
 namespace CareerCompass.Application.Common;
 
 public static class FluentValidationExtensions
@@ -14,5 +17,21 @@ public static class FluentValidationExtensions
         }
 
         return true;
+    }
+
+    public static IRuleBuilderOptions<T, IEnumerable<TSource>> IsDistinct<T, TSource, TResult>(
+        this IRuleBuilderInitial<T, IEnumerable<TSource>> ruleBuilder, Func<TSource, TResult> selector)
+    {
+        return ruleBuilder.Must(x => x.IsDistinct<TSource, TResult>(selector));
+    }
+
+    public static IRuleBuilderOptions<T, string> IsGuid<T>(this IRuleBuilderInitial<T, string> ruleBuilder)
+    {
+        return ruleBuilder.Must(guidString =>
+        {
+            var check = Guid.TryParse(guidString, out _);
+
+            return check;
+        }).WithMessage("The provided value could not be parsed as Guid");
     }
 }
