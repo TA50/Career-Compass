@@ -5,15 +5,15 @@ using CareerCompass.Tests.Unit.Application.Shared;
 using NSubstitute;
 using Shouldly;
 
-namespace CareerCompass.Tests.Unit.Application.Fields.Commands;
+namespace CareerCompass.Tests.Unit.Application.Fields;
 
-public class CreateFieldTests
+public class CreateFieldCommandHandlerTests
 {
     private readonly IFieldRepository _fieldRepository = Substitute.For<IFieldRepository>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
     private readonly CreateFieldCommandHandler _sut;
 
-    public CreateFieldTests()
+    public CreateFieldCommandHandlerTests()
     {
         _sut = new CreateFieldCommandHandler(_fieldRepository, _userRepository);
     }
@@ -34,7 +34,7 @@ public class CreateFieldTests
 
         result.IsError.ShouldBeTrue();
         result.FirstError
-            .ShouldBe(FieldErrors.FieldValidation_UserNotFound(userId));
+            .ShouldBeEquivalentToError(FieldErrors.FieldValidation_UserNotFound(userId));
     }
 
     [Fact(DisplayName = "Handle: SHOULD return FieldValidation_NameAlreadyExists Error WHEN field name already exists")]
@@ -53,7 +53,7 @@ public class CreateFieldTests
         // Assert:
         result.IsError.ShouldBeTrue();
         result.FirstError
-            .ShouldBe(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName));
+            .ShouldBeEquivalentToError(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName));
     }
 
     [Fact(DisplayName = "Handle: SHOULD return Field WHEN CreateFieldInput is valid")]

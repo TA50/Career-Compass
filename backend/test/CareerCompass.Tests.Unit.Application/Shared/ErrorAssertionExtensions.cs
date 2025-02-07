@@ -28,7 +28,7 @@ public static class ErrorExtensions
         }
     }
 
-    public static void ShouldBe(this Error src, Error dst)
+    public static void ShouldBeEquivalentToError(this Error src, Error dst)
     {
         src.Type.ShouldBe(dst.Type);
         src.Description.ShouldBe(dst.Description);
