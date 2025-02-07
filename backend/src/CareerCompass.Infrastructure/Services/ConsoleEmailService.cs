@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 
-
 namespace CareerCompass.Infrastructure.Services;
 
 public class ConsoleEmailSender : IEmailSender<IdentityUser>

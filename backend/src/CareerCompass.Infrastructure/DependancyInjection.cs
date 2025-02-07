@@ -10,7 +10,6 @@ using CareerCompass.Infrastructure.Persistence.Users;
 using CareerCompass.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CareerCompass.Infrastructure;
@@ -21,19 +20,13 @@ public static class DependencyInjection
         Action<DbContextOptionsBuilder> optionBuilder)
     {
         services.AddDbContext<AppDbContext>(optionBuilder);
-        // services.AddDbContext<AppDbContext>(opts =>
-        // {
-        //     opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        // });
-
         services.AddIdentityCore<IdentityUser>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
         services.AddIdentityApiEndpoints<IdentityUser>();
-
+        
         services.AddTransient<IEmailSender<IdentityUser>, ConsoleEmailSender>();
-
         services.Configure<IdentityOptions>(opts => { opts.User.RequireUniqueEmail = true; });
 
 

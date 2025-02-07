@@ -1,4 +1,3 @@
-using System.Collections;
 using FluentValidation;
 
 namespace CareerCompass.Application.Common;
