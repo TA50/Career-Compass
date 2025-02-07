@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Change Directory to the Backend folder
-      run: cd ./backend
+      run: cd ./backend && pwd
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
