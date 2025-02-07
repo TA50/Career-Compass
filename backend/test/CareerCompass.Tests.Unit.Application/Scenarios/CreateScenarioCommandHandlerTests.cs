@@ -101,8 +101,8 @@ public class CreateScenarioCommandHandlerTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_TagNotFound(inValidTagId));
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_TagNotFound(secondInValidTagId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioCreation_TagNotFound(inValidTagId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioCreation_TagNotFound(secondInValidTagId));
         result.Errors.Count.ShouldBe(2); // 2 errors
     }
 
@@ -140,8 +140,8 @@ public class CreateScenarioCommandHandlerTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_FieldNotFound(inValidFieldId));
-        result.Errors.ShouldContainError(ScenarioError.ScenarioCreation_FieldNotFound(secondInValidFieldId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioCreation_FieldNotFound(inValidFieldId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioCreation_FieldNotFound(secondInValidFieldId));
         result.Errors.Count.ShouldBe(2); // 2 errors
     }
 
@@ -169,6 +169,6 @@ public class CreateScenarioCommandHandlerTests
         // Assert
         result.IsError.ShouldBeTrue();
         result.Errors.ShouldHaveSingleItem();
-        result.FirstError.ShouldBeEquivalentToError(ScenarioError.ScenarioCreation_UserNotFound(invalidUserId));
+        result.FirstError.ShouldBeEquivalentToError(ScenarioErrors.ScenarioCreation_UserNotFound(invalidUserId));
     }
 }

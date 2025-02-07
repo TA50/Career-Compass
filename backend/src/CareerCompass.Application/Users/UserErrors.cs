@@ -14,6 +14,13 @@ public static class UserErrorCode
 
         public static string UserNotFound => $"{_prefix}.10";
     }
+
+    public static class Modification
+    {
+        private static readonly string _prefix = $"{_userErrorPrefix}.{30}";
+
+        public static string UserNotFound => $"{_prefix}.10";
+    }
 }
 
 public static class UserErrors
@@ -29,4 +36,20 @@ public static class UserErrors
             }
         );
     }
+
+    #region Modification
+
+    public static Error UserModification_UserNotFound(UserId userId)
+    {
+        return Error.NotFound(UserErrorCode.Modification.UserNotFound,
+            $"User with id ({userId}) was not found ",
+            new Dictionary<string, object>()
+            {
+                { "userId", userId },
+                { ErrorMetaDataKey.Title, "User not found" }
+            }
+        );
+    }
+
+    #endregion
 }

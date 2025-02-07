@@ -1,4 +1,5 @@
 using AutoMapper;
+using CareerCompass.Api.Users.Contracts;
 using CareerCompass.Application.Users;
 
 namespace CareerCompass.Api.Users;
@@ -13,5 +14,8 @@ public class UserMappingProfile : Profile
 
         CreateMap<UserId, string>()
             .ConvertUsing(src => src.Value.ToString());
+
+
+        CreateMap<User, UserDto>();
     }
 }

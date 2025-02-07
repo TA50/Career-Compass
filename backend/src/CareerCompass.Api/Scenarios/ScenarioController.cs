@@ -16,9 +16,9 @@ namespace CareerCompass.Api.Scenarios;
 public class ScenarioController(ApiControllerContext context) : ApiController(context)
 {
     [HttpPost]
-    public async Task<ActionResult<ScenarioDto>> Create([FromBody] CreateScenarioDto dto)
+    public async Task<ActionResult<ScenarioDto>> Create([FromBody] CreateScenarioRequest request)
     {
-        var input = dto.ToCreateScenarioCommand(Context.UserContext.UserId);
+        var input = request.ToCreateScenarioCommand(Context.UserContext.UserId);
         var result = await Context.Sender.Send(input);
 
         return result.Match(

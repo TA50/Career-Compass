@@ -29,7 +29,7 @@ public class CreateScenarioCommandHandler(
             var tagExists = await tagRepository.Exists(new TagId(tagId), cancellationToken);
             if (!tagExists)
             {
-                errors.Add(ScenarioError.ScenarioCreation_TagNotFound(new TagId(tagId)));
+                errors.Add(ScenarioErrors.ScenarioCreation_TagNotFound(new TagId(tagId)));
             }
         }
 
@@ -39,14 +39,14 @@ public class CreateScenarioCommandHandler(
             var fieldExists = await fieldRepository.Exists(new FieldId(field.FieldId), cancellationToken);
             if (!fieldExists)
             {
-                errors.Add(ScenarioError.ScenarioCreation_FieldNotFound(new FieldId(field.FieldId)));
+                errors.Add(ScenarioErrors.ScenarioCreation_FieldNotFound(new FieldId(field.FieldId)));
             }
         }
 
         var userExists = await userRepository.Exists(new UserId(request.UserId), cancellationToken);
         if (!userExists)
         {
-            errors.Add(ScenarioError.ScenarioCreation_UserNotFound(new UserId(request.UserId)));
+            errors.Add(ScenarioErrors.ScenarioCreation_UserNotFound(new UserId(request.UserId)));
         }
 
         if (errors.Any())

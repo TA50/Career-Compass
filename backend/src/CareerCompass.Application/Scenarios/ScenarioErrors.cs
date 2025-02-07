@@ -35,7 +35,7 @@ public static class ScenarioErrorCode
     }
 }
 
-public static class ScenarioError
+public static class ScenarioErrors
 {
     #region Creation
 

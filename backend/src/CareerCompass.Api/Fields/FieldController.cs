@@ -16,10 +16,10 @@ namespace CareerCompass.Api.Fields;
 public class FieldController(ApiControllerContext context) : ApiController(context)
 {
     [HttpPost]
-    public async Task<ActionResult<FieldDto>> Create([FromBody] CreateFieldDto dto)
+    public async Task<ActionResult<FieldDto>> Create([FromBody] CreateFieldRequest request)
     {
         var input = new CreateFieldCommand(Context.UserContext.UserId,
-            dto.Name);
+            request.Name);
 
         var result = await Context.Sender.Send(input);
 

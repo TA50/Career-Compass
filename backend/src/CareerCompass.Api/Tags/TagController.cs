@@ -14,9 +14,9 @@ namespace CareerCompass.Api.Tags;
 public class TagController(ApiControllerContext context) : ApiController(context)
 {
     [HttpPost]
-    public async Task<ActionResult<TagDto>> Create([FromBody] CreateTagDto dto)
+    public async Task<ActionResult<TagDto>> Create([FromBody] CreateTagRequest request)
     {
-        var input = new CreateTagCommand(Context.UserContext.UserId, dto.Name);
+        var input = new CreateTagCommand(Context.UserContext.UserId, request.Name);
 
         var result = await Context.Sender.Send(input);
 

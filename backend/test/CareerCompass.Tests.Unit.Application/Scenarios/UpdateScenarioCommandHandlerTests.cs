@@ -104,8 +104,8 @@ public class UpdateScenarioCommandHandlerTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_TagNotFound(inValidTagId));
-        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_TagNotFound(secondInValidTagId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioModification_TagNotFound(inValidTagId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioModification_TagNotFound(secondInValidTagId));
         result.Errors.Count.ShouldBe(2); // 2 errors
     }
 
@@ -144,8 +144,8 @@ public class UpdateScenarioCommandHandlerTests
 
         // Assert
         result.IsError.ShouldBeTrue();
-        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_FieldNotFound(inValidFieldId));
-        result.Errors.ShouldContainError(ScenarioError.ScenarioModification_FieldNotFound(secondInValidFieldId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioModification_FieldNotFound(inValidFieldId));
+        result.Errors.ShouldContainError(ScenarioErrors.ScenarioModification_FieldNotFound(secondInValidFieldId));
         result.Errors.Count.ShouldBe(2); // 2 errors
     }
 
@@ -175,6 +175,6 @@ public class UpdateScenarioCommandHandlerTests
         // Assert
         result.IsError.ShouldBeTrue();
         result.Errors.ShouldHaveSingleItem();
-        result.FirstError.ShouldBeEquivalentToError(ScenarioError.ScenarioModification_UserNotFound(invalidUserId));
+        result.FirstError.ShouldBeEquivalentToError(ScenarioErrors.ScenarioModification_UserNotFound(invalidUserId));
     }
 }

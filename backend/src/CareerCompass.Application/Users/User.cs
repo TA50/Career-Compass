@@ -22,5 +22,11 @@ public class User(
     public ICollection<TagId> TagIds { get; private set; } = tagIds;
     public ICollection<FieldId> FieldIds { get; private set; } = fieldIds;
     public ICollection<ScenarioId> ScenarioIds { get; private set; } = scenarioIds;
-    
+
+
+    public void SetName(string firstName, string lastName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+    }
 }
