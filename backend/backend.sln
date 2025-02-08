@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9FE90C67-B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Api", "src\CareerCompass.Api\CareerCompass.Api.csproj", "{8AEA1CFC-D9FF-48DB-B118-234D1D4BE983}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Application", "src\CareerCompass.Application\CareerCompass.Application.csproj", "{7540AF09-489D-48C5-899B-2CCF5BDFC6B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Core", "src\CareerCompass.Core\CareerCompass.Core.csproj", "{7540AF09-489D-48C5-899B-2CCF5BDFC6B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Infrastructure", "src\CareerCompass.Infrastructure\CareerCompass.Infrastructure.csproj", "{BD0997CA-CD43-4F5F-9F78-B89BD0A42207}"
 EndProject
@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Playground", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Integration", "test\CareerCompass.Tests.Integration\CareerCompass.Tests.Integration.csproj", "{C548576F-DFEF-4484-949B-1411841EEB6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Unit.Application", "test\CareerCompass.Tests.Unit.Application\CareerCompass.Tests.Unit.Application.csproj", "{50929B21-30C7-4A9D-BC94-EBAAA236268F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Unit.Core", "test\CareerCompass.Tests.Unit.Core\CareerCompass.Tests.Unit.Core.csproj", "{50929B21-30C7-4A9D-BC94-EBAAA236268F}"
 EndProject
 EndProject
 Global

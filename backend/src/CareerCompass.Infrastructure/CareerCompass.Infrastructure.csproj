@@ -31,11 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CareerCompass.Application\CareerCompass.Application.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Migrations\" />
+      <ProjectReference Include="..\CareerCompass.Core\CareerCompass.Core.csproj" />
     </ItemGroup>
 
 </Project>

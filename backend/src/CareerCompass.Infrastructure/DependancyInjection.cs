@@ -1,12 +1,6 @@
-using CareerCompass.Application.Fields;
-using CareerCompass.Application.Scenarios;
-using CareerCompass.Application.Tags;
-using CareerCompass.Application.Users;
+using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Infrastructure.Persistence;
-using CareerCompass.Infrastructure.Persistence.Fields;
-using CareerCompass.Infrastructure.Persistence.Scenarios;
-using CareerCompass.Infrastructure.Persistence.Tags;
-using CareerCompass.Infrastructure.Persistence.Users;
+using CareerCompass.Infrastructure.Persistence.Repositories;
 using CareerCompass.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,19 +14,21 @@ public static class DependencyInjection
         Action<DbContextOptionsBuilder> optionBuilder)
     {
         services.AddDbContext<AppDbContext>(optionBuilder);
-        services.AddIdentityCore<IdentityUser>()
+        services.AddIdentityCore<ApplicationIdentityUser>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-        services.AddIdentityApiEndpoints<IdentityUser>();
-        
+        services.AddIdentityApiEndpoints<ApplicationIdentityUser>();
+
         services.AddTransient<IEmailSender<IdentityUser>, ConsoleEmailSender>();
         services.Configure<IdentityOptions>(opts => { opts.User.RequireUniqueEmail = true; });
-
 
         services.AddTransient<IFieldRepository, FieldRepository>();
         services.AddTransient<ITagRepository, TagRepository>();
         services.AddTransient<IScenarioRepository, ScenarioRepository>();
         services.AddTransient<IUserRepository, UserRepository>();
+
+
+        services.AddTransient(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
     }
 }
