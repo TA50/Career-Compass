@@ -3,6 +3,7 @@ using CareerCompass.Core.Scenarios;
 
 namespace CareerCompass.Infrastructure.Persistence.Repositories;
 
-public class ScenarioRepository : RepositoryBase<Scenario, ScenarioId>, IScenarioRepository
+internal class ScenarioRepository(AppDbContext dbContext)
+    : RepositoryBase<Scenario, ScenarioId>(dbContext), IScenarioRepository
 {
 }

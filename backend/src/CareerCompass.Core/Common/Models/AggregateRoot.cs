@@ -3,7 +3,7 @@ using CareerCompass.Core.Common.Abstractions;
 namespace CareerCompass.Core.Common.Models;
 
 public abstract class AggregateRoot<TId> : Entity<TId>, IAuditable
-    where TId : notnull
+    where TId : ValueObject
 {
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }

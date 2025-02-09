@@ -23,7 +23,7 @@ public struct RepositoryResult
 
 public interface IRepository<TEntity, TId>
     where TEntity : Entity<TId>
-    where TId : notnull
+    where TId : ValueObject
 {
     public Task<TEntity?> Get(TId id,
         bool trackChanges,

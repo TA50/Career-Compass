@@ -1,7 +1,7 @@
 namespace CareerCompass.Core.Common.Models;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
-    where TId : notnull
+    where TId : ValueObject
 {
     protected Entity(TId id)
     {

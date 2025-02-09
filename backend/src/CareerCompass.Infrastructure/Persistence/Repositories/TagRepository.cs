@@ -3,6 +3,6 @@ using CareerCompass.Core.Tags;
 
 namespace CareerCompass.Infrastructure.Persistence.Repositories;
 
-public class TagRepository : RepositoryBase<Tag, TagId>, ITagRepository
+internal class TagRepository(AppDbContext dbContext) : RepositoryBase<Tag, TagId>(dbContext), ITagRepository
 {
 }

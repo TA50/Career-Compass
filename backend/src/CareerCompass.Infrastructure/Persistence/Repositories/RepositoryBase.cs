@@ -1,62 +1,102 @@
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Models;
 using CareerCompass.Core.Common.Specifications;
+using Microsoft.EntityFrameworkCore;
 
 namespace CareerCompass.Infrastructure.Persistence.Repositories;
 
-public abstract class RepositoryBase<TEntity, TId> : IRepository<TEntity, TId>
+internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext) : IRepository<TEntity, TId>
     where TEntity : Entity<TId>
-    where TId : notnull
+    where TId : ValueObject
 {
-    
-    private readonly AppDbContext _dbContext;
     public Task<TEntity?> Get(TId id, bool trackChanges, CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        var set = GetSet(trackChanges);
+        return set.FirstOrDefaultAsync(e => e.Id == id,
+            cancellationToken ?? CancellationToken.None);
     }
 
     public Task<TEntity?> Get(TId id, CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        return Get(id, false, cancellationToken);
     }
 
-    public Task<IList<TEntity>> Get(ISpecification<TEntity, TId> specification, bool trackChanges, CancellationToken? cancellationToken = null)
+    public async Task<IList<TEntity>> Get(ISpecification<TEntity, TId> specification, bool trackChanges,
+        CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        var set = GetSet(trackChanges);
+        return await specification.Apply(set)
+            .ToListAsync(cancellationToken ?? CancellationToken.None);
     }
 
-    public Task<IList<TEntity>> Get(ISpecification<TEntity, TId> specification, CancellationToken? cancellationToken = null)
+    public Task<IList<TEntity>> Get(ISpecification<TEntity, TId> specification,
+        CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        return Get(specification, false, cancellationToken);
     }
 
-    public Task<TEntity?> Single(ISpecification<TEntity, TId> specification, bool trackChanges, CancellationToken? cancellationToken = null)
+    public Task<TEntity?> Single(ISpecification<TEntity, TId> specification, bool trackChanges,
+        CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        var set = GetSet(trackChanges);
+        return specification.Apply(set)
+            .FirstOrDefaultAsync(cancellationToken ?? CancellationToken.None);
     }
 
-    public Task<TEntity?> Single(ISpecification<TEntity, TId> specification, CancellationToken? cancellationToken = null)
+    public Task<TEntity?> Single(ISpecification<TEntity, TId> specification,
+        CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        return Single(specification, false, cancellationToken);
     }
 
     public Task<bool> Exists(ISpecification<TEntity, TId> specification, CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        var set = GetSet(false);
+        return specification.Apply(set)
+            .AnyAsync(cancellationToken ?? CancellationToken.None);
     }
 
     public Task<bool> Exists(TId id, CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        var set = GetSet(false);
+        return set.AnyAsync(e => e.Id == id, cancellationToken ?? CancellationToken.None);
     }
 
-    public Task<RepositoryResult> Create(TEntity entity, CancellationToken? cancellationToken = null)
+    public async Task<RepositoryResult> Create(TEntity entity, CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await dbContext.Set<TEntity>().AddAsync(entity, cancellationToken ?? CancellationToken.None);
+            return new RepositoryResult();
+        }
+        catch (Exception e)
+        {
+            return new RepositoryResult(e.Message);
+        }
     }
 
-    public Task<RepositoryResult> Save(CancellationToken? cancellationToken = null)
+    public async Task<RepositoryResult> Save(CancellationToken? cancellationToken = null)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken ?? CancellationToken.None);
+            return new RepositoryResult();
+        }
+        catch (Exception e)
+        {
+            return new RepositoryResult(e.Message);
+        }
+    }
+
+    private IQueryable<TEntity> GetSet(bool trackChanges)
+    {
+        IQueryable<TEntity> set = dbContext.Set<TEntity>();
+
+        if (!trackChanges)
+        {
+            set = set.AsNoTracking();
+        }
+
+        return set;
     }
 }

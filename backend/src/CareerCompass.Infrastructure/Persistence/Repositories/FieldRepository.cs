@@ -3,6 +3,6 @@ using CareerCompass.Core.Fields;
 
 namespace CareerCompass.Infrastructure.Persistence.Repositories;
 
-public class FieldRepository : RepositoryBase<Field, FieldId>, IFieldRepository
+internal class FieldRepository(AppDbContext dbContext) : RepositoryBase<Field, FieldId>(dbContext), IFieldRepository
 {
 }
