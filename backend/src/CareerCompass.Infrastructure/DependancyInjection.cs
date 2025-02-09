@@ -2,7 +2,6 @@ using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Infrastructure.Persistence;
 using CareerCompass.Infrastructure.Persistence.Repositories;
 using CareerCompass.Infrastructure.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,14 +13,7 @@ public static class DependencyInjection
         Action<DbContextOptionsBuilder> optionBuilder)
     {
         services.AddDbContext<AppDbContext>(optionBuilder);
-        services.AddIdentityCore<ApplicationIdentityUser>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
 
-        services.AddIdentityApiEndpoints<ApplicationIdentityUser>();
-
-        services.AddTransient<IEmailSender<IdentityUser>, ConsoleEmailSender>();
-        services.Configure<IdentityOptions>(opts => { opts.User.RequireUniqueEmail = true; });
 
         services.AddTransient<IFieldRepository, FieldRepository>();
         services.AddTransient<ITagRepository, TagRepository>();

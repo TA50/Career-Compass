@@ -1,4 +1,5 @@
 using CareerCompass.Core.Users;
+using CareerCompass.Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,9 +13,9 @@ internal class UserConfigurations : IEntityTypeConfiguration<User>
 
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.Id)
-            .ValueGeneratedNever()
-            .HasConversion(id => id.Value, s => UserId.Create(s));
+        builder
+            .Property(e => e.Id)
+            .HasConversion(new UserIdConverter());
 
 
         builder.Property(e => e.FirstName)
@@ -22,20 +23,5 @@ internal class UserConfigurations : IEntityTypeConfiguration<User>
 
         builder.Property(e => e.LastName)
             .HasMaxLength(100);
-    }
-}
-
-internal class ApplicationIdentityUserConfigurations : IEntityTypeConfiguration<ApplicationIdentityUser>
-{
-    public void Configure(EntityTypeBuilder<ApplicationIdentityUser> builder)
-    {
-        builder.ToTable("AspNetUsers");
-        builder.HasOne(e => e.User)
-            .WithOne()
-            .HasForeignKey<ApplicationIdentityUser>(e => e.Id); // Shared primary key
-
-        builder.Property(e => e.Id)
-            .ValueGeneratedNever()
-            .HasConversion(id => id.Value, s => UserId.Create(s));
     }
 }

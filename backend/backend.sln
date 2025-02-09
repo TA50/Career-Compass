@@ -16,11 +16,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Core", "src\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Infrastructure", "src\CareerCompass.Infrastructure\CareerCompass.Infrastructure.csproj", "{BD0997CA-CD43-4F5F-9F78-B89BD0A42207}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Playground", "src\CareerCompass.Playground\CareerCompass.Playground.csproj", "{63BDA06D-1C30-4C86-A657-6299FF284FF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Api.Playground", "src\CareerCompass.Api.Playground\CareerCompass.Api.Playground.csproj", "{63BDA06D-1C30-4C86-A657-6299FF284FF3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Integration", "test\CareerCompass.Tests.Integration\CareerCompass.Tests.Integration.csproj", "{C548576F-DFEF-4484-949B-1411841EEB6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CareerCompass.Tests.Unit.Core", "test\CareerCompass.Tests.Unit.Core\CareerCompass.Tests.Unit.Core.csproj", "{50929B21-30C7-4A9D-BC94-EBAAA236268F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "src\Playground\Playground.csproj", "{3B479606-8642-49DB-874E-545C33F2D876}"
 EndProject
 EndProject
 Global
@@ -61,6 +63,10 @@ Global
 		{50929B21-30C7-4A9D-BC94-EBAAA236268F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{50929B21-30C7-4A9D-BC94-EBAAA236268F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{50929B21-30C7-4A9D-BC94-EBAAA236268F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B479606-8642-49DB-874E-545C33F2D876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B479606-8642-49DB-874E-545C33F2D876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B479606-8642-49DB-874E-545C33F2D876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B479606-8642-49DB-874E-545C33F2D876}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8AEA1CFC-D9FF-48DB-B118-234D1D4BE983} = {0BA30F7E-62AC-4F32-941E-58E6DBAE880B}
@@ -69,5 +75,6 @@ Global
 		{63BDA06D-1C30-4C86-A657-6299FF284FF3} = {0BA30F7E-62AC-4F32-941E-58E6DBAE880B}
 		{C548576F-DFEF-4484-949B-1411841EEB6B} = {9FE90C67-B8EC-4628-8A97-19507AFF9C45}
 		{50929B21-30C7-4A9D-BC94-EBAAA236268F} = {9FE90C67-B8EC-4628-8A97-19507AFF9C45}
+		{3B479606-8642-49DB-874E-545C33F2D876} = {0BA30F7E-62AC-4F32-941E-58E6DBAE880B}
 	EndGlobalSection
 EndGlobal

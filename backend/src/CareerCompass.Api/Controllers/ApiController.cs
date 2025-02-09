@@ -1,6 +1,5 @@
 using AutoMapper;
 using CareerCompass.Core.Users;
-using CareerCompass.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,12 +9,10 @@ namespace CareerCompass.Api.Controllers;
 
 public class ApiControllerContext(
     ISender sender,
-    IMapper mapper,
-    UserManager<ApplicationIdentityUser> userManager)
+    IMapper mapper)
 {
     public readonly ISender Sender = sender;
     public readonly IMapper Mapper = mapper;
-    public readonly UserManager<ApplicationIdentityUser> UserManager = userManager;
 }
 
 public class ApiController(ApiControllerContext context) : ControllerBase
@@ -26,19 +23,19 @@ public class ApiController(ApiControllerContext context) : ControllerBase
     {
         get
         {
-            string? userId = context.UserManager.GetUserId(HttpContext.User);
+            // string? userId = context.UserManager.GetUserId(HttpContext.User);
+            //
+            // if (userId == null)
+            // {
+            //     if (IsAuthorizationRequired())
+            //     {
+            //         throw new UnauthorizedAccessException("User not found");
+            //     }
+            //
+            //     return UserId.CreateUnique(); // Anonymous user
+            // }
 
-            if (userId == null)
-            {
-                if (IsAuthorizationRequired())
-                {
-                    throw new UnauthorizedAccessException("User not found");
-                }
-
-                return UserId.CreateUnique(); // Anonymous user
-            }
-
-            return UserId.Create(userId);
+            return UserId.CreateUnique();
         }
     }
 

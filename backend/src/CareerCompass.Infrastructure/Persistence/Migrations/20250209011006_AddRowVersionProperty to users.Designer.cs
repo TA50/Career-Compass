@@ -4,6 +4,7 @@ using CareerCompass.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CareerCompass.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209011006_AddRowVersionProperty to users")]
+    partial class AddRowVersionPropertytousers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,7 +130,7 @@ namespace CareerCompass.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<byte[]>("_TableSharingConcurrencyTokenConvention_RowVersion")
+                    b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion")
@@ -417,11 +420,13 @@ namespace CareerCompass.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("CareerCompass.Infrastructure.Persistence.Identity.ApplicationIdentityUser", b =>
                 {
-                    b.HasOne("CareerCompass.Core.Users.User", null)
+                    b.HasOne("CareerCompass.Core.Users.User", "User")
                         .WithOne()
                         .HasForeignKey("CareerCompass.Infrastructure.Persistence.Identity.ApplicationIdentityUser", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<CareerCompass.Core.Users.UserId>", b =>
