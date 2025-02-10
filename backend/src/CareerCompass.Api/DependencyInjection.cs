@@ -1,5 +1,6 @@
 using System.Text.Json;
 using CareerCompass.Api.Controllers;
+using CareerCompass.Api.OpenApi;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -10,10 +11,11 @@ public static class DependencyInjection
 {
     public static void AddApi(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOpenApi();
+        services.AddOpenApi(options => { options.AddDocumentTransformer<AppOpenApiDocumentTransformer>(); });
 
 
         #region Auth
+
         services.AddAuthorization();
         services.AddAuthentication()
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -49,9 +51,9 @@ public static class DependencyInjection
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.MaxAge = expireTimeSpan;
             });
-        
+
         #endregion
-        
+
         services.AddControllers(o =>
         {
             List<IAuthorizeData> authorizeData = [new AuthorizeAttribute()];

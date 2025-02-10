@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CareerCompass.Aspire.ServiceDefaults\CareerCompass.Aspire.ServiceDefaults.csproj" />
       <ProjectReference Include="..\CareerCompass.Core\CareerCompass.Core.csproj" />
       <ProjectReference Include="..\CareerCompass.Infrastructure\CareerCompass.Infrastructure.csproj" />
     </ItemGroup>

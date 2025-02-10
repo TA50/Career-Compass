@@ -1,4 +1,5 @@
 using CareerCompass.Api;
+using CareerCompass.Aspire.ServiceDefaults;
 using CareerCompass.Core;
 using CareerCompass.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
 
 builder.Services.AddInfrastructure(opts =>
 {
