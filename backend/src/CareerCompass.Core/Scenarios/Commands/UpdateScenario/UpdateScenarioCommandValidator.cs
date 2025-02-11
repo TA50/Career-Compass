@@ -9,7 +9,8 @@ public class UpdateScenarioFieldCommandValidator : AbstractValidator<UpdateScena
     public UpdateScenarioFieldCommandValidator()
     {
         RuleFor(x => x.Value)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(Limits.MaxScenarioFieldValueLength);
 
         RuleFor(x => x.FieldId)
             .NotEmpty();
@@ -22,7 +23,7 @@ public class UpdateScenarioCommandValidator : AbstractValidator<UpdateScenarioCo
     {
         RuleFor(x => x.Title)
             .NotEmpty()
-            .MaximumLength(100);
+            .MaximumLength(Limits.MaxScenarioTitleLength);
         RuleFor(x => x.Id)
             .NotEmpty();
 

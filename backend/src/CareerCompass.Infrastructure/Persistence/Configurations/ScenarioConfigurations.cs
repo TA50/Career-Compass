@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Fields;
 using CareerCompass.Core.Scenarios;
 using CareerCompass.Core.Users;
@@ -25,7 +26,7 @@ internal class ScenarioConfigurations : IEntityTypeConfiguration<Scenario>
             .HasConversion(id => id.Value, s => ScenarioId.Create(s));
 
         builder.Property(s => s.Title)
-            .HasMaxLength(100);
+            .HasMaxLength(Limits.MaxScenarioTitleLength);
 
         builder.Property(e => e.UserId)
             .ValueGeneratedNever()
@@ -45,11 +46,15 @@ internal class ScenarioConfigurations : IEntityTypeConfiguration<Scenario>
             sfb.Property(e => e.Id)
                 .HasColumnName(nameof(ScenarioFieldId))
                 .ValueGeneratedNever()
-                .HasConversion(id => id.Value, s => ScenarioFieldId.Create(s));
+                .HasConversion(id => id.Value,
+                    s => ScenarioFieldId.Create(s));
 
             sfb.Property(e => e.FieldId)
                 .ValueGeneratedNever()
                 .HasConversion(id => id.Value, s => FieldId.Create(s));
+
+            sfb.Property(e => e.Value)
+                .HasMaxLength(Limits.MaxScenarioFieldValueLength);
         });
 
         // builder.Navigation(e => e.ScenarioFields).Metadata.SetField("_scenarioFields");

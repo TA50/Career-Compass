@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Tags;
 using CareerCompass.Core.Users;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ internal class TagConfigurations : IEntityTypeConfiguration<Tag>
 
 
         builder.Property(t => t.Name)
-            .HasMaxLength(30)
+            .HasMaxLength(Limits.MaxNameLength)
             .IsRequired();
 
         builder.HasIndex(x => new { x.UserId, x.Name })

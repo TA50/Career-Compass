@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Fields;
 using CareerCompass.Core.Users;
 using Microsoft.EntityFrameworkCore;
@@ -22,11 +23,11 @@ internal class FieldConfigurations : IEntityTypeConfiguration<Field>
 
 
         builder.Property(t => t.Name)
-            .HasMaxLength(30)
+            .HasMaxLength(Limits.MaxNameLength)
             .IsRequired();
 
         builder.Property(t => t.Group)
-            .HasMaxLength(30)
+            .HasMaxLength(Limits.MaxNameLength)
             .IsRequired();
 
         builder.HasIndex(x => new { x.UserId, x.Name, x.Group })

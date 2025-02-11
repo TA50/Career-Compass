@@ -1,5 +1,5 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Users;
-using CareerCompass.Infrastructure.Persistence.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,19 +9,30 @@ internal class UserConfigurations : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("AspNetUsers"); // Identity table name
+        builder.ToTable("Users");
 
         builder.HasKey(e => e.Id);
 
         builder
             .Property(e => e.Id)
-            .HasConversion(new UserIdConverter());
+            .HasConversion(
+                id => id.Value,
+                value => UserId.Create(value));
 
 
         builder.Property(e => e.FirstName)
-            .HasMaxLength(100);
+            .HasMaxLength(Limits.MaxNameLength);
 
         builder.Property(e => e.LastName)
-            .HasMaxLength(100);
+            .HasMaxLength(Limits.MaxNameLength);
+
+        builder.Property(e => e.Email)
+            .HasMaxLength(Limits.MaxEmailLength);
+
+        builder.Property(e => e.Password)
+            .HasMaxLength(Limits.MaxPasswordLength);
+
+        builder.Property(e => e.EmailConfirmationCode)
+            .HasMaxLength(Limits.EmailConfirmationCodeLength);
     }
 }

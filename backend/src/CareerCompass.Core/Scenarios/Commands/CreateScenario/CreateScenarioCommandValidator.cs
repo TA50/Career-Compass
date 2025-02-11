@@ -9,7 +9,8 @@ public class CreateScenarioFieldCommandValidator : AbstractValidator<CreateScena
     public CreateScenarioFieldCommandValidator()
     {
         RuleFor(x => x.Value)
-            .NotEmpty();
+            .NotEmpty()
+            .MaximumLength(Limits.MaxScenarioFieldValueLength);
 
         RuleFor(x => x.FieldId)
             .NotEmpty();
@@ -22,7 +23,7 @@ public class CreateScenarioCommandValidator : AbstractValidator<CreateScenarioCo
     {
         RuleFor(x => x.Title)
             .NotEmpty()
-            .MaximumLength(100);
+            .MaximumLength(Limits.MaxScenarioTitleLength);
 
         RuleFor(x => x.UserId)
             .NotEmpty();

@@ -63,7 +63,7 @@ public class UpdateUserDetailsCommandHandlerTests
         var originalUser = User.Create(
             firstName: oldFirstName,
             lastName: oldLastName,
-            username: userName,
+            email: userName,
             password: password
         );
         var command = new UpdateUserDetailsCommand(
@@ -92,7 +92,7 @@ public class UpdateUserDetailsCommandHandlerTests
         result.Value.FirstName.Should().Be(firstName);
         result.Value.LastName.Should().Be(lastName);
         result.Value.Id.Should().Be(originalUser.Id);
-        result.Value.UserName.Should().Be(userName);
+        result.Value.Email.Should().Be(userName);
         result.Value.Password.Should().Be(password);
     }
 

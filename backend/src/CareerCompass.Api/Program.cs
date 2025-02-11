@@ -3,7 +3,6 @@ using CareerCompass.Aspire.ServiceDefaults;
 using CareerCompass.Core;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Infrastructure;
-using CareerCompass.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
