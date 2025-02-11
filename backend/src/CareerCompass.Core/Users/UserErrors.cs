@@ -20,6 +20,7 @@ public static class UserErrorCode
         private static readonly string _prefix = $"{_userErrorPrefix}.{30}";
 
         public static string UserNotFound => $"{_prefix}.10";
+        public static string ModificationFailed => $"{_prefix}.20";
     }
 }
 
@@ -47,6 +48,18 @@ public static class UserErrors
             {
                 { "userId", userId },
                 { ErrorMetaDataKey.Title, "User not found" }
+            }
+        );
+    }
+
+    public static Error UserModification_ModificationFailed(UserId userId)
+    {
+        return Error.NotFound(UserErrorCode.Modification.ModificationFailed,
+            $"User modification failed for user with id ({userId})",
+            new Dictionary<string, object>()
+            {
+                { "userId", userId },
+                { ErrorMetaDataKey.Title, "User modification failed" }
             }
         );
     }

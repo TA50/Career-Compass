@@ -25,6 +25,9 @@
         <Reference Include="Microsoft.AspNetCore.Identity">
             <HintPath>..\..\..\..\..\.dotnet\shared\Microsoft.AspNetCore.App\9.0.0\Microsoft.AspNetCore.Identity.dll</HintPath>
         </Reference>
+        <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions">
+          <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.extensions.options.configurationextensions\9.0.1\lib\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup>

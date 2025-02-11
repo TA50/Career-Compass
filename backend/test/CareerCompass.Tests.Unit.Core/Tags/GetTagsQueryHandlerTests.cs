@@ -1,11 +1,10 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Tags;
-using CareerCompass.Core.Tags.Queries.GetTagByIdQuery;
 using CareerCompass.Core.Tags.Queries.GetTagsQuery;
 using CareerCompass.Core.Users;
-using CareerCompass.Tests.Unit.Core.Shared;
+using FluentAssertions;
 using NSubstitute;
-using Shouldly;
 
 namespace CareerCompass.Tests.Unit.Core.Tags;
 
@@ -14,9 +13,12 @@ public class GetTagsQueryHandlerTests
     private readonly ITagRepository _tagRepository = Substitute.For<ITagRepository>();
     private readonly GetTagsQueryHandler _sut;
 
+    private readonly ILoggerAdapter<GetTagsQueryHandler> _logger =
+        Substitute.For<ILoggerAdapter<GetTagsQueryHandler>>();
+
     public GetTagsQueryHandlerTests()
     {
-        _sut = new(_tagRepository);
+        _sut = new(_tagRepository, _logger);
     }
 
 
@@ -24,43 +26,48 @@ public class GetTagsQueryHandlerTests
     public async Task Handle_ShouldReturnTags_WhenTagsExist()
     {
         // Arrange: 
-        var userId = UserId.NewId();
-        var tagName = "test tag name";
+        var userId = UserId.CreateUnique();
+        const string tagName = "test tag name";
         var query = new GetTagsQuery(userId);
-        var expectedTag = new Tag(TagId.NewId(), tagName + "1", userId);
+        var expectedTag = Tag.Create(userId, tagName);
         List<Tag> tags = [expectedTag];
 
-
-        _tagRepository.Get(userId, Arg.Any<CancellationToken>()).Returns(tags);
+        var spec = new GetUserTagsSpecification(userId);
+        _tagRepository.Get(spec, Arg.Any<CancellationToken>()).Returns(tags);
 
         // Act: 
         var result = await _sut.Handle(query, CancellationToken.None);
 
         // Assert:
+        const int expectedCount = 0;
+        _logger.Received(1).LogInformation("Getting tags for user {UserId}", userId);
+        _logger.Received(1).LogInformation("Found {TagsCount} tags for user {@UserId}", expectedCount, userId);
 
-        result.IsError.ShouldBeFalse();
-        result.Value.ShouldHaveSingleItem();
-        result.Value.Single().ShouldBeEquivalentTo(expectedTag);
+        result.IsError.Should().BeFalse();
+        result.Value.Should().HaveCount(expectedCount);
+        result.Value.Single().Should().BeEquivalentTo(expectedTag);
     }
 
     [Fact(DisplayName = "Handle: Should return empty list when no tags exist")]
     public async Task Handle_ShouldReturnEmptyList_WhenNotTagsExist()
     {
         // Arrange: 
-        var userId = UserId.NewId();
-        var name = "test name";
-        var fieldId = TagId.NewId();
+        var userId = UserId.CreateUnique();
         var query = new GetTagsQuery(userId);
-
-
-        _tagRepository.Get(userId, Arg.Any<CancellationToken>()).Returns(Enumerable.Empty<Tag>().ToList());
+        var spec = new GetUserTagsSpecification(userId);
+        _tagRepository.Get(spec, Arg.Any<CancellationToken>()).Returns([]);
 
         // Act: 
         var result = await _sut.Handle(query, CancellationToken.None);
 
         // Assert:
+        var expectedCount = 0;
+        _logger.Received(1).LogInformation("Getting tags for user {UserId}", userId);
+        _logger.Received(1).LogInformation("Found {TagsCount} tags for user {@UserId}", 1, userId);
 
-        result.IsError.ShouldBeFalse();
-        result.Value.ShouldBeEmpty();
+
+        result.IsError.Should().BeFalse();
+        result.Value.Should().HaveCount(expectedCount);
+        result.Value.Should().BeEmpty();
     }
 }

@@ -1,24 +1,28 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System.Reflection;
 
-using CareerCompass.Core.Tags;
-using CareerCompass.Core.Users;
-using CareerCompass.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+var id = Guid.NewGuid();
+var ctor = typeof(Test)
+    .GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, [typeof(Guid), typeof(string)]);
 
-var configuration = new ConfigurationBuilder()
-    .AddUserSecrets<Program>() // Use AddUserSecrets
-    .Build();
+var field = ctor.Invoke([ id, "Test" ]);
 
-var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-var options = new DbContextOptionsBuilder<AppDbContext>()
-    .UseSqlServer(connectionString)
-    .Options;
 
-var dbContext = new AppDbContext(options);
+Console.WriteLine(field);
 
-dbContext.Tags.Add(Tag.Create(UserId.CreateUnique(), "Test"));
-dbContext.SaveChanges();
-var tag = dbContext.Tags.FirstOrDefault();
-Console.WriteLine("Hello World!");
+class Test
+{
+    public Guid Id { get; private set; }
+    public string Name { get; private set; }
+
+    private Test(Guid id, string name)
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public static Test Create(string name)
+    {
+        return new Test(Guid.NewGuid(), name);
+    }
+}

@@ -23,8 +23,21 @@ public class CreateScenarioCommandHandler(
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Creating scenario for user {@UserId} {@ScenarioTitle}", request.UserId, request.Title);
-        // Validate Tag Ids: 
+        // Validate User Id:
         var errors = new List<Error>();
+        var userExists = await userRepository.Exists(request.UserId, cancellationToken);
+        if (!userExists)
+        {
+            errors.Add(ScenarioErrors.ScenarioCreation_UserNotFound(request.UserId));
+        }
+
+        // If User does not exist, return error immediately, we know fields, tags will not exist, no need for extra db calls
+        if (errors.Any())
+        {
+            return ErrorOr<Scenario>.From(errors);
+        }
+
+        // Validate Tag Ids: 
         foreach (var tagId in request.TagIds)
         {
             var spec = new GetTagByIdSpecification(tagId, request.UserId);
@@ -46,12 +59,6 @@ public class CreateScenarioCommandHandler(
             }
         }
 
-        // Validate User Id:
-        var userExists = await userRepository.Exists(request.UserId, cancellationToken);
-        if (!userExists)
-        {
-            errors.Add(ScenarioErrors.ScenarioCreation_UserNotFound(request.UserId));
-        }
 
         if (errors.Any())
         {
@@ -78,7 +85,7 @@ public class CreateScenarioCommandHandler(
 
         if (!result.IsSuccess)
         {
-            logger.LogError("Failed to create scenario {@Scenario}. Reason: {@message}", scenario,
+            logger.LogError("Failed to create scenario with title: {@ScenarioTitle}. Reason: {@message}", scenario.Title,
                 result.ErrorMessage ?? "Unknown");
             return ScenarioErrors.ScenarioCreation_CreationFailed(scenario.Title);
         }

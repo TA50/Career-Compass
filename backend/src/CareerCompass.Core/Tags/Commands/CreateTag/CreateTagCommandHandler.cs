@@ -56,6 +56,8 @@ public class CreateTagCommandHandler(
             ]);
         }
 
+        logger.LogInformation("Tag created for user {@UserId} {@TagName}", request.UserId, request.Name);
+
         return tag;
     }
 }

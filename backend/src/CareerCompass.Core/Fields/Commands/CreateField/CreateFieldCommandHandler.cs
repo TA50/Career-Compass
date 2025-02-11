@@ -20,8 +20,7 @@ public class CreateFieldCommandHandler(
         // Validate User 
 
         var userExists = await userRepository.Exists(
-            new GetUserByIdSpecification(request.UserId)
-            , cancellationToken);
+            request.UserId, cancellationToken);
         if (!userExists)
         {
             errors.Add(FieldErrors.FieldValidation_UserNotFound(request.UserId));
@@ -54,7 +53,7 @@ public class CreateFieldCommandHandler(
                 "Failed to create field {Name} inside group {Group} for user {UserId}. Failed because: {Message}",
                 request.Name,
                 request.Group, request.UserId, result.ErrorMessage ?? "Unknown error");
-            
+
             return ErrorOr<Field>.From([
                 FieldErrors.FieldCreation_FailedToCreateField(
                     request.UserId, request.Name, request.Group

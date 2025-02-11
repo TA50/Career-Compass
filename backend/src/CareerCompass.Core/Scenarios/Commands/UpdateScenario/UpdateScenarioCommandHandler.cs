@@ -1,4 +1,6 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Specifications.Fields;
+using CareerCompass.Core.Common.Specifications.Tags;
 using ErrorOr;
 using MediatR;
 
@@ -23,6 +25,7 @@ public class UpdateScenarioCommandHandler(
         var errors = new List<Error>();
         foreach (var tagId in request.TagIds)
         {
+            var spec = new GetTagByIdSpecification(tagId, request.UserId);
             var tagExists = await tagRepository.Exists(tagId, cancellationToken);
             if (!tagExists)
             {
@@ -33,7 +36,8 @@ public class UpdateScenarioCommandHandler(
         // Validate Field Ids:
         foreach (var scenarioField in request.ScenarioFields)
         {
-            var fieldExists = await fieldRepository.Exists(scenarioField.FieldId, cancellationToken);
+            var spec = new GetFieldByIdSpecification(scenarioField.FieldId, request.UserId);
+            var fieldExists = await fieldRepository.Exists(spec, cancellationToken);
             if (!fieldExists)
             {
                 errors.Add(ScenarioErrors.ScenarioModification_FieldNotFound(scenarioField.FieldId));
@@ -51,7 +55,7 @@ public class UpdateScenarioCommandHandler(
             return ErrorOr<Scenario>.From(errors);
         }
 
-        var scenario = await scenarioRepository.Get(request.Id, cancellationToken);
+        var scenario = await scenarioRepository.Get(request.Id, true, cancellationToken);
 
         if (scenario is null)
         {
@@ -61,7 +65,7 @@ public class UpdateScenarioCommandHandler(
         }
 
         // update scenario
-
+        throw new NotImplementedException();
         var result = await scenarioRepository.Save(cancellationToken);
         if (!result.IsSuccess)
         {
