@@ -40,6 +40,7 @@ public class UserController(
     [HttpPost]
     [AllowAnonymous]
     public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest dto,
+        string returnUrl,
         CancellationToken cancellationToken)
     {
         var input = dto.ToRegisterCommand();
@@ -53,10 +54,10 @@ public class UserController(
 
 
         // Send email
-        return await SendEmail(result.Value, cancellationToken);
+        return await SendEmail(result.Value, returnUrl, cancellationToken);
     }
 
-    private async Task<ActionResult<RegisterResponse>> SendEmail(RegisterCommandResult result,
+    private async Task<ActionResult<RegisterResponse>> SendEmail(RegisterCommandResult result, string returnUrl,
         CancellationToken cancellationToken)
     {
         var from = config["RegistrationSender"];
@@ -68,7 +69,7 @@ public class UserController(
         }
 
 
-        var confirmUrl = GenerateConfirmationUrl(result);
+        var confirmUrl = GenerateConfirmationUrl(result, returnUrl);
 
         Console.WriteLine(confirmUrl);
 
@@ -92,25 +93,35 @@ public class UserController(
         });
     }
 
-    private string GenerateConfirmationUrl(RegisterCommandResult result)
+    private string GenerateConfirmationUrl(RegisterCommandResult result, string returnUrl)
     {
         var request = HttpContext.Request;
         var scheme = request.Scheme;
         var host = request.Host.ToUriComponent();
+        var uriBuilder = new UriBuilder
+        {
+            Scheme = scheme,
+            Host = host,
+            Path = $"users/confirm-email/{result.UserId}/{result.ConfirmationCode}",
+            Query = "returnUrl=" + returnUrl
+        };
 
-        return $"{scheme}://{host}/users/confirm-email/{result.UserId}/{result.ConfirmationCode}";
+
+        return uriBuilder.Uri.ToString();
     }
 
     [AllowAnonymous]
     [HttpGet("confirm-email/{userId:guid:required}/{code:required}")]
-    public async Task<IActionResult> ConfirmEmail(Guid userId, string code)
+    public async Task<IActionResult> ConfirmEmail(Guid userId, string code, string returnUrl)
     {
         var input = new ConfirmEmailCommand(UserId.Create(userId), code);
         var result = await Context.Sender.Send(input);
 
-        return result.Match(
-            value => Ok(),
-            error => error.ToProblemDetails()
-                .ToActionResult());
+        if (result.IsError)
+        {
+            return result.Errors.ToProblemDetails().ToActionResult();
+        }
+
+        return Redirect(returnUrl);
     }
 }
