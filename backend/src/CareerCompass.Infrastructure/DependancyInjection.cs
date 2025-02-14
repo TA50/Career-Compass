@@ -1,4 +1,7 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Crypto;
+using CareerCompass.Core.Common.Abstractions.Email;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Infrastructure.Configuration;
 using CareerCompass.Infrastructure.Persistence;
 using CareerCompass.Infrastructure.Persistence.Repositories;
@@ -25,7 +28,8 @@ public static class DependencyInjection
 
         services.AddTransient(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
-        services.AddTransient<IEmailSender, MailHogEmailService>();
+        services.AddTransient<IEmailSender, SmtpEmailService>();
+        services.AddTransient<ICryptoService, CryptoService>();
     }
 
     public static void BindInfrastructureConfiguration(this IServiceCollection services,

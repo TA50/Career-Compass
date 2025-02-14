@@ -1,7 +1,7 @@
 using CareerCompass.Core.Common.Models;
 using CareerCompass.Core.Common.Specifications;
 
-namespace CareerCompass.Core.Common.Abstractions;
+namespace CareerCompass.Core.Common.Abstractions.Repositories;
 
 public struct RepositoryResult
 {

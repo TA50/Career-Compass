@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Tags;
 using CareerCompass.Core.Tags.Queries.GetTagByIdQuery;
@@ -68,7 +69,7 @@ public class GetTagByIdQueryHandlerTests
 
         var expectedError = TagErrors.TagRead_TagNotFound(userId, tagId);
         result.IsError.Should().BeTrue();
-        result.FirstError.Should().BeEquivalentTo(expectedError);
+        result.FirstError.ShouldBeEquivalentTo(expectedError);
         result.Errors.Should().HaveCount(1);
     }
 }

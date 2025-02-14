@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Fields;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Fields;
@@ -190,6 +191,6 @@ public class UpdateScenarioCommandHandlerTests
         // Assert
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should().BeEquivalentTo(ScenarioErrors.ScenarioModification_UserNotFound(invalidUserId));
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioModification_UserNotFound(invalidUserId));
     }
 }

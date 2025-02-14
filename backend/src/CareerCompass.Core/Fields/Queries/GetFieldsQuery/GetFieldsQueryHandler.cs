@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Fields;
 using MediatR;
 using ErrorOr;

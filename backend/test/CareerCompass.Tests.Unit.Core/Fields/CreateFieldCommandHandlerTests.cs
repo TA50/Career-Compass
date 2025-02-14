@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Fields;
 using CareerCompass.Core.Fields;
 using CareerCompass.Core.Fields.Commands.CreateField;
@@ -44,8 +45,8 @@ public class CreateFieldCommandHandlerTests
 
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should()
-            .BeEquivalentTo(FieldErrors.FieldValidation_UserNotFound(userId));
+        result.FirstError
+            .ShouldBeEquivalentTo(FieldErrors.FieldValidation_UserNotFound(userId));
     }
 
     [Fact(DisplayName = "Handle: SHOULD return FieldValidation_NameAlreadyExists Error WHEN field name already exists")]
@@ -74,7 +75,7 @@ public class CreateFieldCommandHandlerTests
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
         result.FirstError
-            .Should().BeEquivalentTo(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName, groupName));
+            .ShouldBeEquivalentTo(FieldErrors.FieldValidation_NameAlreadyExists(userId, fieldName, groupName));
     }
 
     [Fact(DisplayName = "Handle: SHOULD return Field WHEN CreateFieldInput is valid")]
@@ -147,7 +148,7 @@ public class CreateFieldCommandHandlerTests
 
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should().BeEquivalentTo(FieldErrors.FieldCreation_FailedToCreateField(
+        result.FirstError.ShouldBeEquivalentTo(FieldErrors.FieldCreation_FailedToCreateField(
             userId, fieldName, groupName
         ));
     }

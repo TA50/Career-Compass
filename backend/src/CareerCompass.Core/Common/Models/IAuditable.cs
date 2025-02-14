@@ -1,4 +1,4 @@
-namespace CareerCompass.Core.Common.Abstractions;
+namespace CareerCompass.Core.Common.Models;
 
 public interface IAuditable
 {

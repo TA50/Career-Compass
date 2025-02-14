@@ -30,7 +30,7 @@ internal class UserConfigurations : IEntityTypeConfiguration<User>
             .HasMaxLength(Limits.MaxEmailLength);
 
         builder.Property(e => e.Password)
-            .HasMaxLength(Limits.MaxPasswordLength);
+            .HasMaxLength(255);
 
         builder.Property(e => e.EmailConfirmationCode)
             .HasMaxLength(Limits.EmailConfirmationCodeLength);

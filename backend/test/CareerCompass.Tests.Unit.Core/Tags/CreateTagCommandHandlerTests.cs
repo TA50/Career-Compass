@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Tags;
 using CareerCompass.Core.Tags.Commands.CreateTag;
@@ -42,7 +43,7 @@ public class CreateTagCommandHandlerTests
         var expectedError = TagErrors.TagCreation_UserNotFound(userId);
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should().BeEquivalentTo(expectedError);
+        result.FirstError.ShouldBeEquivalentTo(expectedError);
     }
 
     [Fact(DisplayName =
@@ -69,7 +70,7 @@ public class CreateTagCommandHandlerTests
         var expectedError = TagErrors.TagCreation_TagNameAlreadyExists(userId, tagName);
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should().BeEquivalentTo(expectedError);
+        result.FirstError.ShouldBeEquivalentTo(expectedError);
     }
 
 
@@ -80,7 +81,7 @@ public class CreateTagCommandHandlerTests
         var userId = UserId.CreateUnique();
         const string tagName = "test tag name";
         var createdTag = Tag.Create(userId, tagName);
-        var createTagInput = new CreateTagCommand(userId, tagName);
+        var request = new CreateTagCommand(userId, tagName);
 
         _userRepository.Exists(userId, Arg.Any<CancellationToken>()).Returns(true);
         var spec = new GetTagByNameSpecification(userId, tagName);
@@ -91,15 +92,15 @@ public class CreateTagCommandHandlerTests
             .Returns(new RepositoryResult());
 
         // Act: 
-        var result = await _sut.Handle(createTagInput, CancellationToken.None);
+        var result = await _sut.Handle(request, CancellationToken.None);
 
 
         // Assert:
-        _logger.Received(1).LogInformation("Creating tag for user {@UserId} {@TagName}", userId, tagName);
-        _logger.Received(1).LogInformation("Tag created for user {@UserId} {@TagName}", userId, tagName);
+        _logger.Received(1).LogInformation("Creating tag for user {@UserId} {@TagName}", request.UserId, request.Name);
+        _logger.Received(1).LogInformation("Tag created for user {@UserId} {@TagName}", request.UserId, request.Name);
         result.Value.Should().BeEquivalentTo(createdTag);
-        result.Value.Name.Should().Be(createTagInput.Name);
-        result.Value.UserId.Should().Be(createTagInput.UserId);
+        result.Value.Name.Should().Be(request.Name);
+        result.Value.UserId.Should().Be(request.UserId);
     }
 
 
@@ -133,6 +134,6 @@ public class CreateTagCommandHandlerTests
         var expectedError = TagErrors.TagCreation_FailedToCreateTag(userId, tagName);
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should().BeEquivalentTo(expectedError);
+        result.FirstError.ShouldBeEquivalentTo(expectedError);
     }
 }

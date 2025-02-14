@@ -15,7 +15,7 @@ public class TagController(ApiControllerContext context) : ApiController(context
     [HttpPost]
     public async Task<ActionResult<TagDto>> Create([FromBody] CreateTagRequest request)
     {
-        var input = new CreateTagCommand(UserId, request.Name);
+        var input = new CreateTagCommand(CurrentUserId, request.Name);
 
         var result = await Context.Sender.Send(input);
 
@@ -32,7 +32,7 @@ public class TagController(ApiControllerContext context) : ApiController(context
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<TagDto>> Get(Guid id)
     {
-        var query = new GetTagByIdQuery(UserId, TagId.Create(id));
+        var query = new GetTagByIdQuery(CurrentUserId, TagId.Create(id));
 
         var result = await Context.Sender.Send(query);
 
@@ -45,7 +45,7 @@ public class TagController(ApiControllerContext context) : ApiController(context
     [HttpGet]
     public async Task<ActionResult<IList<TagDto>>> Get()
     {
-        var query = new GetTagsQuery(UserId);
+        var query = new GetTagsQuery(CurrentUserId);
 
         var result = await Context.Sender.Send(query);
 

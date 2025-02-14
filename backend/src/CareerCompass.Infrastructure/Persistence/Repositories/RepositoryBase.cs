@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Models;
 using CareerCompass.Core.Common.Specifications;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,7 @@ internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext) : I
         try
         {
             await dbContext.Set<TEntity>().AddAsync(entity, cancellationToken ?? CancellationToken.None);
+            await dbContext.SaveChangesAsync(cancellationToken ?? CancellationToken.None);
             return new RepositoryResult();
         }
         catch (Exception e)

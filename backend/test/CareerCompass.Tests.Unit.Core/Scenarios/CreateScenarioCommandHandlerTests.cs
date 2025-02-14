@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Fields;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Fields;
@@ -99,9 +100,12 @@ public class CreateScenarioCommandHandlerTests
             Date: DateTime.UtcNow
         );
 
-        _tagRepository.Exists(Arg.Is(validTagId), Arg.Any<CancellationToken>()).Returns(true);
-        _tagRepository.Exists(Arg.Is(inValidTagId), Arg.Any<CancellationToken>()).Returns(false);
-        _tagRepository.Exists(Arg.Is(secondInValidTagId), Arg.Any<CancellationToken>()).Returns(false);
+        _tagRepository.Exists(new GetTagByIdSpecification(validTagId, userId), Arg.Any<CancellationToken>())
+            .Returns(true);
+        _tagRepository.Exists(new GetTagByIdSpecification(inValidTagId, userId), Arg.Any<CancellationToken>())
+            .Returns(false);
+        _tagRepository.Exists(new GetTagByIdSpecification(secondInValidTagId, userId), Arg.Any<CancellationToken>())
+            .Returns(false);
         _userRepository.Exists(Arg.Any<UserId>(), Arg.Any<CancellationToken>()).Returns(true);
         _fieldRepository.Exists(Arg.Any<FieldId>(), Arg.Any<CancellationToken>()).Returns(true);
 
@@ -117,8 +121,8 @@ public class CreateScenarioCommandHandlerTests
         result.IsError.Should().BeTrue();
         const int expectedCount = 2;
         result.Errors.Should().HaveCount(expectedCount);
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioCreation_TagNotFound(inValidTagId));
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioCreation_TagNotFound(secondInValidTagId));
+        result.Errors.ShouldContainEquivalentOf(ScenarioErrors.ScenarioCreation_TagNotFound(inValidTagId));
+        result.Errors.ShouldContainEquivalentOf(ScenarioErrors.ScenarioCreation_TagNotFound(secondInValidTagId));
         result.Errors.Count.Should().Be(2); // 2 errors
     }
 
@@ -158,7 +162,7 @@ public class CreateScenarioCommandHandlerTests
             Arg.Any<CancellationToken>()).Returns(false);
 
         _userRepository.Exists(userId, Arg.Any<CancellationToken>()).Returns(true);
-        _tagRepository.Exists(tagId, Arg.Any<CancellationToken>()).Returns(true);
+        _tagRepository.Exists(new GetTagByIdSpecification(tagId, userId), Arg.Any<CancellationToken>()).Returns(true);
 
 
         // Act
@@ -169,8 +173,8 @@ public class CreateScenarioCommandHandlerTests
             request.Title);
 
         result.IsError.Should().BeTrue();
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioCreation_FieldNotFound(inValidFieldId));
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioCreation_FieldNotFound(secondInValidFieldId));
+        result.Errors.ShouldContainEquivalentOf(ScenarioErrors.ScenarioCreation_FieldNotFound(inValidFieldId));
+        result.Errors.ShouldContainEquivalentOf(ScenarioErrors.ScenarioCreation_FieldNotFound(secondInValidFieldId));
         result.Errors.Count.Should().Be(2); // 2 errors
     }
 
@@ -200,7 +204,7 @@ public class CreateScenarioCommandHandlerTests
 
         result.IsError.Should().BeTrue();
         result.Errors.Should().HaveCount(1);
-        result.FirstError.Should().BeEquivalentTo(ScenarioErrors.ScenarioCreation_UserNotFound(invalidUserId));
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioCreation_UserNotFound(invalidUserId));
     }
 
 
@@ -251,7 +255,7 @@ public class CreateScenarioCommandHandlerTests
             dbError);
 
         result.IsError.Should().BeTrue();
-        result.FirstError.Should().BeEquivalentTo(ScenarioErrors.ScenarioCreation_CreationFailed(request.Title));
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioCreation_CreationFailed(request.Title));
         result.Errors.Should().HaveCount(1);
     }
 }

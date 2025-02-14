@@ -15,7 +15,7 @@ public class FieldController(ApiControllerContext context) : ApiController(conte
     [HttpPost]
     public async Task<ActionResult<FieldDto>> Create([FromBody] CreateFieldRequest request)
     {
-        var input = new CreateFieldCommand(UserId,
+        var input = new CreateFieldCommand(CurrentUserId,
             request.Name,
             request.Group
         );
@@ -35,7 +35,7 @@ public class FieldController(ApiControllerContext context) : ApiController(conte
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<FieldDto>> Get(Guid id)
     {
-        var query = new GetFieldByIdQuery(UserId, FieldId.Create(id));
+        var query = new GetFieldByIdQuery(CurrentUserId, FieldId.Create(id));
 
         var result = await Context.Sender.Send(query);
 
@@ -48,7 +48,7 @@ public class FieldController(ApiControllerContext context) : ApiController(conte
     [HttpGet]
     public async Task<ActionResult<IList<FieldDto>>> Get()
     {
-        var query = new GetFieldsQuery(UserId);
+        var query = new GetFieldsQuery(CurrentUserId);
 
         var result = await Context.Sender.Send(query);
 

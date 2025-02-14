@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Fields;
 using CareerCompass.Core.Fields;
 using CareerCompass.Core.Fields.Queries.GetFieldByIdQuery;
@@ -65,7 +66,7 @@ public class GetFieldByIdQueryHandlerTests
         // Assert:
 
         result.IsError.Should().BeTrue();
-        result.FirstError.Should().BeEquivalentTo(FieldErrors.FieldRead_FieldNotFound(userId, fieldId));
+        result.FirstError.ShouldBeEquivalentTo(FieldErrors.FieldRead_FieldNotFound(userId, fieldId));
         result.Errors.Should().HaveCount(1);
         _logger.Received(1).LogInformation("Getting field for user {@UserId} {@FieldId}", query.UserId, query.FieldId);
     }

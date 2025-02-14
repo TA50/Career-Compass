@@ -1,5 +1,6 @@
 using System.Xml.Schema;
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Fields;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Fields;

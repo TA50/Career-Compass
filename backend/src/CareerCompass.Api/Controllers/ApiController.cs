@@ -18,7 +18,7 @@ public class ApiController(ApiControllerContext context) : ControllerBase
 {
     public ApiControllerContext Context { get; } = context;
 
-    protected UserId UserId
+    protected UserId CurrentUserId
     {
         get
         {

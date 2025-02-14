@@ -2,6 +2,7 @@ using CareerCompass.Api;
 using CareerCompass.Aspire.ServiceDefaults;
 using CareerCompass.Core;
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Email;
 using CareerCompass.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -37,13 +38,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/test", async (IEmailSender emailSender) =>
-    {
-        await emailSender.Send("awadalbrkal@gmail.com", "Test", "Hello");
-        return Results.Ok("Email Sent!");
-    })
-    .WithName("Test")
-    .AllowAnonymous();
 
 app.MapControllers();
 

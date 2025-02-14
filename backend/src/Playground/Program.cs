@@ -1,28 +1,23 @@
-﻿using System.Reflection;
+﻿using Bogus;
 
-var id = Guid.NewGuid();
-var ctor = typeof(Test)
-    .GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, [typeof(Guid), typeof(string)]);
+var faker = new Faker<RegisterCommand>()
+    .CustomInstantiator((faker) => new RegisterCommand("", "", "", "", ""))
+    .RuleFor(x => x.FirstName, faker => faker.Person.FirstName)
+    .RuleFor(x => x.LastName, faker => faker.Person.LastName)
+    .RuleFor(x => x.Email, faker => faker.Person.Email)
+    .RuleFor(x => x.Password,
+        faker => faker.Internet.Password(regexPattern:"[A-Za-z\\d@$!%*?&\\-_]")
+    )
+    .RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
 
-var field = ctor.Invoke([ id, "Test" ]);
 
+var r = faker.Generate();
+Console.WriteLine(r);
 
-
-Console.WriteLine(field);
-
-class Test
-{
-    public Guid Id { get; private set; }
-    public string Name { get; private set; }
-
-    private Test(Guid id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
-
-    public static Test Create(string name)
-    {
-        return new Test(Guid.NewGuid(), name);
-    }
-}
+public record RegisterCommand(
+    string FirstName,
+    string LastName,
+    string Email,
+    string Password,
+    string ConfirmPassword
+);

@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Common.Specifications.Users;
 using CareerCompass.Core.Users;
@@ -19,9 +20,7 @@ public class CreateTagCommandHandler(
         var errors = new List<Error>();
         // Validate User Id
 
-        var userExists = await userRepository.Exists(
-            new GetUserByIdSpecification(request.UserId)
-            , cancellationToken);
+        var userExists = await userRepository.Exists(request.UserId, cancellationToken);
 
         if (!userExists)
         {

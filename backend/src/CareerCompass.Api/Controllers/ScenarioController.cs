@@ -16,7 +16,7 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
     [HttpPost]
     public async Task<ActionResult<ScenarioDto>> Create([FromBody] CreateScenarioRequest request)
     {
-        var input = request.ToCreateScenarioCommand(UserId);
+        var input = request.ToCreateScenarioCommand(CurrentUserId);
         var result = await Context.Sender.Send(input);
 
         return result.Match(
@@ -33,7 +33,7 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
     [HttpPut]
     public async Task<ActionResult<ScenarioDto>> Update([FromBody] UpdateScenarioDto dto)
     {
-        var input = dto.ToUpdateScenarioCommand(UserId);
+        var input = dto.ToUpdateScenarioCommand(CurrentUserId);
         var result = await Context.Sender.Send(input);
 
         return result.Match(
@@ -59,7 +59,7 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
     [HttpGet]
     public async Task<ActionResult<IList<ScenarioDto>>> Get()
     {
-        var query = new GetScenariosQuery(UserId);
+        var query = new GetScenariosQuery(CurrentUserId);
 
         var result = await Context.Sender.Send(query);
 

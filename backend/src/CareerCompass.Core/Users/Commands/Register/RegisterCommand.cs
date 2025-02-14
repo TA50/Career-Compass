@@ -3,7 +3,10 @@ using MediatR;
 
 namespace CareerCompass.Core.Users.Commands.Register;
 
-public record RegisterCommandResult();
+public record RegisterCommandResult(
+    UserId UserId,
+    string Email,
+    string ConfirmationCode);
 
 public record RegisterCommand(
     string FirstName,

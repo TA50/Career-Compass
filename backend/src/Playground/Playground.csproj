@@ -12,5 +12,9 @@
         <ProjectReference Include="..\CareerCompass.Api\CareerCompass.Api.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Bogus" Version="35.6.1" />
+    </ItemGroup>
+
 
 </Project>

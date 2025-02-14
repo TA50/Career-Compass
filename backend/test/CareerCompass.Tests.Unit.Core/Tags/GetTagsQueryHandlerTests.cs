@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Tags;
 using CareerCompass.Core.Tags.Queries.GetTagsQuery;
@@ -39,7 +40,7 @@ public class GetTagsQueryHandlerTests
         var result = await _sut.Handle(query, CancellationToken.None);
 
         // Assert:
-        const int expectedCount = 0;
+        const int expectedCount = 1;
         _logger.Received(1).LogInformation("Getting tags for user {UserId}", userId);
         _logger.Received(1).LogInformation("Found {TagsCount} tags for user {@UserId}", expectedCount, userId);
 
@@ -62,8 +63,9 @@ public class GetTagsQueryHandlerTests
 
         // Assert:
         var expectedCount = 0;
-        _logger.Received(1).LogInformation("Getting tags for user {UserId}", userId);
-        _logger.Received(1).LogInformation("Found {TagsCount} tags for user {@UserId}", 1, userId);
+        _logger.Received(1).LogInformation("Getting tags for user {UserId}", query.UserId);
+
+        _logger.Received(1).LogInformation("Found {TagsCount} tags for user {@UserId}", expectedCount, query.UserId);
 
 
         result.IsError.Should().BeFalse();
