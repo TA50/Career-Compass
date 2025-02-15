@@ -8,7 +8,7 @@
 
 
     <ItemGroup>
-        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
         <PackageReference Include="ErrorOr" Version="2.0.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
             <PrivateAssets>all</PrivateAssets>
@@ -27,7 +27,7 @@
             <HintPath>..\..\..\..\..\.dotnet\shared\Microsoft.AspNetCore.App\9.0.0\Microsoft.AspNetCore.Identity.dll</HintPath>
         </Reference>
         <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions">
-          <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.extensions.options.configurationextensions\9.0.1\lib\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
+            <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.extensions.options.configurationextensions\9.0.1\lib\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
         </Reference>
     </ItemGroup>
 
@@ -37,6 +37,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="Playground"/>
+        <InternalsVisibleTo Include="CareerCompass.Tests.Integration"/>
     </ItemGroup>
 
 </Project>

@@ -4,7 +4,9 @@ using CareerCompass.Core;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Email;
 using CareerCompass.Infrastructure;
+using CareerCompass.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +40,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.MapGet("/test", (IOptions<SmtpSettings> options, IEmailSender mailservice) => Results.Ok(options.Value))
+    .AllowAnonymous();
 app.MapControllers();
 
 #endregion
