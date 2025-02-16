@@ -4,7 +4,9 @@ using CareerCompass.Api.Extensions;
 using CareerCompass.Api.Services;
 using CareerCompass.Core.Users;
 using CareerCompass.Core.Users.Commands.ChangeEmail;
+using CareerCompass.Core.Users.Commands.ChangeForgottenPassword;
 using CareerCompass.Core.Users.Commands.ConfirmEmail;
+using CareerCompass.Core.Users.Commands.GenerateForgotPasswordCode;
 using CareerCompass.Core.Users.Commands.Login;
 using CareerCompass.Core.Users.Commands.ResetPassword;
 using CareerCompass.Core.Users.Queries.GetUserById;
@@ -55,24 +57,38 @@ public class UserController(
 
     [HttpGet("forgot-password")]
     [AllowAnonymous]
-    public async Task<IActionResult> ForgotPassword(string email, string returnUrl)
+    public async Task<IActionResult> GenerateForgotPasswordCode(string email, string returnUrl,
+        CancellationToken cancellationToken)
     {
-        // var input = new ForgotPasswordCommand(email);
-        // var result = await Context.Sender.Send(input);
-        //
-        // if (result.IsError)
-        // {
-        //     return result.Errors.ToProblemDetails().ToActionResult();
-        // }
-        //
-        // var emailResult = await emailSender.SendResetPasswordEmail(
-        //     HttpContext, result.Value.UserId, result.Value.Email, result.Value.ResetPasswordCode, returnUrl);
-        //
-        // return emailResult.Match(
-        //     _ => Ok(),
-        //     error => error.ToProblemDetails().ToActionResult()
-        // );
-        return Ok();
+        var input = new GenerateForgotPasswordCodeCommand(email);
+        var result = await Context.Sender.Send(input);
+
+        if (result.IsError)
+        {
+            return result.Errors.ToProblemDetails().ToActionResult();
+        }
+
+        var emailResult =
+            await emailSender.SendForgotPasswordEmail(email, result.Value.Code, returnUrl, cancellationToken);
+
+        return emailResult.Match(
+            _ => Ok(),
+            error => error.ToProblemDetails().ToActionResult()
+        );
+    }
+
+    [HttpPost("change-forgotten-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ChangeForgottenPassword([FromBody] ChangeForgottenPasswordRequest dto,
+        CancellationToken cancellationToken)
+    {
+        var input = new ChangeForgottenPasswordCommand(dto.Email, dto.Code, dto.NewPassword, dto.ConfirmNewPassword);
+        var result = await Context.Sender.Send(input, cancellationToken);
+
+        return result.Match(
+            _ => Ok(),
+            error => error.ToProblemDetails().ToActionResult()
+        );
     }
 
 

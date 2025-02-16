@@ -61,6 +61,7 @@ public class User : AggregateRoot<UserId>
     public void SetPassword(string password)
     {
         Password = password;
+        ForgotPasswordCode = null;
         Updated();
     }
 

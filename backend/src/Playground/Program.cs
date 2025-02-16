@@ -1,42 +1,13 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿var example = "https://www.example.com?test=1";
 
-var src = new Source();
-src.PropertyChanged += (sender, args) => Console.WriteLine(args.PropertyName);
+var uri = new Uri(example);
 
-src.Prop = "Hello";
-
-Console.ReadLine();
-
-class Source : INotifyPropertyChanged
-
+var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+query["code"] = "123";
+var uriBuilder = new UriBuilder(uri)
 {
-    private string _prop;
+    Query = query.ToString(),
+    Port = -1
+};
 
-    public string Prop
-    {
-        get { return _prop; }
-        set
-        {
-            if (SetField(ref _prop, value))
-            {
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
-    }
-}
+Console.WriteLine(uriBuilder.ToString());

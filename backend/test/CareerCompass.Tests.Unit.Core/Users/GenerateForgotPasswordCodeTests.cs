@@ -34,7 +34,7 @@ public class GenerateForgotPasswordCodeTests
         var user = _userFaker.Generate();
         var spec = new GetUserByEmailSpecification(user.Email)
             .RequireConfirmation();
-        _userRepository.Single(spec, _cancellationToken).Returns(user);
+        _userRepository.Single(spec, true, _cancellationToken).Returns(user);
 
         _userRepository.Save(_cancellationToken).Returns(new RepositoryResult());
 
@@ -45,7 +45,7 @@ public class GenerateForgotPasswordCodeTests
         // Assert
         result.IsError.Should().BeFalse();
         result.Value.Email.Should().Be(user.Email);
-        result.Value.Code.Should().NotBeNullOrWhiteSpace();
+        user.ForgotPasswordCode.Should().NotBeNullOrWhiteSpace();
         result.Value.Code.Should().Be(user.ForgotPasswordCode);
 
         await _userRepository.Received(1).Save(_cancellationToken);
@@ -63,7 +63,7 @@ public class GenerateForgotPasswordCodeTests
         var request = new GenerateForgotPasswordCodeCommand(invalidEmail);
         var spec = new GetUserByEmailSpecification(request.Email)
             .RequireConfirmation();
-        _userRepository.Single(spec, _cancellationToken).ReturnsNull();
+        _userRepository.Single(spec, true, _cancellationToken).ReturnsNull();
 
         // Act
         var result = await _sut.Handle(request, _cancellationToken);
@@ -85,7 +85,7 @@ public class GenerateForgotPasswordCodeTests
 
         var spec = new GetUserByEmailSpecification(request.Email)
             .RequireConfirmation();
-        _userRepository.Single(spec, _cancellationToken).Returns(user);
+        _userRepository.Single(spec, true, _cancellationToken).Returns(user);
         _userRepository.Save(_cancellationToken).Returns(new RepositoryResult(dbError));
 
         // Act

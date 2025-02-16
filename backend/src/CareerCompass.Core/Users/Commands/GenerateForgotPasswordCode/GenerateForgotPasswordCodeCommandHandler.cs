@@ -21,7 +21,7 @@ public class GenerateForgotPasswordCodeCommandHandler(
         var spec = new GetUserByEmailSpecification(request.Email)
             .RequireConfirmation();
 
-        var user = await userRepository.Single(spec, cancellationToken);
+        var user = await userRepository.Single(spec, true, cancellationToken);
 
         if (user is null)
         {
