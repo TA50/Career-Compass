@@ -1,6 +1,7 @@
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
+using CareerCompass.Core.Common.Specifications.Users;
 using ErrorOr;
 using MediatR;
 
@@ -15,6 +16,30 @@ public class ChangeForgottenPasswordCommandHandler(
     public async Task<ErrorOr<ChangeForgottenPasswordCommandResult>> Handle(ChangeForgottenPasswordCommand request,
         CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        logger.LogInformation("Changing forgotten password for {Email}", request.Email);
+        var spec = new GetUserByEmailSpecification(request.Email).RequireConfirmation();
+        var user = await userRepository.Single(spec, true, cancellationToken);
+        if (user is null)
+        {
+            return UserErrors.ChangeForgotPassword_InvalidEmail(request.Email);
+        }
+        
+        if (user.ForgotPasswordCode != request.Code)
+        {
+            return UserErrors.ChangeForgotPassword_InvalidCode(request.Email);
+        }
+
+        var passHash = cryptoService.Hash(request.NewPassword);
+        user.SetPassword(passHash);
+        var result = await userRepository.Save(cancellationToken);
+        if (!result.IsSuccess)
+        {
+            logger.LogError("Failed to change forgotten password for {Email}. Error: {Error}", request.Email,
+                result.ErrorMessage ?? "Unknown error");
+            return UserErrors.ChangeForgotPassword_OperationFailed(request.Email);
+        }
+        logger.LogInformation("Successfully changed forgotten password for {Email}", request.Email);
+
+        return new ChangeForgottenPasswordCommandResult(user.Id, user.Email);
     }
 }

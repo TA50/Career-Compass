@@ -22,6 +22,17 @@ public class UserFaker : Faker<User>
         );
     }
 
+    public static string GenerateDifferentCode(string code)
+    {
+        string differentCode;
+        do
+        {
+            differentCode = new Faker().Random.AlphaNumeric(6);
+        } while (differentCode == code);
+
+        return differentCode;
+    }
+
     public static string GenerateDifferentPassword(string password)
     {
         string differentPassword;
@@ -31,5 +42,16 @@ public class UserFaker : Faker<User>
         } while (differentPassword == password);
 
         return differentPassword;
+    }
+
+    public static string GenerateDifferentEmail(string email)
+    {
+        string differentEmail;
+        do
+        {
+            differentEmail = new Faker().Internet.Email();
+        } while (differentEmail == email);
+
+        return differentEmail;
     }
 }

@@ -71,6 +71,13 @@ public static class UserErrorCode
         public static string OperationFailed => $"{Prefixes.ChangeEmailCode}.30";
         public static string EmailAlreadyExists => $"{Prefixes.ChangeEmailCode}.40";
     }
+
+    public static class ForgotPassword
+    {
+        public static string OperationFailed => $"{Prefixes.ForgotPassword}.10";
+        public static string InvalidEmail => $"{Prefixes.ForgotPassword}.20";
+        public static string InvalidCode => $"{Prefixes.ForgotPassword}.30";
+    }
 }
 
 public static class UserErrors
@@ -279,6 +286,83 @@ public static class UserErrors
             {
                 { "email", email },
                 { ErrorMetaDataKey.Title, "Change email: Email already exists" }
+            }
+        );
+    }
+
+    #endregion
+
+    #region Forgot Password
+
+    public static Error ForgotPassword_OperationFailed(string email)
+    {
+        return Error.Failure(UserErrorCode.ForgotPassword.OperationFailed,
+            $"Forgot password operation failed for user with email ({email})",
+            new Dictionary<string, object>()
+            {
+                { "email", email },
+                { ErrorMetaDataKey.Title, "Forgot password: Operation failed" }
+            }
+        );
+    }
+
+    public static Error ChangeForgotPassword_OperationFailed(string email)
+    {
+        return Error.Failure(UserErrorCode.ForgotPassword.OperationFailed,
+            $"Forgot password operation failed for user with email ({email})",
+            new Dictionary<string, object>()
+            {
+                { "email", email },
+                { ErrorMetaDataKey.Title, "Change Forgotten password: Operation failed" }
+            }
+        );
+    }
+
+
+    public static Error ForgotPassword_InvalidEmail(string email)
+    {
+        return Error.Conflict(UserErrorCode.ForgotPassword.InvalidEmail,
+            $"Provided email ({email}) does not exist",
+            new Dictionary<string, object>()
+            {
+                { "email", email },
+                { ErrorMetaDataKey.Title, "Forgot password: invalid email" }
+            }
+        );
+    }
+
+    public static Error ChangeForgotPassword_InvalidEmail(string email)
+    {
+        return Error.Conflict(UserErrorCode.ForgotPassword.InvalidEmail,
+            $"Provided email ({email}) does not exist",
+            new Dictionary<string, object>()
+            {
+                { "email", email },
+                { ErrorMetaDataKey.Title, "Change Forgotten password: invalid email" }
+            }
+        );
+    }
+
+    public static Error ForgotPassword_InvalidCode(string email)
+    {
+        return Error.Conflict(UserErrorCode.ForgotPassword.InvalidCode,
+            $"Invalid code provided for email ({email})",
+            new Dictionary<string, object>()
+            {
+                { "email", email },
+                { ErrorMetaDataKey.Title, "Forgot password: Invalid code" }
+            }
+        );
+    }
+
+    public static Error ChangeForgotPassword_InvalidCode(string email)
+    {
+        return Error.Conflict(UserErrorCode.ForgotPassword.InvalidCode,
+            $"Invalid code provided for email ({email})",
+            new Dictionary<string, object>()
+            {
+                { "email", email },
+                { ErrorMetaDataKey.Title, "Change Forgotten password: Invalid code" }
             }
         );
     }
