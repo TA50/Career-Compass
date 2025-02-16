@@ -8,27 +8,28 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1" />
-        <PackageReference Include="ErrorOr" Version="2.0.1" />
-        <PackageReference Include="FluentValidation" Version="11.11.0" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
-        <PackageReference Include="MediatR" Version="12.4.1" />
+        <PackageReference Include="AutoMapper" Version="13.0.1"/>
+        <PackageReference Include="ErrorOr" Version="2.0.1"/>
+        <PackageReference Include="FluentValidation" Version="11.11.0"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>
+        <PackageReference Include="MediatR" Version="12.4.1"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.0.4" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.0.4"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CareerCompass.Aspire.ServiceDefaults\CareerCompass.Aspire.ServiceDefaults.csproj" />
-      <ProjectReference Include="..\CareerCompass.Core\CareerCompass.Core.csproj" />
-      <ProjectReference Include="..\CareerCompass.Infrastructure\CareerCompass.Infrastructure.csproj" />
+        <ProjectReference Include="..\CareerCompass.Aspire.ServiceDefaults\CareerCompass.Aspire.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\CareerCompass.Core\CareerCompass.Core.csproj"/>
+        <ProjectReference Include="..\CareerCompass.Infrastructure\CareerCompass.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Contracts\" />
+        <Folder Include="Contracts\"/>
     </ItemGroup>
+    
 
 </Project>

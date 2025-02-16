@@ -5,9 +5,9 @@ using ErrorOr;
 
 namespace CareerCompass.Core.Users.Commands.ConfirmEmail;
 
-public class ConfirmEmailCommandHandler(
+public class ConfirmEmailHandler(
     IUserRepository userRepository,
-    ILoggerAdapter<ConfirmEmailCommandHandler> logger)
+    ILoggerAdapter<ConfirmEmailHandler> logger)
     : IRequestHandler<ConfirmEmailCommand, ErrorOr<ConfirmEmailCommandResult>>
 {
     public async Task<ErrorOr<ConfirmEmailCommandResult>> Handle(ConfirmEmailCommand request,

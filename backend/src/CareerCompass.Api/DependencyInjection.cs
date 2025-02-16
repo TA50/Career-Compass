@@ -1,6 +1,7 @@
 using System.Text.Json;
 using CareerCompass.Api.Controllers;
 using CareerCompass.Api.OpenApi;
+using CareerCompass.Api.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -64,5 +65,6 @@ public static class DependencyInjection
         // Services
         services.AddScoped<ApiControllerContext>();
         services.AddAutoMapper(typeof(Program));
+        services.AddTransient<AuthenticationEmailSender>();
     }
 }

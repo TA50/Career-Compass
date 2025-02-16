@@ -8,7 +8,7 @@ using NSubstitute.ReturnsExtensions;
 
 namespace CareerCompass.Tests.Unit.Core.Users;
 
-public class UpdateUserDetailsCommandHandlerTests
+public class UpdateUserDetailsTests
 {
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
     private readonly UpdateUserDetailsCommandHandler _sut;
@@ -16,9 +16,9 @@ public class UpdateUserDetailsCommandHandlerTests
     private readonly ILoggerAdapter<UpdateUserDetailsCommandHandler> _logger =
         Substitute.For<ILoggerAdapter<UpdateUserDetailsCommandHandler>>();
 
-    public UpdateUserDetailsCommandHandlerTests()
+    public UpdateUserDetailsTests()
     {
-        _sut = new UpdateUserDetailsCommandHandler(_userRepository, _logger);
+        _sut = new(_userRepository, _logger);
     }
 
     [Fact(DisplayName = "Handle: Should return UserModification_UserNotFoundError when user does not exist",

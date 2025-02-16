@@ -8,18 +8,18 @@ using NSubstitute.ReturnsExtensions;
 
 namespace CareerCompass.Tests.Unit.Core.Users;
 
-public class ConfirmEmailCommandHandlerTests
+public class ConfirmEmailTests
 {
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
 
-    private readonly ILoggerAdapter<ConfirmEmailCommandHandler> _logger =
-        Substitute.For<ILoggerAdapter<ConfirmEmailCommandHandler>>();
+    private readonly ILoggerAdapter<ConfirmEmailHandler> _logger =
+        Substitute.For<ILoggerAdapter<ConfirmEmailHandler>>();
 
-    private readonly ConfirmEmailCommandHandler _sut;
+    private readonly ConfirmEmailHandler _sut;
 
-    public ConfirmEmailCommandHandlerTests()
+    public ConfirmEmailTests()
     {
-        _sut = new ConfirmEmailCommandHandler(_userRepository, _logger);
+        _sut = new ConfirmEmailHandler(_userRepository, _logger);
     }
 
     [Fact]

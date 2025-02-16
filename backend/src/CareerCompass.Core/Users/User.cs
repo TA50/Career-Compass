@@ -17,6 +17,7 @@ public class User : AggregateRoot<UserId>
 
     public bool EmailConfirmed { get; private set; }
     public string? EmailConfirmationCode { get; private set; }
+    public string? ForgotPasswordCode { get; private set; }
 
     private User(
         UserId id,
@@ -62,7 +63,7 @@ public class User : AggregateRoot<UserId>
         Password = password;
     }
 
-    public void UpdateEmail(string email)
+    public void ChangeEmail(string email)
     {
         if (email == Email)
         {
@@ -75,15 +76,10 @@ public class User : AggregateRoot<UserId>
 
     public bool ConfirmEmail(string code)
     {
-        var codesDontMatch = string.IsNullOrEmpty(EmailConfirmationCode)
-                             || string.IsNullOrEmpty(code)
-                             || EmailConfirmationCode != code;
-
-        if (codesDontMatch)
+        if (!DoesCodeMatch(EmailConfirmationCode, code))
         {
             return false;
         }
-
 
         EmailConfirmed = true;
         EmailConfirmationCode = null;
@@ -98,12 +94,44 @@ public class User : AggregateRoot<UserId>
     /// <returns>EmailConfirmationCode</returns>
     public string GenerateEmailConfirmationCode()
     {
+        EmailConfirmationCode = GenerateCode(length: Limits.EmailConfirmationCodeLength);
+        return EmailConfirmationCode;
+    }
+
+
+    public string GenerateForgotPasswordCode()
+    {
+        ForgotPasswordCode = GenerateCode(length: Limits.ForgotPasswordCodeLength);
+        return ForgotPasswordCode;
+    }
+
+    public bool ConfirmForgotPassword(string code)
+    {
+        if (!DoesCodeMatch(ForgotPasswordCode, code))
+        {
+            return false;
+        }
+
+        ForgotPasswordCode = null;
+
+        return true;
+    }
+
+    private bool DoesCodeMatch(string? actual, string expectedCode)
+    {
+        return string.IsNullOrEmpty(expectedCode)
+               || string.IsNullOrEmpty(actual)
+               || expectedCode == actual;
+    }
+
+    private string GenerateCode(int length)
+    {
         var random = new Random();
         const string chars = "0123456789";
 
         var stringBuild = new StringBuilder();
 
-        foreach (var chrs in Enumerable.Repeat(chars, Limits.EmailConfirmationCodeLength))
+        foreach (var chrs in Enumerable.Repeat(chars, length))
         {
             var next = random.Next(chrs.Length);
             var c = chrs[next];
@@ -111,8 +139,6 @@ public class User : AggregateRoot<UserId>
             stringBuild.Append(c);
         }
 
-        EmailConfirmationCode = stringBuild.ToString();
-
-        return EmailConfirmationCode;
+        return stringBuild.ToString();
     }
 }

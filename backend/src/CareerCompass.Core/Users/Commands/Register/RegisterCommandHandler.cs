@@ -19,7 +19,7 @@ public class RegisterCommandHandler(
     {
         logger.LogInformation("Creating user with email {Email}", request.Email);
 
-        var spec = new UserWithEmailSpecification(request.Email);
+        var spec = new GetUserByEmailSpecification(request.Email);
         var userWithEmailExists = await userRepository.Exists(spec, cancellationToken);
         if (userWithEmailExists)
         {

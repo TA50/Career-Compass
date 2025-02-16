@@ -13,7 +13,7 @@ using FluentAssertions.Primitives;
 
 namespace CareerCompass.Tests.Unit.Core.Users;
 
-public class RegisterCommandHandlerTests
+public class RegisterTests
 {
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
     private readonly ICryptoService _cryptoService = Substitute.For<ICryptoService>();
@@ -26,7 +26,7 @@ public class RegisterCommandHandlerTests
         Substitute.For<ILoggerAdapter<RegisterCommandHandler>>();
 
 
-    public RegisterCommandHandlerTests()
+    public RegisterTests()
     {
         _sut = new RegisterCommandHandler(_userRepository, _cryptoService, _logger);
     }
@@ -37,7 +37,7 @@ public class RegisterCommandHandlerTests
         // Arrange
         var request = _faker.Generate();
         _cryptoService.Hash(request.Password).Returns(request.Password);
-        _userRepository.Exists(new UserWithEmailSpecification(request.Email), Arg.Any<CancellationToken>())
+        _userRepository.Exists(new GetUserByEmailSpecification(request.Email), Arg.Any<CancellationToken>())
             .Returns(false);
 
 
@@ -78,7 +78,7 @@ public class RegisterCommandHandlerTests
     {
         // Arrange
         var request = _faker.Generate();
-        var spec = new UserWithEmailSpecification(request.Email);
+        var spec = new GetUserByEmailSpecification(request.Email);
         _userRepository.Exists(Arg.Is(spec),
                 Arg.Any<CancellationToken>())
             .Returns(true);
@@ -99,7 +99,7 @@ public class RegisterCommandHandlerTests
         // Arrange
         var request = _faker.Generate();
         _cryptoService.Hash(request.Password).Returns(request.Password);
-        _userRepository.Exists(new UserWithEmailSpecification(request.Email), Arg.Any<CancellationToken>())
+        _userRepository.Exists(new GetUserByEmailSpecification(request.Email), Arg.Any<CancellationToken>())
             .Returns(false);
 
         const string dbError = "db error";

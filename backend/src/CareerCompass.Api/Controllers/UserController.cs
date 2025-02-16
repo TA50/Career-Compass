@@ -1,14 +1,16 @@
+using System.Security.Claims;
 using CareerCompass.Api.Contracts.Users;
 using CareerCompass.Api.Extensions;
-using CareerCompass.Core.Common.Abstractions;
-using CareerCompass.Core.Common.Abstractions.Email;
+using CareerCompass.Api.Services;
 using CareerCompass.Core.Users;
+using CareerCompass.Core.Users.Commands.ChangeEmail;
 using CareerCompass.Core.Users.Commands.ConfirmEmail;
-using CareerCompass.Core.Users.Commands.Register;
+using CareerCompass.Core.Users.Commands.Login;
+using CareerCompass.Core.Users.Commands.ResetPassword;
+using CareerCompass.Core.Users.Queries.GetUserById;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CareerCompass.Api.Controllers;
 
@@ -16,10 +18,7 @@ namespace CareerCompass.Api.Controllers;
 [Route("users")]
 public class UserController(
     ApiControllerContext context,
-    ILoggerAdapter<UserController> logger,
-    IEmailSender emailSender,
-    IUrlHelperFactory urlHelperFactory,
-    IConfiguration config)
+    AuthenticationEmailSender emailSender)
     : ApiController(context)
 {
     [HttpPut]
@@ -36,6 +35,22 @@ public class UserController(
                 .ToActionResult<UserDto>());
     }
 
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto>> GetMe()
+    {
+        var userId = CurrentUserId;
+        var input = new GetUserByIdQuery(userId);
+        var result = await Context.Sender.Send(input);
+
+        return result.Match(
+            value => Ok(
+                Context.Mapper.Map<UserDto>(value)
+            ),
+            error => error.ToProblemDetails()
+                .ToActionResult<UserDto>());
+    }
+
+    #region Authentication
 
     [HttpPost]
     [AllowAnonymous]
@@ -54,60 +69,46 @@ public class UserController(
 
 
         // Send email
-        return await SendEmail(result.Value, returnUrl, cancellationToken);
+        var emailResult = await emailSender.SendConfirmationEmail(
+            HttpContext, result.Value.UserId, result.Value.Email, result.Value.ConfirmationCode, returnUrl,
+            cancellationToken);
+
+        return emailResult.Match(
+            _ => Ok(new RegisterResponse()),
+            error => error.ToProblemDetails()
+                .ToActionResult<RegisterResponse>()
+        );
     }
 
-    private async Task<ActionResult<RegisterResponse>> SendEmail(RegisterCommandResult result, string returnUrl,
+
+    [HttpPost("change-email")]
+    public async Task<ActionResult<ChangeEmailResponse>> ChangeEmail([FromBody] ChangeEmailRequest dto,
         CancellationToken cancellationToken)
     {
-        var from = config["RegistrationSender"];
-        if (string.IsNullOrEmpty(from))
-        {
-            logger.LogError("RegistrationSender is not configured");
+        var input = new ChangeEmailCommand(CurrentUserId, dto.OldPassword, dto.Email);
+        var result = await Context.Sender.Send(input, cancellationToken);
 
-            return Problem("Internal error", statusCode: StatusCodes.Status500InternalServerError);
+        if (result.IsError)
+        {
+            return result.Errors.ToProblemDetails()
+                .ToActionResult<ChangeEmailResponse>();
         }
 
+        // Send email
+        var emailResult = await emailSender.SendConfirmationEmail(
+            HttpContext, result.Value.UserId, dto.Email, result.Value.EmailConfirmationCode, dto.returnUrl,
+            cancellationToken);
 
-        var confirmUrl = GenerateConfirmationUrl(result, returnUrl);
-
-        Console.WriteLine(confirmUrl);
-
-        if (string.IsNullOrEmpty(confirmUrl))
+        if (emailResult.IsError)
         {
-            logger.LogError("Failed to generate confirmation URL for user with id {UserId}", result.UserId);
-            return Problem("Internal error", statusCode: StatusCodes.Status500InternalServerError);
+            return emailResult.Errors.ToProblemDetails()
+                .ToActionResult<ChangeEmailResponse>();
         }
 
+        await HttpContext.SignOutAsync();
 
-        var mail = new PlainTextMail(from, result.Email).WithSubject(@"Welcome to Career Compass")
-            .WithBody($@"
-            Welcome to Career Compass! Please click the link below to verify your email address. 
-            {confirmUrl}
-            ");
-
-        await emailSender.Send(mail, cancellationToken);
-        return Ok(new RegisterResponse
-        {
-            Message = "User registered successfully. Please check your email for verification."
-        });
-    }
-
-    private string GenerateConfirmationUrl(RegisterCommandResult result, string returnUrl)
-    {
-        var request = HttpContext.Request;
-        var scheme = request.Scheme;
-        var host = request.Host.ToUriComponent();
-        var uriBuilder = new UriBuilder
-        {
-            Scheme = scheme,
-            Host = host,
-            Path = $"users/confirm-email/{result.UserId}/{result.ConfirmationCode}",
-            Query = "returnUrl=" + returnUrl
-        };
-
-
-        return uriBuilder.Uri.ToString();
+        return Ok(new ChangeEmailResponse(
+            "Email has been changed successfully. Please login with your new email after confirming it"));
     }
 
     [AllowAnonymous]
@@ -124,4 +125,51 @@ public class UserController(
 
         return Redirect(returnUrl);
     }
+
+
+    [HttpPost("reset-password")]
+    public async Task<ActionResult<ResetPasswordResponse>> ResetPassword([FromBody] ResetPasswordRequest dto,
+        CancellationToken cancellationToken)
+    {
+        var input = new ResetPasswordCommand(CurrentUserId, dto.OldPassword, dto.NewPassword, dto.ConfirmNewPassword);
+        var result = await Context.Sender.Send(input, cancellationToken);
+
+        if (result.IsError)
+        {
+            return result.FirstError.ToProblemDetails()
+                .ToActionResult<ResetPasswordResponse>();
+        }
+
+        await HttpContext.SignOutAsync();
+        return Ok(
+            new ResetPasswordResponse("Password has been reset successfully. Please login with your new password"));
+    }
+
+    [HttpPost("login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login([FromBody] LoginRequest dto, CancellationToken cancellationToken)
+    {
+        var command = new LoginCommand(dto.Email, dto.Password);
+        var result = await Context.Sender.Send(command, cancellationToken);
+
+        if (result.IsError)
+        {
+            return result.Errors.ToProblemDetails().ToActionResult();
+        }
+
+        var identity = new ClaimsIdentity([new(ClaimTypes.NameIdentifier, result.Value.UserId.ToString())]);
+        var principal = new ClaimsPrincipal(identity);
+        await HttpContext.SignInAsync(principal);
+
+        return Ok();
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync();
+        return Ok();
+    }
+
+    #endregion
 }
