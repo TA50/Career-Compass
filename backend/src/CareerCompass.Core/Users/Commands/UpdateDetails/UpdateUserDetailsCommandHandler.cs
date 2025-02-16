@@ -25,7 +25,7 @@ public class UpdateUserDetailsCommandHandler(
         }
 
         user.SetName(request.FirstName, request.LastName);
-        var result = await userRepository.Save();
+        var result = await userRepository.Save(cancellationToken);
         if (!result.IsSuccess)
         {
             logger.LogError("Failed to update user details for user {@UserId}", request.UserId);

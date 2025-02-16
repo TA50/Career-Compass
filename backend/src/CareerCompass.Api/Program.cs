@@ -1,4 +1,5 @@
 using CareerCompass.Api;
+using CareerCompass.Api.Controllers;
 using CareerCompass.Aspire.ServiceDefaults;
 using CareerCompass.Core;
 using CareerCompass.Core.Common.Abstractions;
@@ -40,7 +41,18 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/test", (IOptions<SmtpSettings> options, IEmailSender mailservice) => Results.Ok(options.Value))
+app.MapGet("/test", (HttpContext context) =>
+    {
+        var linkGenerator = context.RequestServices.GetRequiredService<LinkGenerator>();
+        var confirmUrl = linkGenerator.GetUriByName(context,
+            nameof(UserController.ConfirmEmail),
+            values: new { userId = Guid.NewGuid(), code = "123111", returnUrl = "http://localhost:5000" });
+
+        return Results.Ok(new
+        {
+            confirmUrl
+        });
+    })
     .AllowAnonymous();
 app.MapControllers();
 

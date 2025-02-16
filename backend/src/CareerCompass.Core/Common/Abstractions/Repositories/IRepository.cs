@@ -5,19 +5,32 @@ namespace CareerCompass.Core.Common.Abstractions.Repositories;
 
 public struct RepositoryResult
 {
-    public bool IsSuccess { get; }
-    public string? ErrorMessage { get; }
+    private bool _isSuccess = false;
+    private string? _errorMessage;
+    public bool IsSuccess => _isSuccess;
+
+    public string? ErrorMessage
+    {
+        get => _errorMessage;
+        private set
+        {
+            if (value == null) return;
+
+            _errorMessage = value;
+            _isSuccess = true;
+        }
+    }
 
     public RepositoryResult()
     {
-        IsSuccess = true;
         ErrorMessage = null;
+        _isSuccess = true;
     }
 
     public RepositoryResult(string errorMessage)
     {
-        IsSuccess = false;
         ErrorMessage = errorMessage;
+        _isSuccess = false;
     }
 }
 
@@ -25,6 +38,12 @@ public interface IRepository<TEntity, TId>
     where TEntity : Entity<TId>
     where TId : ValueObject
 {
+    public Task StartTransaction(CancellationToken? cancellationToken = null);
+
+    public Task CommitTransaction(CancellationToken? cancellationToken = null);
+
+    public Task RollbackTransaction(CancellationToken? cancellationToken = null);
+
     public Task<TEntity?> Get(TId id,
         bool trackChanges,
         CancellationToken? cancellationToken = null);

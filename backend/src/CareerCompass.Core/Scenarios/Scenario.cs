@@ -20,6 +20,7 @@ public class Scenario : AggregateRoot<ScenarioId>
         UserId = userId;
         Date = date;
         Title = title;
+        Created();
     }
 
     private ICollection<ScenarioField> _scenarioFields;
@@ -49,11 +50,13 @@ public class Scenario : AggregateRoot<ScenarioId>
     {
         var sf = ScenarioField.Create(fieldId, value);
         _scenarioFields.Add(sf);
+        Updated();
     }
 
     public void AddTag(TagId tagId)
     {
         _tagIds.Add(tagId);
+        Updated();
     }
 
 #pragma warning disable CS8618

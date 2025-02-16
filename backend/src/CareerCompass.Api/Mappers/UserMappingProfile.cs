@@ -17,5 +17,8 @@ public class UserMappingProfile : Profile
 
 
         CreateMap<User, UserDto>();
+
+
+
     }
 }

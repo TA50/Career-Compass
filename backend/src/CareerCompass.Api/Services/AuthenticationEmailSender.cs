@@ -25,9 +25,8 @@ public class AuthenticationEmailSender(
         }
 
 
-        var confirmUrl = linkGenerator.GetPathByAction(context,
-            action: nameof(UserController.ConfirmEmail), controller: nameof(UserController),
-            values: new { userId = userId, code = code, returnUrl });
+        var confirmUrl = linkGenerator.GetUriByName(context,
+            nameof(UserController.ConfirmEmail), values: new { userId = userId, code = code, returnUrl });
 
 
         if (string.IsNullOrEmpty(confirmUrl))

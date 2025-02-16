@@ -19,6 +19,7 @@ public sealed class Tag : AggregateRoot<TagId>
     {
         UserId = userId;
         Name = name;
+        Created();
     }
 
     public static Tag Create(UserId userId, string name)

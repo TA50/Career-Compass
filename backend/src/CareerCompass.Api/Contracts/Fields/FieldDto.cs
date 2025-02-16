@@ -2,5 +2,6 @@ namespace CareerCompass.Api.Contracts.Fields;
 
 public record FieldDto(
     string Id,
-    string Name
+    string Name,
+    string Group
 );

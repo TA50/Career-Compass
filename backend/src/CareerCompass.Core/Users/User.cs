@@ -24,16 +24,16 @@ public class User : AggregateRoot<UserId>
         string email,
         string password,
         string firstName,
-        string lastName,
-        bool emailConfirmed,
-        string? emailConfirmationCode) : base(id)
+        string lastName) : base(id)
     {
         Email = email;
         Password = password;
         FirstName = firstName;
         LastName = lastName;
-        EmailConfirmed = emailConfirmed;
-        EmailConfirmationCode = emailConfirmationCode;
+        EmailConfirmed = false;
+        EmailConfirmationCode = null;
+        ForgotPasswordCode = null;
+        Created();
     }
 
     public static User Create(
@@ -47,20 +47,21 @@ public class User : AggregateRoot<UserId>
             email: email,
             password: password,
             firstName: firstName,
-            lastName: lastName,
-            emailConfirmed: false,
-            emailConfirmationCode: null);
+            lastName: lastName
+        );
     }
 
     public void SetName(string firstName, string lastName)
     {
         FirstName = firstName;
         LastName = lastName;
+        Updated();
     }
 
     public void SetPassword(string password)
     {
         Password = password;
+        Updated();
     }
 
     public void ChangeEmail(string email)
@@ -72,6 +73,7 @@ public class User : AggregateRoot<UserId>
 
         Email = email;
         EmailConfirmed = false;
+        Updated();
     }
 
     public bool ConfirmEmail(string code)
@@ -83,7 +85,7 @@ public class User : AggregateRoot<UserId>
 
         EmailConfirmed = true;
         EmailConfirmationCode = null;
-
+        Updated();
         return true;
     }
 
@@ -95,6 +97,7 @@ public class User : AggregateRoot<UserId>
     public string GenerateEmailConfirmationCode()
     {
         EmailConfirmationCode = GenerateCode(length: Limits.EmailConfirmationCodeLength);
+        Updated();
         return EmailConfirmationCode;
     }
 
@@ -102,6 +105,7 @@ public class User : AggregateRoot<UserId>
     public string GenerateForgotPasswordCode()
     {
         ForgotPasswordCode = GenerateCode(length: Limits.ForgotPasswordCodeLength);
+        Updated();
         return ForgotPasswordCode;
     }
 
@@ -113,6 +117,7 @@ public class User : AggregateRoot<UserId>
         }
 
         ForgotPasswordCode = null;
+        Updated();
 
         return true;
     }

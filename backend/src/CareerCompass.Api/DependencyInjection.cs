@@ -18,7 +18,7 @@ public static class DependencyInjection
         #region Auth
 
         services.AddAuthorization();
-        services.AddAuthentication()
+        services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
             {
                 var expireTimeInMinutes = configuration.GetValue<int>("Authentication:Cookie:ExpireTimeInMinutes");

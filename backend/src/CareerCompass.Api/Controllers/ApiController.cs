@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using AutoMapper;
 using CareerCompass.Core.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,26 +18,35 @@ public class ApiControllerContext(
 
 public class ApiController(ApiControllerContext context) : ControllerBase
 {
+    private const string UserIdClaimType = ClaimTypes.NameIdentifier;
     public ApiControllerContext Context { get; } = context;
+
+    protected bool IsAuthenticated => HttpContext.User.Identity?.IsAuthenticated ?? false;
 
     protected UserId CurrentUserId
     {
         get
         {
-            // string? userId = context.UserManager.GetUserId(HttpContext.User);
-            //
-            // if (userId == null)
-            // {
-            //     if (IsAuthorizationRequired())
-            //     {
-            //         throw new UnauthorizedAccessException("User not found");
-            //     }
-            //
-            //     return UserId.CreateUnique(); // Anonymous user
-            // }
+            var principal = HttpContext.User;
 
-            return UserId.CreateUnique();
+            var identity = principal.Identities
+                .Where(i => i.AuthenticationType == CookieAuthenticationDefaults.AuthenticationScheme)
+                .FirstOrDefault(i => i.IsAuthenticated);
+
+
+            var userId = identity?.FindFirst(UserIdClaimType)?.Value;
+            return userId is null ? HandleAnonymousUser() : UserId.Create(userId);
         }
+    }
+
+    private UserId HandleAnonymousUser()
+    {
+        if (IsAuthorizationRequired())
+        {
+            throw new UnauthorizedAccessException("User not found");
+        }
+
+        return UserId.CreateUnique(); // Anonymous user
     }
 
     private bool IsAuthorizationRequired()
@@ -51,5 +62,16 @@ public class ApiController(ApiControllerContext context) : ControllerBase
 
         // Authorization is required if there is an AuthorizeFilter and no AllowAnonymous
         return authorize != null && allowAnonymous == null;
+    }
+
+    protected ClaimsPrincipal GenerateClaimsPrincipal(UserId userId)
+    {
+        var claims = new List<Claim>
+        {
+            new(UserIdClaimType, userId.ToString())
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        return new ClaimsPrincipal(identity);
     }
 }

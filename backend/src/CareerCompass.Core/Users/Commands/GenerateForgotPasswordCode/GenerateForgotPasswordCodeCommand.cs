@@ -1,7 +1,7 @@
-using MediatR;
 using ErrorOr;
+using MediatR;
 
-namespace CareerCompass.Core.Users.Commands.ForgotPassword;
+namespace CareerCompass.Core.Users.Commands.GenerateForgotPasswordCode;
 
 public record GenerateForgotPasswordCodeCommandResult(
     string Code,

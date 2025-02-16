@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace CareerCompass.Core.Users.Commands.ForgotPassword;
+namespace CareerCompass.Core.Users.Commands.GenerateForgotPasswordCode;
 
 public class GenerateForgotPasswordCodeCommandValidator : AbstractValidator<GenerateForgotPasswordCodeCommand>
 {

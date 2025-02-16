@@ -8,9 +8,7 @@ public class FieldMappingProfile : Profile
 {
     public FieldMappingProfile()
     {
-        CreateMap<Field, FieldDto>()
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+        CreateMap<Field, FieldDto>();
 
 
         CreateMap<string, FieldId>()

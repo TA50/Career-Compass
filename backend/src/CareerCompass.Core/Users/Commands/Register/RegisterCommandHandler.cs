@@ -33,15 +33,18 @@ public class RegisterCommandHandler(
             password: cryptoService.Hash(request.Password));
 
         var confirmationCode = user.GenerateEmailConfirmationCode();
+        await userRepository.StartTransaction();
         var result = await userRepository.Create(user, cancellationToken);
         if (!result.IsSuccess)
         {
             logger.LogError("Failed to create user with email {Email}: {ErrorMessage}", request.Email,
                 result.ErrorMessage ?? "Unknown error");
 
+            await userRepository.RollbackTransaction();
             return UserErrors.UserCreation_CreationFailed(request.Email);
         }
 
+        await userRepository.CommitTransaction();
         logger.LogInformation("User with email {Email} was successfully created", request.Email);
         return new RegisterCommandResult(user.Id, user.Email, confirmationCode);
     }

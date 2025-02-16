@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace CareerCompass.Core.Common.Models;
 
 public interface IAuditable

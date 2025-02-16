@@ -21,6 +21,7 @@ public sealed class Field : AggregateRoot<FieldId>
         UserId = userId;
         Name = name;
         Group = group;
+        Created();
     }
 
     public static Field Create(UserId userId, string name, string group)

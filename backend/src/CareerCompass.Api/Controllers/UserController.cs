@@ -9,6 +9,7 @@ using CareerCompass.Core.Users.Commands.Login;
 using CareerCompass.Core.Users.Commands.ResetPassword;
 using CareerCompass.Core.Users.Queries.GetUserById;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,7 +53,31 @@ public class UserController(
 
     #region Authentication
 
+    [HttpGet("forgot-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ForgotPassword(string email, string returnUrl)
+    {
+        // var input = new ForgotPasswordCommand(email);
+        // var result = await Context.Sender.Send(input);
+        //
+        // if (result.IsError)
+        // {
+        //     return result.Errors.ToProblemDetails().ToActionResult();
+        // }
+        //
+        // var emailResult = await emailSender.SendResetPasswordEmail(
+        //     HttpContext, result.Value.UserId, result.Value.Email, result.Value.ResetPasswordCode, returnUrl);
+        //
+        // return emailResult.Match(
+        //     _ => Ok(),
+        //     error => error.ToProblemDetails().ToActionResult()
+        // );
+        return Ok();
+    }
+
+
     [HttpPost]
+    [EndpointSummary("Register a new user")]
     [AllowAnonymous]
     public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest dto,
         string returnUrl,
@@ -74,7 +99,7 @@ public class UserController(
             cancellationToken);
 
         return emailResult.Match(
-            _ => Ok(new RegisterResponse()),
+            _ => Ok(new RegisterResponse("User has been registered successfully. Please confirm your email")),
             error => error.ToProblemDetails()
                 .ToActionResult<RegisterResponse>()
         );
@@ -105,14 +130,14 @@ public class UserController(
                 .ToActionResult<ChangeEmailResponse>();
         }
 
-        await HttpContext.SignOutAsync();
+        await Logout();
 
         return Ok(new ChangeEmailResponse(
             "Email has been changed successfully. Please login with your new email after confirming it"));
     }
 
     [AllowAnonymous]
-    [HttpGet("confirm-email/{userId:guid:required}/{code:required}")]
+    [HttpGet("confirm-email/{userId:guid:required}/{code:required}", Name = nameof(ConfirmEmail))]
     public async Task<IActionResult> ConfirmEmail(Guid userId, string code, string returnUrl)
     {
         var input = new ConfirmEmailCommand(UserId.Create(userId), code);
@@ -140,7 +165,7 @@ public class UserController(
                 .ToActionResult<ResetPasswordResponse>();
         }
 
-        await HttpContext.SignOutAsync();
+        await Logout();
         return Ok(
             new ResetPasswordResponse("Password has been reset successfully. Please login with your new password"));
     }
@@ -149,6 +174,11 @@ public class UserController(
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginRequest dto, CancellationToken cancellationToken)
     {
+        if (IsAuthenticated)
+        {
+            return Ok();
+        }
+
         var command = new LoginCommand(dto.Email, dto.Password);
         var result = await Context.Sender.Send(command, cancellationToken);
 
@@ -157,8 +187,7 @@ public class UserController(
             return result.Errors.ToProblemDetails().ToActionResult();
         }
 
-        var identity = new ClaimsIdentity([new(ClaimTypes.NameIdentifier, result.Value.UserId.ToString())]);
-        var principal = new ClaimsPrincipal(identity);
+        var principal = GenerateClaimsPrincipal(result.Value.UserId);
         await HttpContext.SignInAsync(principal);
 
         return Ok();
@@ -167,7 +196,7 @@ public class UserController(
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync();
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Ok();
     }
 

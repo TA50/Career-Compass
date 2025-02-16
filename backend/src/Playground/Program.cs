@@ -1,23 +1,42 @@
-﻿using Bogus;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-var faker = new Faker<RegisterCommand>()
-    .CustomInstantiator((faker) => new RegisterCommand("", "", "", "", ""))
-    .RuleFor(x => x.FirstName, faker => faker.Person.FirstName)
-    .RuleFor(x => x.LastName, faker => faker.Person.LastName)
-    .RuleFor(x => x.Email, faker => faker.Person.Email)
-    .RuleFor(x => x.Password,
-        faker => faker.Internet.Password(regexPattern:"[A-Za-z\\d@$!%*?&\\-_]")
-    )
-    .RuleFor(x => x.ConfirmPassword, (f, u) => u.Password);
+var src = new Source();
+src.PropertyChanged += (sender, args) => Console.WriteLine(args.PropertyName);
 
+src.Prop = "Hello";
 
-var r = faker.Generate();
-Console.WriteLine(r);
+Console.ReadLine();
 
-public record RegisterCommand(
-    string FirstName,
-    string LastName,
-    string Email,
-    string Password,
-    string ConfirmPassword
-);
+class Source : INotifyPropertyChanged
+
+{
+    private string _prop;
+
+    public string Prop
+    {
+        get { return _prop; }
+        set
+        {
+            if (SetField(ref _prop, value))
+            {
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+}

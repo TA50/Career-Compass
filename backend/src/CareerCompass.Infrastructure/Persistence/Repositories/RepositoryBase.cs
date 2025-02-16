@@ -3,13 +3,31 @@ using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Models;
 using CareerCompass.Core.Common.Specifications;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CareerCompass.Infrastructure.Persistence.Repositories;
 
-internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext) : IRepository<TEntity, TId>
-    where TEntity : Entity<TId>
+internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext)
+    : IRepository<TEntity, TId>, IDisposable, IAsyncDisposable where TEntity : Entity<TId>
     where TId : ValueObject
 {
+    protected IDbContextTransaction? Transaction;
+
+    public async Task StartTransaction(CancellationToken? cancellationToken = null)
+    {
+        Transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken ?? CancellationToken.None);
+    }
+
+    public Task CommitTransaction(CancellationToken? cancellationToken = null)
+    {
+        return Transaction?.CommitAsync(cancellationToken ?? CancellationToken.None) ?? Task.CompletedTask;
+    }
+
+    public Task RollbackTransaction(CancellationToken? cancellationToken = null)
+    {
+        return dbContext.Database.RollbackTransactionAsync(cancellationToken ?? CancellationToken.None);
+    }
+
     public Task<TEntity?> Get(TId id, bool trackChanges, CancellationToken? cancellationToken = null)
     {
         var set = GetSet(trackChanges);
@@ -100,5 +118,15 @@ internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext) : I
         }
 
         return set;
+    }
+
+    public void Dispose()
+    {
+        Transaction?.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Transaction is not null) await Transaction.DisposeAsync();
     }
 }

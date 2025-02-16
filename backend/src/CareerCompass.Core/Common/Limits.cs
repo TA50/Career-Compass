@@ -9,6 +9,6 @@ public static class Limits
     public const int MaxPasswordLength = 30;
     public const int MinPasswordLength = 8;
 
-    public const int MaxScenarioTitleLength = 30;
+    public const int MaxScenarioTitleLength = 300;
     public const int MaxScenarioFieldValueLength = 1000;
 }
