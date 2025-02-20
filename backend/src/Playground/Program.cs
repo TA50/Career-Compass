@@ -1,13 +1,12 @@
-﻿var example = "https://www.example.com?test=1";
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-var uri = new Uri(example);
-
-var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-query["code"] = "123";
-var uriBuilder = new UriBuilder(uri)
+var validationProblemDetails = new ValidationProblemDetails
 {
-    Query = query.ToString(),
-    Port = -1
+    Title = "One or more validation errors occurred.",
+    Status = StatusCodes.Status400BadRequest
 };
+validationProblemDetails.Errors.Add("test key", ["test error", "test error 2"]);
 
-Console.WriteLine(uriBuilder.ToString());
+var json = System.Text.Json.JsonSerializer.Serialize(validationProblemDetails);
+Console.WriteLine(json);

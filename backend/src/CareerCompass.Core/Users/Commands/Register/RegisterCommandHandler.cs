@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
@@ -10,6 +11,7 @@ namespace CareerCompass.Core.Users.Commands.Register;
 public class RegisterCommandHandler(
     IUserRepository userRepository,
     ICryptoService cryptoService,
+    CoreSettings settings,
     ILoggerAdapter<RegisterCommandHandler> logger
 )
     : IRequestHandler<RegisterCommand, ErrorOr<RegisterCommandResult>>
@@ -32,7 +34,8 @@ public class RegisterCommandHandler(
             email: request.Email,
             password: cryptoService.Hash(request.Password));
 
-        var confirmationCode = user.GenerateEmailConfirmationCode();
+        var confirmationCode =
+            user.GenerateEmailConfirmationCode(TimeSpan.FromHours(settings.EmailConfirmationCodeLifetimeInHours));
         await userRepository.StartTransaction();
         var result = await userRepository.Create(user, cancellationToken);
         if (!result.IsSuccess)

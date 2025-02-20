@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
@@ -10,6 +11,7 @@ namespace CareerCompass.Core.Users.Commands.ChangeEmail;
 public class ChangeEmailCommandHandler(
     IUserRepository userRepository,
     ICryptoService cryptoService,
+    CoreSettings settings,
     ILoggerAdapter<ChangeEmailCommandHandler> logger)
     : IRequestHandler<ChangeEmailCommand, ErrorOr<ChangeEmailCommandResult>>
 {
@@ -41,7 +43,8 @@ public class ChangeEmailCommandHandler(
         }
 
         user.ChangeEmail(request.NewEmail);
-        var confirmationCode = user.GenerateEmailConfirmationCode();
+        var confirmationCode =
+            user.GenerateEmailConfirmationCode(TimeSpan.FromHours(settings.EmailConfirmationCodeLifetimeInHours));
         var result = await userRepository.Save(cancellationToken);
         if (!result.IsSuccess)
         {

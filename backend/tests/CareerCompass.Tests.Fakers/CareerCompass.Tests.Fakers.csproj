@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\CareerCompass.Api\CareerCompass.Api.csproj" />
       <ProjectReference Include="..\..\src\CareerCompass.Core\CareerCompass.Core.csproj" />
     </ItemGroup>
 

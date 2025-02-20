@@ -19,6 +19,8 @@ public static class ApplicationErrorPrefix
         Scenario = 10,
         Tag = 20,
         User = 30,
-        Field = 40
+        Field = 40,
+        Configuration = 100
     }
+    
 }

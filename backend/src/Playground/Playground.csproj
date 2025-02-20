@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\test\CareerCompass.Tests.Integration\CareerCompass.Tests.Integration.csproj" />
         <ProjectReference Include="..\CareerCompass.Api\CareerCompass.Api.csproj"/>
     </ItemGroup>
 

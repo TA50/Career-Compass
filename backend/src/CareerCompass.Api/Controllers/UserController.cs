@@ -1,7 +1,7 @@
-using System.Security.Claims;
 using CareerCompass.Api.Contracts.Users;
 using CareerCompass.Api.Extensions;
 using CareerCompass.Api.Services;
+using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Users;
 using CareerCompass.Core.Users.Commands.ChangeEmail;
 using CareerCompass.Core.Users.Commands.ChangeForgottenPassword;
@@ -15,13 +15,15 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace CareerCompass.Api.Controllers;
 
 [ApiController]
 [Route("users")]
 public class UserController(
     ApiControllerContext context,
-    AuthenticationEmailSender emailSender)
+    AuthenticationEmailSender emailSender,
+    ILoggerAdapter<UserController> logger)
     : ApiController(context)
 {
     [HttpPut]
@@ -69,7 +71,7 @@ public class UserController(
         }
 
         var emailResult =
-            await emailSender.SendForgotPasswordEmail(email, result.Value.Code, returnUrl, cancellationToken);
+            await emailSender.SendForgotPasswordEmail(email, result.Value.Code, cancellationToken);
 
         return emailResult.Match(
             _ => Ok(),
@@ -96,7 +98,6 @@ public class UserController(
     [EndpointSummary("Register a new user")]
     [AllowAnonymous]
     public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest dto,
-        string returnUrl,
         CancellationToken cancellationToken)
     {
         var input = dto.ToRegisterCommand();
@@ -111,11 +112,14 @@ public class UserController(
 
         // Send email
         var emailResult = await emailSender.SendConfirmationEmail(
-            HttpContext, result.Value.UserId, result.Value.Email, result.Value.ConfirmationCode, returnUrl,
+            result.Value.Email, result.Value.ConfirmationCode,
             cancellationToken);
 
+
         return emailResult.Match(
-            _ => Ok(new RegisterResponse("User has been registered successfully. Please confirm your email")),
+            _ => Created(string.Empty, new RegisterResponse(
+                "User has been registered successfully. Please confirm your email",
+                result.Value.UserId.ToString())),
             error => error.ToProblemDetails()
                 .ToActionResult<RegisterResponse>()
         );
@@ -137,8 +141,7 @@ public class UserController(
 
         // Send email
         var emailResult = await emailSender.SendConfirmationEmail(
-            HttpContext, result.Value.UserId, dto.Email, result.Value.EmailConfirmationCode, dto.returnUrl,
-            cancellationToken);
+            dto.Email, result.Value.EmailConfirmationCode, cancellationToken);
 
         if (emailResult.IsError)
         {
@@ -154,17 +157,15 @@ public class UserController(
 
     [AllowAnonymous]
     [HttpGet("confirm-email/{userId:guid:required}/{code:required}", Name = nameof(ConfirmEmail))]
-    public async Task<IActionResult> ConfirmEmail(Guid userId, string code, string returnUrl)
+    public async Task<IActionResult> ConfirmEmail(Guid userId, string code)
     {
         var input = new ConfirmEmailCommand(UserId.Create(userId), code);
         var result = await Context.Sender.Send(input);
 
-        if (result.IsError)
-        {
-            return result.Errors.ToProblemDetails().ToActionResult();
-        }
-
-        return Redirect(returnUrl);
+        return result.Match(
+            _ => Ok(),
+            error => error.ToProblemDetails().ToActionResult()
+        );
     }
 
 

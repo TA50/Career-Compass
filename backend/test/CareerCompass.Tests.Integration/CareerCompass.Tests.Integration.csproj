@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Bogus" Version="35.6.1" />
         <PackageReference Include="coverlet.collector" Version="6.0.2"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
@@ -23,6 +24,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\CareerCompass.Api\CareerCompass.Api.csproj" />
+      <ProjectReference Include="..\..\tests\CareerCompass.Tests.Fakers\CareerCompass.Tests.Fakers.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="FluentAssertions">
+        <HintPath>..\..\..\..\..\..\.nuget\packages\awesomeassertions\8.0.0\lib\net6.0\FluentAssertions.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

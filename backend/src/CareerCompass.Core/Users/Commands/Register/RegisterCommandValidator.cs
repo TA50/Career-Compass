@@ -22,12 +22,12 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 
 
         RuleFor(c => c.ConfirmPassword)
-            .NotEmpty();
+            .NotEmpty()
+            .Equal(c => c.Password);
 
         RuleFor(c => c.Password)
             .Matches(RegexPatterns.Password)
             .NotEmpty()
-            .Equal(c => c.ConfirmPassword)
             .MaximumLength(Limits.MaxPasswordLength);
     }
 }

@@ -31,19 +31,4 @@ public static class DependencyInjection
         services.AddTransient<IEmailSender, SmtpEmailService>();
         services.AddTransient<ICryptoService, CryptoService>();
     }
-
-    public static void BindInfrastructureConfiguration(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        var section = configuration.GetSection(nameof(SmtpSettings));
-        Console.WriteLine(section.Value);
-        if (section.Exists())
-        {
-            services.Configure<SmtpSettings>(section);
-        }
-        else
-        {
-            throw new Exception($"{nameof(SmtpSettings)} section is missing");
-        }
-    }
 }

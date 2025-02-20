@@ -1,3 +1,4 @@
+using System.Net;
 using CareerCompass.Core.Common;
 using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
@@ -22,26 +23,21 @@ public static class ErrorExtensions
             };
         }
 
+
         var first = errors.First().ToProblemDetails(
             title,
             statusCode,
             details);
-        if (errors.Count == 1)
+
+        if (first.Status == StatusCodes.Status400BadRequest)
         {
-            return first;
+            return errors.ToValidationProblemDetails();
         }
 
-        return new ProblemDetails
-        {
-            Title = title ?? first.Title,
-            Status = statusCode ?? first.Status,
-            Detail = details ?? first.Detail,
-            Extensions = new Dictionary<string, object?>
-            {
-                ["errors"] = errors.Select(e => e.Description)
-            }
-        };
+
+        return first;
     }
+
 
     public static IActionResult ToActionResult(this ProblemDetails problem)
     {
@@ -67,12 +63,12 @@ public static class ErrorExtensions
     {
         var statusCode = inStatusCode ?? error.Type switch
         {
-            ErrorType.Conflict => 404,
-            ErrorType.Unauthorized => 401,
-            ErrorType.Forbidden => 403,
-            ErrorType.Validation => 400,
-            ErrorType.Unexpected => 500,
-            ErrorType.Failure => 500,
+            ErrorType.Conflict => StatusCodes.Status409Conflict,
+            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
+            ErrorType.Validation => StatusCodes.Status400BadRequest,
+            ErrorType.Unexpected => StatusCodes.Status500InternalServerError,
+            ErrorType.Failure => StatusCodes.Status500InternalServerError,
             _ => 500
         };
 
@@ -103,5 +99,30 @@ public static class ErrorExtensions
             Detail = details ?? error.Description,
             Extensions = extensions
         };
+    }
+
+
+    public static ProblemDetails ToValidationProblemDetails(
+        this IList<Error> errors)
+    {
+        var problem = new ValidationProblemDetails()
+        {
+            Title = "One or more validation errors occurred.",
+            Status = StatusCodes.Status400BadRequest
+        };
+
+        foreach (var error in errors)
+        {
+            if (problem.Errors.ContainsKey(error.Code))
+            {
+                var previousErrors = problem.Errors[error.Code];
+                problem.Errors[error.Code] = [..previousErrors, error.Description];
+                continue;
+            }
+
+            problem.Errors.Add(error.Code, [error.Description]);
+        }
+
+        return problem;
     }
 }

@@ -2,12 +2,10 @@ using CareerCompass.Api;
 using CareerCompass.Api.Controllers;
 using CareerCompass.Aspire.ServiceDefaults;
 using CareerCompass.Core;
-using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions.Email;
 using CareerCompass.Infrastructure;
-using CareerCompass.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,10 +17,14 @@ builder.Services.AddInfrastructure(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.BindInfrastructureConfiguration(builder.Configuration);
+builder.ConfigureSettings();
 
-builder.Services.AddApplication();
+builder.Services.AddCore();
 builder.Services.AddApi(builder.Configuration);
+
+builder.Services.Configure<CoreSettings>(
+    builder.Configuration.GetSection(nameof(CoreSettings)));
+
 
 #region Pipeline
 
@@ -41,18 +43,13 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/test", (HttpContext context) =>
-    {
-        var linkGenerator = context.RequestServices.GetRequiredService<LinkGenerator>();
-        var confirmUrl = linkGenerator.GetUriByName(context,
-            nameof(UserController.ConfirmEmail),
-            values: new { userId = Guid.NewGuid(), code = "123111", returnUrl = "http://localhost:5000" });
 
-        return Results.Ok(new
+app.MapGet("/test",
+        async (HttpContext context, IEmailSender emailSender) =>
         {
-            confirmUrl
-        });
-    })
+            await emailSender.Send(new PlainTextMail("test@gmail.com", "hellow@gmail.com").WithBody("test"));
+            return Results.Ok();
+        })
     .AllowAnonymous();
 app.MapControllers();
 

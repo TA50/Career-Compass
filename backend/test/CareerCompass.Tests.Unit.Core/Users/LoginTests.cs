@@ -1,4 +1,5 @@
 using Bogus;
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
@@ -17,6 +18,12 @@ public class LoginTests
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
     private readonly ICryptoService _cryptoService = Substitute.For<ICryptoService>();
     private readonly UserFaker _userFaker = new();
+
+    private readonly CoreSettings _settings = new CoreSettings
+    {
+        EmailConfirmationCodeLifetimeInHours = 6,
+        ForgotPasswordCodeLifetimeInHours = 6
+    };
 
     private readonly ILoggerAdapter<LoginCommandHandler>
         _logger = Substitute.For<ILoggerAdapter<LoginCommandHandler>>();
@@ -37,7 +44,8 @@ public class LoginTests
         var spec = new GetUserByEmailSpecification(request.Email)
             .RequireConfirmation();
 
-        var code = user.GenerateEmailConfirmationCode();
+        var code = user.GenerateEmailConfirmationCode(
+            TimeSpan.FromHours(_settings.EmailConfirmationCodeLifetimeInHours));
         user.ConfirmEmail(code);
 
         _cryptoService.Verify(request.Password, user.Password).Returns(true);
@@ -68,7 +76,8 @@ public class LoginTests
         var spec = new GetUserByEmailSpecification(request.Email)
             .RequireConfirmation();
 
-        var code = user.GenerateEmailConfirmationCode();
+        var code = user.GenerateEmailConfirmationCode(
+            TimeSpan.FromHours(_settings.EmailConfirmationCodeLifetimeInHours));
         user.ConfirmEmail(code);
 
         _userRepository
@@ -98,7 +107,8 @@ public class LoginTests
         var spec = new GetUserByEmailSpecification(request.Email)
             .RequireConfirmation();
 
-        var code = user.GenerateEmailConfirmationCode();
+        var code = user.GenerateEmailConfirmationCode(
+            TimeSpan.FromHours(_settings.EmailConfirmationCodeLifetimeInHours));
         user.ConfirmEmail(code);
 
         _cryptoService.Verify(request.Password, user.Password).Returns(false);

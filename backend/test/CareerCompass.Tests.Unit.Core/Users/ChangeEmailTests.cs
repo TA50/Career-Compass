@@ -1,4 +1,5 @@
 using Bogus;
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
@@ -26,7 +27,12 @@ public class ChangeEmailTests
 
     public ChangeEmailTests()
     {
-        _sut = new(_userRepository, _cryptoService, _logger);
+        var settings = new CoreSettings
+        {
+            EmailConfirmationCodeLifetimeInHours = 6,
+            ForgotPasswordCodeLifetimeInHours = 6
+        };
+        _sut = new(_userRepository, _cryptoService, settings, _logger);
     }
 
     [Fact]

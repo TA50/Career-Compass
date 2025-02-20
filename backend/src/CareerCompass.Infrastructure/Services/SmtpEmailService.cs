@@ -10,11 +10,11 @@ internal class SmtpEmailService : IEmailSender, IDisposable
 {
     private readonly SmtpClient _client;
 
-    public SmtpEmailService(IOptions<SmtpSettings> options)
+    public SmtpEmailService(SmtpSettings settings)
     {
-        _client = new SmtpClient(options.Value.Host, options.Value.Port);
-        _client.EnableSsl = options.Value.EnableSsl;
-        _client.Credentials = new NetworkCredential(options.Value.UserName, options.Value.Password);
+        _client = new SmtpClient(settings.Host, settings.Port);
+        _client.EnableSsl = settings.EnableSsl;
+        _client.Credentials = new NetworkCredential(settings.UserName, settings.Password);
     }
 
     public void Dispose()

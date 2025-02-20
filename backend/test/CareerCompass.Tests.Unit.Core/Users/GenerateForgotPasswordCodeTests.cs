@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
@@ -22,9 +23,15 @@ public class GenerateForgotPasswordCodeTests
     private readonly GenerateForgotPasswordCodeCommandHandler _sut;
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
 
+    private readonly CoreSettings _settings = new()
+    {
+        ForgotPasswordCodeLifetimeInHours = 6,
+        EmailConfirmationCodeLifetimeInHours = 6,
+    };
+
     public GenerateForgotPasswordCodeTests()
     {
-        _sut = new(_userRepository, _logger);
+        _sut = new(_userRepository, _settings, _logger);
     }
 
     [Fact]

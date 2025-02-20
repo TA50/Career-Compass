@@ -22,6 +22,7 @@ public class UserFaker : Faker<User>
         );
     }
 
+    
     public static string GenerateDifferentCode(string code)
     {
         string differentCode;

@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
@@ -28,7 +29,12 @@ public class RegisterTests
 
     public RegisterTests()
     {
-        _sut = new RegisterCommandHandler(_userRepository, _cryptoService, _logger);
+        var settings = new CoreSettings
+        {
+            EmailConfirmationCodeLifetimeInHours = 6,
+            ForgotPasswordCodeLifetimeInHours = 6
+        };
+        _sut = new RegisterCommandHandler(_userRepository, _cryptoService, settings, _logger);
     }
 
     [Fact]

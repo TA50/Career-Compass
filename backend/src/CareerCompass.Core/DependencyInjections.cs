@@ -9,7 +9,7 @@ namespace CareerCompass.Core;
 
 public static class DependencyInjections
 {
-    public static void AddApplication(this IServiceCollection services)
+    public static void AddCore(this IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies([
             Assembly.GetAssembly(typeof(ApplicationAssemblyMarker)) ?? throw new InvalidOperationException()
@@ -17,7 +17,7 @@ public static class DependencyInjections
 
         services.AddValidatorsFromAssemblyContaining<ApplicationAssemblyMarker>();
 
-        services.AddTransient(typeof(IPipelineBehavior<,>), 
+        services.AddTransient(typeof(IPipelineBehavior<,>),
             typeof(ValidationPipelineBehavior<,>));
     }
 }

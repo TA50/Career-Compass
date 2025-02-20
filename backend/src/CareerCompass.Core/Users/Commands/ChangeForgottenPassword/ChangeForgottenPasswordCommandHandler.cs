@@ -23,8 +23,9 @@ public class ChangeForgottenPasswordCommandHandler(
         {
             return UserErrors.ChangeForgotPassword_InvalidEmail(request.Email);
         }
-        
-        if (user.ForgotPasswordCode != request.Code)
+
+        var confirmationResult = user.ConfirmForgotPassword(request.Code);
+        if (!confirmationResult)
         {
             return UserErrors.ChangeForgotPassword_InvalidCode(request.Email);
         }
@@ -38,6 +39,7 @@ public class ChangeForgottenPasswordCommandHandler(
                 result.ErrorMessage ?? "Unknown error");
             return UserErrors.ChangeForgotPassword_OperationFailed(request.Email);
         }
+
         logger.LogInformation("Successfully changed forgotten password for {Email}", request.Email);
 
         return new ChangeForgottenPasswordCommandResult(user.Id, user.Email);

@@ -1,14 +1,13 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
 using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Users;
 using CareerCompass.Core.Users;
 using CareerCompass.Core.Users.Commands.ChangeForgottenPassword;
-using CareerCompass.Core.Users.Commands.GenerateForgotPasswordCode;
 using CareerCompass.Tests.Fakers.Core;
 using FluentAssertions;
 using NSubstitute;
-using NSubstitute.ReceivedExtensions;
 using NSubstitute.ReturnsExtensions;
 
 namespace CareerCompass.Tests.Unit.Core.Users;
@@ -25,6 +24,12 @@ public class ChangeForgottenPasswordTests
     private readonly ChangeForgottenPasswordCommandHandler _sut;
     private readonly CancellationToken _cancellationToken = CancellationToken.None;
 
+    private readonly CoreSettings _settings = new CoreSettings
+    {
+        EmailConfirmationCodeLifetimeInHours = 6,
+        ForgotPasswordCodeLifetimeInHours = 6
+    };
+
     public ChangeForgottenPasswordTests()
     {
         _sut = new(_userRepository, _cryptoService, _logger);
@@ -36,7 +41,7 @@ public class ChangeForgottenPasswordTests
         // Arrange
         var user = _userFaker.Generate();
         var oldPassword = user.Password;
-        var code = user.GenerateForgotPasswordCode();
+        var code = user.GenerateForgotPasswordCode(TimeSpan.FromHours(_settings.ForgotPasswordCodeLifetimeInHours));
         var newPassword = UserFaker.GenerateDifferentPassword(user.Email);
         var request = new ChangeForgottenPasswordCommand(user.Email, code, newPassword, newPassword);
 
@@ -67,7 +72,7 @@ public class ChangeForgottenPasswordTests
         // Arrange
         var user = _userFaker.Generate();
         var oldPassword = user.Password;
-        var code = user.GenerateForgotPasswordCode();
+        var code = user.GenerateForgotPasswordCode(TimeSpan.FromHours(_settings.ForgotPasswordCodeLifetimeInHours));
         var newPassword = UserFaker.GenerateDifferentPassword(user.Email);
         const string errorMessage = "Database error";
 
@@ -99,7 +104,34 @@ public class ChangeForgottenPasswordTests
         // Arrange
         var user = _userFaker.Generate();
         var oldPassword = user.Password;
-        var userCode = user.GenerateForgotPasswordCode();
+        var userCode = user.GenerateForgotPasswordCode(TimeSpan.FromHours(_settings.ForgotPasswordCodeLifetimeInHours));
+        var inputCode = UserFaker.GenerateDifferentCode(userCode);
+        var newPassword = UserFaker.GenerateDifferentPassword(user.Email);
+        var request = new ChangeForgottenPasswordCommand(user.Email, inputCode, newPassword, newPassword);
+
+        var spec = new GetUserByEmailSpecification(request.Email)
+            .RequireConfirmation();
+        _userRepository.Single(spec, true, _cancellationToken).Returns(user);
+
+        // Act
+        var result = await _sut.Handle(request, _cancellationToken);
+        // Assert
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.ShouldBeEquivalentTo(UserErrors.ChangeForgotPassword_InvalidCode(request.Email));
+
+        _logger.Received(1).LogInformation("Changing forgotten password for {Email}", request.Email);
+        _logger.DidNotReceive().LogInformation("Successfully changed forgotten password for {Email}", request.Email);
+        await _userRepository.DidNotReceive().Save(_cancellationToken);
+    }
+
+    [Fact]
+    public async Task ShouldReturnInvalidCodeError_WhenCodeIsExpired()
+    {
+        // Arrange
+        var user = _userFaker.Generate();
+        var oldPassword = user.Password;
+        var userCode = user.GenerateForgotPasswordCode(TimeSpan.FromHours(-5));
         var inputCode = UserFaker.GenerateDifferentCode(userCode);
         var newPassword = UserFaker.GenerateDifferentPassword(user.Email);
         var request = new ChangeForgottenPasswordCommand(user.Email, inputCode, newPassword, newPassword);
@@ -126,7 +158,7 @@ public class ChangeForgottenPasswordTests
         // Arrange
         var user = _userFaker.Generate();
         var oldPassword = user.Password;
-        var code = user.GenerateForgotPasswordCode();
+        var code = user.GenerateForgotPasswordCode(TimeSpan.FromHours(_settings.ForgotPasswordCodeLifetimeInHours));
         var differentEmail = UserFaker.GenerateDifferentEmail(user.Email);
         var newPassword = UserFaker.GenerateDifferentPassword(user.Email);
         var request = new ChangeForgottenPasswordCommand(differentEmail, code, newPassword, newPassword);

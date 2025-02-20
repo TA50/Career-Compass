@@ -2,6 +2,8 @@ using System.Text.Json;
 using CareerCompass.Api.Controllers;
 using CareerCompass.Api.OpenApi;
 using CareerCompass.Api.Services;
+using CareerCompass.Core.Common;
+using CareerCompass.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -66,5 +68,28 @@ public static class DependencyInjection
         services.AddScoped<ApiControllerContext>();
         services.AddAutoMapper(typeof(Program));
         services.AddTransient<AuthenticationEmailSender>();
+    }
+
+
+    public static void ConfigureSettings(this WebApplicationBuilder builder)
+    {
+        builder.ConfigureSettings<SmtpSettings>(nameof(SmtpSettings));
+        builder.ConfigureSettings<CoreSettings>(nameof(CoreSettings));
+    }
+
+    private static void ConfigureSettings<TOptions>(this WebApplicationBuilder builder, string sectionName)
+        where TOptions : class, new()
+    {
+        var section = builder.Configuration.GetSection(sectionName);
+        if (section.Exists())
+        {
+            var options = new TOptions();
+            section.Bind(options);
+            builder.Services.AddSingleton(options);
+        }
+        else
+        {
+            throw new Exception($"{sectionName} section is missing");
+        }
     }
 }

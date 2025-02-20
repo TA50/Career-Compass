@@ -17,7 +17,11 @@ public class User : AggregateRoot<UserId>
 
     public bool EmailConfirmed { get; private set; }
     public string? EmailConfirmationCode { get; private set; }
+
+    public DateTime? EmailConfirmationCodeExpireAt { get; private set; }
     public string? ForgotPasswordCode { get; private set; }
+
+    public DateTime? ForgotPasswordCodeExpireAt { get; private set; }
 
     private User(
         UserId id,
@@ -79,13 +83,14 @@ public class User : AggregateRoot<UserId>
 
     public bool ConfirmEmail(string code)
     {
-        if (!DoesCodeMatch(EmailConfirmationCode, code))
+        if (!IsCodeValid(EmailConfirmationCode, code, EmailConfirmationCodeExpireAt))
         {
             return false;
         }
 
         EmailConfirmed = true;
         EmailConfirmationCode = null;
+        EmailConfirmationCodeExpireAt = null;
         Updated();
         return true;
     }
@@ -95,35 +100,58 @@ public class User : AggregateRoot<UserId>
     /// Sets a new email confirmation code and returns it
     /// </summary>
     /// <returns>EmailConfirmationCode</returns>
-    public string GenerateEmailConfirmationCode()
+    public string GenerateEmailConfirmationCode(TimeSpan expiresAfter)
     {
         EmailConfirmationCode = GenerateCode(length: Limits.EmailConfirmationCodeLength);
+        EmailConfirmationCodeExpireAt = DateTime.Now.Add(expiresAfter);
+
         Updated();
         return EmailConfirmationCode;
     }
 
 
-    public string GenerateForgotPasswordCode()
+    public string GenerateForgotPasswordCode(TimeSpan expiresAfter)
     {
         ForgotPasswordCode = GenerateCode(length: Limits.ForgotPasswordCodeLength);
+        ForgotPasswordCodeExpireAt = DateTime.Now.Add(expiresAfter);
+
         Updated();
         return ForgotPasswordCode;
     }
 
     public bool ConfirmForgotPassword(string code)
     {
-        if (!DoesCodeMatch(ForgotPasswordCode, code))
+        if (!IsCodeValid(code, ForgotPasswordCode, ForgotPasswordCodeExpireAt))
         {
             return false;
         }
 
         ForgotPasswordCode = null;
+        ForgotPasswordCodeExpireAt = null;
         Updated();
 
         return true;
     }
 
-    private bool DoesCodeMatch(string? actual, string expectedCode)
+
+    private bool IsCodeValid(string? actual, string? expected, DateTime? expiresAt)
+    {
+        if (actual is null || expiresAt is null) return false;
+
+        if (!DoesCodeMatch(actual, expected))
+        {
+            return false;
+        }
+
+        if (DateTime.Now > expiresAt)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool DoesCodeMatch(string? actual, string? expectedCode)
     {
         return string.IsNullOrEmpty(expectedCode)
                || string.IsNullOrEmpty(actual)

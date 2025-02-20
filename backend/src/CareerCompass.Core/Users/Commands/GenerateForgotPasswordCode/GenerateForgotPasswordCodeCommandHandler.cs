@@ -1,3 +1,4 @@
+using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Users;
@@ -9,6 +10,7 @@ namespace CareerCompass.Core.Users.Commands.GenerateForgotPasswordCode;
 
 public class GenerateForgotPasswordCodeCommandHandler(
     IUserRepository userRepository,
+    CoreSettings settings,
     ILoggerAdapter<GenerateForgotPasswordCodeCommandHandler> logger)
     : IRequestHandler<GenerateForgotPasswordCodeCommand,
         ErrorOr<GenerateForgotPasswordCodeCommandResult>>
@@ -28,7 +30,7 @@ public class GenerateForgotPasswordCodeCommandHandler(
             return UserErrors.ForgotPassword_InvalidEmail(request.Email);
         }
 
-        var code = user.GenerateForgotPasswordCode();
+        var code = user.GenerateForgotPasswordCode(TimeSpan.FromHours(settings.ForgotPasswordCodeLifetimeInHours));
         var result = await userRepository.Save(cancellationToken);
 
         if (!result.IsSuccess)
