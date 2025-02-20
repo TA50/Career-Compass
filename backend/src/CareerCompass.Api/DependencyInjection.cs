@@ -81,15 +81,10 @@ public static class DependencyInjection
         where TOptions : class, new()
     {
         var section = builder.Configuration.GetSection(sectionName);
-        if (section.Exists())
-        {
-            var options = new TOptions();
-            section.Bind(options);
-            builder.Services.AddSingleton(options);
-        }
-        else
-        {
-            throw new Exception($"{sectionName} section is missing");
-        }
+        if (!section.Exists()) return;
+        
+        var options = new TOptions();
+        section.Bind(options);
+        builder.Services.AddSingleton(options);
     }
 }
