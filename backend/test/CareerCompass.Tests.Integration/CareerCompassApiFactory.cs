@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
@@ -37,6 +38,17 @@ public class CareerCompassApiFactory : WebApplicationFactory<ApiMarker>, IAsyncL
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((context, config) =>
+        {
+            var testConfig = new Dictionary<string, string?>
+            {
+                { "Authentication:Cookie:ExpireTimeInMinutes", "30" },
+                { "RegistrationSender", "noreply@career-compass.com" }
+            };
+
+            config.AddInMemoryCollection(testConfig);
+        });
+
         builder.ConfigureTestServices(services =>
         {
             var dbContextSd = services.First(descriptor => descriptor.ServiceType == typeof(AppDbContext));
