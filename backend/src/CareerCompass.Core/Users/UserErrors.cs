@@ -326,7 +326,7 @@ public static class UserErrors
             new Dictionary<string, object>()
             {
                 { "email", email },
-                { ErrorMetaDataKey.Title, "Forgot password: invalid email" }
+                { ErrorMetaDataKey.Title, "Forgot password: invalid credentials" }
             }
         );
     }
@@ -343,17 +343,7 @@ public static class UserErrors
         );
     }
 
-    public static Error ForgotPassword_InvalidCode(string email)
-    {
-        return Error.Conflict(UserErrorCode.ForgotPassword.InvalidCode,
-            $"Invalid code provided for email ({email})",
-            new Dictionary<string, object>()
-            {
-                { "email", email },
-                { ErrorMetaDataKey.Title, "Forgot password: Invalid code" }
-            }
-        );
-    }
+ 
 
     public static Error ChangeForgotPassword_InvalidCode(string email)
     {

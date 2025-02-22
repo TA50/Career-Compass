@@ -59,7 +59,7 @@ public class UserController(
 
     [HttpGet("forgot-password")]
     [AllowAnonymous]
-    public async Task<IActionResult> GenerateForgotPasswordCode(string email, string returnUrl,
+    public async Task<IActionResult> GenerateForgotPasswordCode(string email,
         CancellationToken cancellationToken)
     {
         var input = new GenerateForgotPasswordCodeCommand(email);

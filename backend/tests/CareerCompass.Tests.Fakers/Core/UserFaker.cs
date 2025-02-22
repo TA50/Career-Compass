@@ -9,20 +9,19 @@ public class UserFaker : Faker<User>
     {
         var faker = new Faker();
         var email = faker.Internet.Email();
-        var password = faker.Internet.Password();
-        var passwordHash = faker.Random.Chars(count: 64).ToString() ?? password;
+        var password = faker.StrongPassword();
         var firstName = faker.Person.FirstName;
         var lastName = faker.Person.LastName;
 
         return User.Create(
             email,
-            passwordHash,
+            password,
             firstName,
             lastName
         );
     }
 
-    
+
     public static string GenerateDifferentCode(string code)
     {
         string differentCode;
@@ -39,7 +38,7 @@ public class UserFaker : Faker<User>
         string differentPassword;
         do
         {
-            differentPassword = new Faker().Internet.Password();
+            differentPassword = new Faker().StrongPassword();
         } while (differentPassword == password);
 
         return differentPassword;

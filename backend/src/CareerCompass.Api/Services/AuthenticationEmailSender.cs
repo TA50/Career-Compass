@@ -1,9 +1,7 @@
-using System.Web;
-using CareerCompass.Api.Controllers;
+using CareerCompass.Api.Emails;
 using CareerCompass.Core.Common;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Email;
-using CareerCompass.Core.Users;
 using ErrorOr;
 
 namespace CareerCompass.Api.Services;
@@ -25,18 +23,7 @@ public class AuthenticationEmailSender(
         }
 
 
-        var mail = new PlainTextMail(from, email).WithSubject("Welcome to Career Compass")
-            .WithBody($@"
-            Welcome to Career Compass!.
-
-            Please confirm your email using the code below.
-            {code}.
-
-            This code will expire in {coreSettings.EmailConfirmationCodeLifetimeInHours} hours.
-
-
-            If you did not register, please ignore this email.
-            ");
+        var mail = new EmailConfirmationEmail(from, email, code, coreSettings.EmailConfirmationCodeLifetimeInHours);
 
         try
         {
@@ -62,15 +49,7 @@ public class AuthenticationEmailSender(
         }
 
 
-        var mail = new PlainTextMail(from, email).WithSubject(@"Change your password")
-            .WithBody($@"
-            You have requested to change your password. Use the code below to change your password. 
-            {code}.
-
-            This code will expire in {coreSettings.ForgotPasswordCodeLifetimeInHours} hours.
-
-            If you did not request to change your password, please ignore this email.
-            ");
+        var mail = new ForgotPasswordEmail(from, email, code, coreSettings.ForgotPasswordCodeLifetimeInHours);
 
         try
         {
