@@ -22,6 +22,7 @@ public class GetScenarioByIdQueryHandler(
             return ScenarioErrors.ScenarioRead_ScenarioNotFound(request.Id);
         }
 
+        logger.LogInformation("Got scenario {ScenarioId} for user {@UserId}", request.Id, request.UserId);
         return result;
     }
 }

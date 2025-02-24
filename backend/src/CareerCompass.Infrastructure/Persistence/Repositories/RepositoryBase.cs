@@ -81,6 +81,21 @@ internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext)
         return set.AnyAsync(e => e.Id == id, cancellationToken ?? CancellationToken.None);
     }
 
+    public async Task<RepositoryResult> Delete(TId id, CancellationToken? cancellationToken = null)
+    {
+        try
+        {
+            await dbContext.Set<TEntity>().Where(t => t.Id == id)
+                .ExecuteDeleteAsync(cancellationToken ?? CancellationToken.None);
+
+            return new RepositoryResult();
+        }
+        catch (Exception e)
+        {
+            return new RepositoryResult(e.Message);
+        }
+    }
+
     public async Task<RepositoryResult> Create(TEntity entity, CancellationToken? cancellationToken = null)
     {
         try

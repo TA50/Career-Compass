@@ -79,6 +79,9 @@ public interface IRepository<TEntity, TId>
         TId id,
         CancellationToken? cancellationToken = null);
 
+    public Task<RepositoryResult> Delete(TId id,
+        CancellationToken? cancellationToken = null);
+
     /// <summary>
     /// Create a new entity in the database
     /// </summary>

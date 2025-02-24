@@ -24,6 +24,13 @@ public static class FieldErrorCode
         private static string _prefix = $"{_fieldPrefix}.{20}";
         public static string TagNotFound = $"{_prefix}.{20}";
     }
+
+    public static class Delete
+    {
+        private static string _prefix = $"{_fieldPrefix}.{30}";
+        public static string FieldNotFound = $"{_prefix}.{10}";
+        public static string OperationFailed = $"{_prefix}.{20}";
+    }
 }
 
 public static class FieldErrors
@@ -79,6 +86,32 @@ public static class FieldErrors
                 { "FieldId", userId.ToString() },
                 { ErrorMetaDataKey.Title, $"FieldRead: Field with the given user id and field id was not found!" }
             });
+
+    #endregion
+
+    #region Delete
+
+    public static Error FieldDelete_OperationFailed(FieldId fieldId)
+    {
+        return Error.Failure(FieldErrorCode.Delete.OperationFailed,
+            $"Failed to delete field with id '{fieldId}'",
+            new Dictionary<string, object>
+            {
+                { "FieldId", fieldId.ToString() },
+                { ErrorMetaDataKey.Title, "FieldDelete: Failed to delete field" }
+            });
+    }
+
+    public static Error FieldDelete_FieldNotFound(FieldId fieldId)
+    {
+        return Error.Validation(FieldErrorCode.Delete.FieldNotFound,
+            $"Field with id '{fieldId}' was not found",
+            new Dictionary<string, object>
+            {
+                { "FieldId", fieldId.ToString() },
+                { ErrorMetaDataKey.Title, "FieldDelete: Field with the given id was not found!" }
+            });
+    }
 
     #endregion
 }
