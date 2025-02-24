@@ -44,7 +44,7 @@ public class ForgotPasswordTests
     public async Task SendForgotPasswordEmailWithCode_WhenInputIsValid()
     {
         // Arrange
-        var user = await CreateUser();
+        var user = await _factory.CreateUser();
 
         // Act
         var result = await _client.GetAsync($"/users/forgot-password?email={user.Email}");
@@ -68,7 +68,7 @@ public class ForgotPasswordTests
 
 
         // Cleanup
-        await RemoveUser(user.Email);
+        await _factory.RemoveUser(user.Email);
     }
 
 
@@ -132,7 +132,7 @@ public class ForgotPasswordTests
     public async Task ShouldChangePassword_WhenInputIsValid()
     {
         // Arrange
-        var user = await CreateUser();
+        var user = await _factory.CreateUser();
         user = await _dbContext.Users.FirstAsync(u => u.Id == user.Id);
 
         var forgotPasswordCode =
@@ -156,14 +156,14 @@ public class ForgotPasswordTests
 
         // Cleanup
 
-        await RemoveUser(user.Email);
+        await _factory.RemoveUser(user.Email);
     }
 
     [Fact]
     public async Task ShouldReturnInvalidCode_WhenCodeIsNotCorrect()
     {
         // Arrange
-        var user = await CreateUser();
+        var user = await _factory.CreateUser();
         user = await _dbContext.Users.FirstAsync(u => u.Id == user.Id);
 
         var forgotPasswordCode =
@@ -196,14 +196,14 @@ public class ForgotPasswordTests
 
         // Cleanup
 
-        await RemoveUser(user.Email);
+        await _factory.RemoveUser(user.Email);
     }
 
     [Fact]
     public async Task ShouldReturnInvalidCode_WhenCodeIsExpired()
     {
         // Arrange
-        var user = await CreateUser();
+        var user = await _factory.CreateUser();
         user = await _dbContext.Users.FirstAsync(u => u.Id == user.Id);
 
         var forgotPasswordCode =
@@ -236,14 +236,14 @@ public class ForgotPasswordTests
 
         // Cleanup
 
-        await RemoveUser(user.Email);
+        await _factory.RemoveUser(user.Email);
     }
 
     [Fact]
     public async Task ShouldReturnBadRequest_WhenEmailIsNotCorrect()
     {
         // Arrange
-        var user = await CreateUser();
+        var user = await _factory.CreateUser();
         user = await _dbContext.Users.FirstAsync(u => u.Id == user.Id);
 
         var forgotPasswordCode =
@@ -275,14 +275,14 @@ public class ForgotPasswordTests
 
         // Cleanup
 
-        await RemoveUser(user.Email);
+        await _factory.RemoveUser(user.Email);
     }
 
     [Fact]
     public async Task ShouldReturnValidationProblemDetails_WhenFieldsAreEmpty()
     {
         // Arrange
-        var user = await CreateUser();
+        var user = await _factory.CreateUser();
         user = await _dbContext.Users.FirstAsync(u => u.Id == user.Id);
 
         var forgotPasswordCode =
@@ -319,29 +319,8 @@ public class ForgotPasswordTests
 
         // Cleanup
 
-        await RemoveUser(user.Email);
+        await _factory.RemoveUser(user.Email);
     }
 
     #endregion
-
-    private async Task<User> CreateUser()
-    {
-        var user = _userFaker.Generate();
-        var password = user.Password;
-        var hash = _cryptoService.Hash(password);
-        user.SetPassword(hash);
-        var code = user.GenerateEmailConfirmationCode(
-            TimeSpan.FromHours(_coreSettings.EmailConfirmationCodeLifetimeInHours));
-        user.ConfirmEmail(code);
-
-        _factory.DbContext.Users.Add(user);
-        await _factory.DbContext.SaveChangesAsync();
-
-        return user;
-    }
-
-    private async Task RemoveUser(string email)
-    {
-        await _factory.DbContext.Users.Where(u => u.Email == email).ExecuteDeleteAsync();
-    }
 }

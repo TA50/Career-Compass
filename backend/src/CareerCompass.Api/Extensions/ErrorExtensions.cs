@@ -13,6 +13,13 @@ public static class ErrorExtensions
         int? statusCode = null,
         string? details = null)
     {
+        var includeValidationBehaviorErrors = errors.Any(e => e.NumericType == CustomErrorType.ValidationBehavior);
+
+        if (includeValidationBehaviorErrors)
+        {
+            return errors.ToValidationProblemDetails();
+        }
+
         if (errors.Count == 0)
         {
             return new ProblemDetails
@@ -24,18 +31,10 @@ public static class ErrorExtensions
         }
 
 
-        var first = errors.First().ToProblemDetails(
+        return errors.First().ToProblemDetails(
             title,
             statusCode,
             details);
-
-        if (first.Status == StatusCodes.Status400BadRequest)
-        {
-            return errors.ToValidationProblemDetails();
-        }
-
-
-        return first;
     }
 
 
@@ -61,16 +60,19 @@ public static class ErrorExtensions
         int? inStatusCode = null,
         string? details = null)
     {
-        var statusCode = inStatusCode ?? error.Type switch
+        var statusCode = inStatusCode ?? error.NumericType switch
         {
-            ErrorType.Conflict => StatusCodes.Status409Conflict,
-            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.Validation => StatusCodes.Status400BadRequest,
-            ErrorType.Unexpected => StatusCodes.Status500InternalServerError,
-            ErrorType.Failure => StatusCodes.Status500InternalServerError,
+            (int)ErrorType.Conflict => StatusCodes.Status409Conflict,
+            (int)ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            (int)ErrorType.Forbidden => StatusCodes.Status403Forbidden,
+            (int)ErrorType.Validation => StatusCodes.Status400BadRequest,
+            (int)ErrorType.Unexpected => StatusCodes.Status500InternalServerError,
+            (int)ErrorType.Failure => StatusCodes.Status500InternalServerError,
+            (int)ErrorType.NotFound => StatusCodes.Status404NotFound,
+            CustomErrorType.ValidationBehavior => StatusCodes.Status400BadRequest,
             _ => 500
         };
+
 
         var extensions = new Dictionary<string, object?> { { "code", error.Code } };
         var metadata = error.Metadata;

@@ -7,18 +7,18 @@ public static class UserErrorCode
 {
     private static class Prefixes
     {
-        public static readonly string CreationCode = $"{_userErrorPrefix}.{10}";
-        public static readonly string QueryCode = $"{_userErrorPrefix}.{20}";
-        public static readonly string ModificationCode = $"{_userErrorPrefix}.{30}";
-        public static readonly string DeleteCode = $"{_userErrorPrefix}.{40}";
-        public static readonly string EmailConfirmationCode = $"{_userErrorPrefix}.{50}";
-        public static readonly string LoginCode = $"{_userErrorPrefix}.{60}";
-        public static readonly string ForgotPassword = $"{_userErrorPrefix}.{70}";
-        public static readonly string ResetPasswordCode = $"{_userErrorPrefix}.{80}";
-        public static readonly string ChangeEmailCode = $"{_userErrorPrefix}.{90}";
+        public static readonly string CreationCode = $"{UserErrorPrefix}.{10}";
+        public static readonly string QueryCode = $"{UserErrorPrefix}.{20}";
+        public static readonly string ModificationCode = $"{UserErrorPrefix}.{30}";
+        public static readonly string DeleteCode = $"{UserErrorPrefix}.{40}";
+        public static readonly string EmailConfirmationCode = $"{UserErrorPrefix}.{50}";
+        public static readonly string LoginCode = $"{UserErrorPrefix}.{60}";
+        public static readonly string ForgotPasswordCode = $"{UserErrorPrefix}.{70}";
+        public static readonly string ResetPasswordCode = $"{UserErrorPrefix}.{80}";
+        public static readonly string ChangeEmailCode = $"{UserErrorPrefix}.{90}";
     }
 
-    private static readonly string _userErrorPrefix =
+    private static readonly string UserErrorPrefix =
         ApplicationErrorPrefix.Create(ApplicationErrorPrefix.ApplicationErrorType.User);
 
     public static class Creation
@@ -74,9 +74,9 @@ public static class UserErrorCode
 
     public static class ForgotPassword
     {
-        public static string OperationFailed => $"{Prefixes.ForgotPassword}.10";
-        public static string InvalidEmail => $"{Prefixes.ForgotPassword}.20";
-        public static string InvalidCode => $"{Prefixes.ForgotPassword}.30";
+        public static string OperationFailed => $"{Prefixes.ForgotPasswordCode}.10";
+        public static string InvalidEmail => $"{Prefixes.ForgotPasswordCode}.20";
+        public static string InvalidCode => $"{Prefixes.ForgotPasswordCode}.30";
     }
 }
 
@@ -90,7 +90,7 @@ public static class UserErrors
             $"User with id ({userId}) was not found ",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
+                { "userId", userId.ToString() },
                 { ErrorMetaDataKey.Title, "User not found" }
             }
         );
@@ -106,7 +106,7 @@ public static class UserErrors
             $"User with id ({userId}) was not found ",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
+                { "userId", userId.ToString() },
                 { ErrorMetaDataKey.Title, "User not found" }
             }
         );
@@ -118,7 +118,7 @@ public static class UserErrors
             $"User modification failed for user with id ({userId})",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
+                { "userId", userId.ToString() },
                 { ErrorMetaDataKey.Title, "User modification failed" }
             }
         );
@@ -159,11 +159,11 @@ public static class UserErrors
     public static Error UserEmailConfirmation_InvalidEmailConfirmationCode(UserId userId)
     {
         return Error.Validation(UserErrorCode.EmailConfirmation.InvalidEmailConfirmationCode,
-            $"Email confirmation failed for user with userId ({userId}). the provided confirmation code is not correct",
+            $"Email confirmation error for user with userId ({userId}). the provided confirmation code is not correct",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
-                { ErrorMetaDataKey.Title, "Email confirmation failed, invalid confirmation code" }
+                { "userId", userId.ToString() },
+                { ErrorMetaDataKey.Title, "Email confirmation error, invalid confirmation code" }
             }
         );
     }
@@ -172,11 +172,11 @@ public static class UserErrors
     public static Error UserEmailConfirmation_UserNotFound(UserId userId)
     {
         return Error.Validation(UserErrorCode.EmailConfirmation.UserNotFound,
-            $"Email confirmation failed. User with userId ({userId}) was not found",
+            $"Email confirmation error. User with userId ({userId}) was not found",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
-                { ErrorMetaDataKey.Title, "Email confirmation failed, user not found" }
+                { "userId", userId.ToString() },
+                { ErrorMetaDataKey.Title, "Email confirmation error, user not found" }
             }
         );
     }
@@ -187,7 +187,7 @@ public static class UserErrors
             $"Email confirmation failed for user with userId ({userId})",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
+                { "userId", userId.ToString() },
                 { ErrorMetaDataKey.Title, "Email confirmation failed" }
             }
         );
@@ -247,7 +247,7 @@ public static class UserErrors
             $"User with id ({userId}) was not found ",
             new Dictionary<string, object>()
             {
-                { "userId", userId },
+                { "userId", userId.ToString() },
                 { ErrorMetaDataKey.Title, "User not found" }
             }
         );
@@ -343,7 +343,6 @@ public static class UserErrors
         );
     }
 
- 
 
     public static Error ChangeForgotPassword_InvalidCode(string email)
     {

@@ -1,5 +1,10 @@
 namespace CareerCompass.Core.Common;
 
+public static class CustomErrorType
+{
+    public const int ValidationBehavior = 100;
+}
+
 public static class ErrorMetaDataKey
 {
     public const string Title = "title";
@@ -22,5 +27,4 @@ public static class ApplicationErrorPrefix
         Field = 40,
         Configuration = 100
     }
-    
 }

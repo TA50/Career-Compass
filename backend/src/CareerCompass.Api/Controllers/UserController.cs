@@ -22,8 +22,7 @@ namespace CareerCompass.Api.Controllers;
 [Route("users")]
 public class UserController(
     ApiControllerContext context,
-    AuthenticationEmailSender emailSender,
-    ILoggerAdapter<UserController> logger)
+    AuthenticationEmailSender emailSender)
     : ApiController(context)
 {
     [HttpPut]
@@ -175,10 +174,10 @@ public class UserController(
     {
         var input = new ResetPasswordCommand(CurrentUserId, dto.OldPassword, dto.NewPassword, dto.ConfirmNewPassword);
         var result = await Context.Sender.Send(input, cancellationToken);
-
+        
         if (result.IsError)
         {
-            return result.FirstError.ToProblemDetails()
+            return result.Errors.ToProblemDetails()
                 .ToActionResult<ResetPasswordResponse>();
         }
 

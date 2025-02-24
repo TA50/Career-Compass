@@ -200,4 +200,18 @@ public static class ScenarioErrors
     }
 
     #endregion
+
+    public static Error ScenarioRead_ScenarioNotFound(ScenarioId id)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            { "ScenarioId", id.ToString() },
+            {
+                ErrorMetaDataKey.Title,
+                "Scenario Read: The requested scenario does not exist"
+            }
+        };
+        return Error.NotFound(ScenarioErrorCode.Read.ScenarioNotFound,
+            $"Scenario with id {id} does not exist", metadata);
+    }
 }

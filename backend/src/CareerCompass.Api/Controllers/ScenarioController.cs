@@ -1,6 +1,7 @@
 using CareerCompass.Api.Contracts.Scenarios;
 using CareerCompass.Api.Extensions;
 using CareerCompass.Core.Scenarios;
+using CareerCompass.Core.Scenarios.Queries.GetScenarioByIdQuery;
 using CareerCompass.Core.Scenarios.Queries.GetScenariosQuery;
 using CareerCompass.Core.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -47,13 +48,14 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
     [HttpGet("{id}")]
     public async Task<ActionResult<ScenarioDto>> Get(Guid id)
     {
-        var scenario = Scenario.Create(
-            userId: UserId.CreateUnique(),
-            title: "",
-            date: DateTime.Today
-        );
+        var query = new GetScenarioByIdQuery(ScenarioId.Create(id), CurrentUserId);
 
-        return Ok(scenario);
+        var result = await Context.Sender.Send(query);
+
+        return result.Match(
+            value => Ok(Context.Mapper.Map<ScenarioDto>(value)),
+            errors => errors.ToProblemDetails().ToActionResult<ScenarioDto>()
+        );
     }
 
     [HttpGet]

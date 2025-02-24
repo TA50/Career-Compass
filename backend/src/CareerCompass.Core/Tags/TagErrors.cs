@@ -15,13 +15,19 @@ public static class TagErrorCode
 
         public static string UserNotFound => $"{_prefix}.{10}";
         public static string TagNameAlreadyExists => $"{_prefix}.{20}";
-        
+
         public static string FailedToCreateTag => $"{_prefix}.{30}";
     }
 
     public static class Read
     {
         private static readonly string _prefix = $"{_tagErrorPrefix}.{20}";
+        public static string TagNotFound => $"{_prefix}.10";
+    }
+
+    public static class Delete
+    {
+        private static readonly string _prefix = $"{_tagErrorPrefix}.{30}";
         public static string TagNotFound => $"{_prefix}.10";
     }
 }
@@ -55,7 +61,7 @@ public static class TagErrors
             $"Tag with name {tagName} already exists for user with id {userId}",
             metadata);
     }
-    
+
     public static Error TagCreation_FailedToCreateTag(UserId userId, string tagName)
     {
         var metadata = new Dictionary<string, object>
@@ -80,7 +86,7 @@ public static class TagErrors
             { "TagId", tagId.ToString() },
             { ErrorMetaDataKey.Title, "Tag Read: Tag was not found " }
         };
-        return Error.Validation(TagErrorCode.Read.TagNotFound,
+        return Error.NotFound(TagErrorCode.Read.TagNotFound,
             $"Tag with  userId {userId} and tagId {tagId} was not found.", metadata);
     }
 

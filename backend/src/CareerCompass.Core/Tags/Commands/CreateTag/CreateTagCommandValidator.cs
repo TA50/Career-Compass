@@ -9,6 +9,6 @@ public class CreateTagCommandValidator : AbstractValidator<CreateTagCommand>
     {
         RuleFor(x => x.UserId).NotEmpty();
         RuleFor(x => x.Name).NotEmpty()
-            .MaximumLength(Limits.MaxScenarioTitleLength);
+            .MaximumLength(Limits.MaxNameLength);
     }
 }

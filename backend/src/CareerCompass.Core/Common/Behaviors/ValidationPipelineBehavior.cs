@@ -38,7 +38,8 @@ public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior
 
 
         var errors = validationResult
-            .Errors.ConvertAll(e => Error.Validation(e.PropertyName, e.ErrorMessage));
+            .Errors.ConvertAll(e => Error.Custom(CustomErrorType.ValidationBehavior, e.PropertyName, e.ErrorMessage));
+
 
         return (dynamic)errors;
     }

@@ -1,7 +1,11 @@
+using System.Net;
 using CareerCompass.Api;
 using CareerCompass.Core.Common;
+using CareerCompass.Core.Common.Abstractions.Crypto;
+using CareerCompass.Core.Users;
 using CareerCompass.Infrastructure.Configuration;
 using CareerCompass.Infrastructure.Persistence;
+using CareerCompass.Tests.Fakers.Core;
 using CareerCompass.Tests.Integration.EmailServerClient;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
@@ -78,6 +82,45 @@ public class CareerCompassApiFactory : WebApplicationFactory<ApiMarker>, IAsyncL
         });
 
         base.ConfigureWebHost(builder);
+    }
+
+    public new HttpClient CreateClient()
+    {
+        var options = new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("https://localhost")
+        };
+        return base.CreateClient(options);
+    }
+
+    public async Task<User> CreateUser(string? plainPassword = null)
+    {
+        var cryptoService = Services.GetRequiredService<ICryptoService>();
+        var coreSettings = Services.GetRequiredService<CoreSettings>();
+        var userFaker = new UserFaker();
+        var user = userFaker.Generate();
+        var password = plainPassword ?? user.Password;
+        var hash = cryptoService.Hash(password);
+        user.SetPassword(hash);
+        var code = user.GenerateEmailConfirmationCode(
+            TimeSpan.FromHours(coreSettings.EmailConfirmationCodeLifetimeInHours));
+        user.ConfirmEmail(code);
+
+        DbContext.Users.Add(user);
+        await DbContext.SaveChangesAsync();
+
+        return user;
+    }
+
+    
+    public async Task RemoveUser(string email)
+    {
+        await DbContext.Users.Where(u => u.Email == email).ExecuteDeleteAsync();
+    }
+
+    public async Task RemoveUser(UserId userId)
+    {
+        await DbContext.Users.Where(u => u.Id == userId).ExecuteDeleteAsync();
     }
 
     public async Task InitializeAsync()

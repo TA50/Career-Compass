@@ -72,7 +72,7 @@ public static class FieldErrors
     #region Read
 
     public static Error FieldRead_FieldNotFound(UserId userId, FieldId fieldId) =>
-        Error.Validation(FieldErrorCode.Read.TagNotFound,
+        Error.NotFound(FieldErrorCode.Read.TagNotFound,
             $" with user id : {userId} and field id : {fieldId} does not exist", new Dictionary<string, object>
             {
                 { "UserId", userId.ToString() },
