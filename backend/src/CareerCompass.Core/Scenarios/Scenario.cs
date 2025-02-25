@@ -10,8 +10,8 @@ public class Scenario : AggregateRoot<ScenarioId>
 {
     private Scenario(ScenarioId id,
         string title,
-        ICollection<TagId> tagIds,
-        ICollection<ScenarioField> scenarioFields,
+        List<TagId> tagIds,
+        List<ScenarioField> scenarioFields,
         UserId userId,
         DateTime? date) : base(id)
     {
@@ -23,8 +23,8 @@ public class Scenario : AggregateRoot<ScenarioId>
         Created();
     }
 
-    private ICollection<ScenarioField> _scenarioFields;
-    private ICollection<TagId> _tagIds;
+    private List<ScenarioField> _scenarioFields = [];
+    private ICollection<TagId> _tagIds = [];
 
     public string Title { get; private set; }
 
@@ -39,8 +39,8 @@ public class Scenario : AggregateRoot<ScenarioId>
     {
         return new(ScenarioId.CreateUnique(),
             title,
-            new List<TagId>(),
-            new List<ScenarioField>(),
+            [],
+            [],
             userId,
             date
         );
@@ -53,9 +53,38 @@ public class Scenario : AggregateRoot<ScenarioId>
         Updated();
     }
 
+    public void UpdateScenarioField(FieldId fieldId, string value)
+    {
+        var sf = GetScenarioField(fieldId);
+        if (sf is null) return;
+
+        sf.SetValue(value);
+        Updated();
+    }
+
+    public void RemoveScenarioField(FieldId fieldId)
+    {
+        var sf = GetScenarioField(fieldId);
+        if (sf is null) return;
+
+        _scenarioFields.Remove(sf);
+        Updated();
+    }
+
+    public ScenarioField? GetScenarioField(FieldId fieldId)
+    {
+        return _scenarioFields.FirstOrDefault(sf => sf.FieldId == fieldId);
+    }
+
     public void AddTag(TagId tagId)
     {
         _tagIds.Add(tagId);
+        Updated();
+    }
+
+    public void RemoveTag(TagId tagId)
+    {
+        _tagIds.Remove(tagId);
         Updated();
     }
 

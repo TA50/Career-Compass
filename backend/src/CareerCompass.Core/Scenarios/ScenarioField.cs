@@ -17,6 +17,10 @@ public class ScenarioField : Entity<ScenarioFieldId>
         Value = value;
     }
 
+    public void SetValue(string value)
+    {
+        Value = value;
+    }
 
     public static ScenarioField Create(FieldId fieldId, string value)
     {
