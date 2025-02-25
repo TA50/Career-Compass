@@ -1,7 +1,7 @@
 using CareerCompass.Core.Common;
 using FluentValidation;
 
-namespace CareerCompass.Core.Tags.Commands.CreateTag;
+namespace CareerCompass.Core.Tags.Commands.Create;
 
 public class CreateTagCommandValidator : AbstractValidator<CreateTagCommand>
 {

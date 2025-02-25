@@ -1,12 +1,10 @@
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Tags;
-using CareerCompass.Core.Common.Specifications.Users;
-using CareerCompass.Core.Users;
 using ErrorOr;
 using MediatR;
 
-namespace CareerCompass.Core.Tags.Commands.CreateTag;
+namespace CareerCompass.Core.Tags.Commands.Create;
 
 public class CreateTagCommandHandler(
     ITagRepository tagRepository,

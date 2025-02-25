@@ -3,8 +3,8 @@ using CareerCompass.Core.Scenarios;
 
 namespace CareerCompass.Core.Common.Specifications.Scenarios;
 
-public class GetScenarioContainingField(FieldId fieldId)
-    : EquatableModel<GetScenarioContainingField>, ISpecification<Scenario, ScenarioId>
+public class GetScenarioHavingField(FieldId fieldId)
+    : EquatableModel<GetScenarioHavingField>, ISpecification<Scenario, ScenarioId>
 {
     public IQueryable<Scenario> Apply(IQueryable<Scenario> query)
     {

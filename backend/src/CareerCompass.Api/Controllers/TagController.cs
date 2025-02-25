@@ -1,10 +1,12 @@
 using CareerCompass.Api.Contracts.Tags;
 using CareerCompass.Api.Extensions;
 using CareerCompass.Core.Tags;
-using CareerCompass.Core.Tags.Commands.CreateTag;
+using CareerCompass.Core.Tags.Commands.Create;
+using CareerCompass.Core.Tags.Commands.Delete;
 using CareerCompass.Core.Tags.Queries.GetTagByIdQuery;
 using CareerCompass.Core.Tags.Queries.GetTagsQuery;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 namespace CareerCompass.Api.Controllers;
 
@@ -53,5 +55,20 @@ public class TagController(ApiControllerContext context) : ApiController(context
             value => Ok(Context.Mapper.Map<IList<TagDto>>(value)),
             error => error.ToProblemDetails().ToActionResult<IList<TagDto>>()
         );
+    }
+
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var command = new DeleteTagCommand(CurrentUserId, TagId.Create(id));
+
+        var result = await Context.Sender.Send(command);
+        if (result.IsError)
+        {
+            return result.ErrorsOrEmptyList.ToProblemDetails().ToActionResult();
+        }
+
+        return NoContent();
     }
 }

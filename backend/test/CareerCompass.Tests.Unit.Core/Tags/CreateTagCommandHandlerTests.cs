@@ -2,7 +2,7 @@ using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Repositories;
 using CareerCompass.Core.Common.Specifications.Tags;
 using CareerCompass.Core.Tags;
-using CareerCompass.Core.Tags.Commands.CreateTag;
+using CareerCompass.Core.Tags.Commands.Create;
 using CareerCompass.Core.Users;
 using FluentAssertions;
 using NSubstitute;

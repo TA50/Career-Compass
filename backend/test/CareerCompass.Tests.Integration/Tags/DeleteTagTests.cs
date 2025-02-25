@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Bogus;
 using CareerCompass.Api.Contracts.Users;
-using CareerCompass.Core.Fields;
+using CareerCompass.Core.Tags;
 using CareerCompass.Core.Users;
 using CareerCompass.Tests.Fakers;
 using FluentAssertions;
@@ -10,16 +10,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace CareerCompass.Tests.Integration.Fields;
+namespace CareerCompass.Tests.Integration.Tags;
 
 [Collection(nameof(ApiCollection))]
-public class DeleteFieldTests
+public class DeleteTagTests
 {
     private readonly CareerCompassApiFactory _factory;
     private readonly HttpClient _client;
     private readonly Faker _faker;
 
-    public DeleteFieldTests(CareerCompassApiFactory factory)
+    public DeleteTagTests(CareerCompassApiFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();
@@ -27,21 +27,21 @@ public class DeleteFieldTests
     }
 
     [Fact]
-    public async Task ShouldDeleteField_WhenFieldExists()
+    public async Task ShouldDeleteTag_WhenTagExists()
     {
         // Arrange
         var userId = await Login();
-        var field = Field.Create(userId, _faker.Random.AlphaNumeric(10), _faker.Random.AlphaNumeric(10));
-        _factory.DbContext.Fields.Add(field);
+        var tag = Tag.Create(userId, _faker.Random.AlphaNumeric(10));
+        _factory.DbContext.Tags.Add(tag);
         await _factory.DbContext.SaveChangesAsync();
 
         // Act
-        var response = await _client.DeleteAsync($"fields/{field.Id}");
+        var response = await _client.DeleteAsync($"tags/{tag.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var entity = await _factory.DbContext.Fields.FirstOrDefaultAsync(f => f.Id == field.Id);
+        var entity = await _factory.DbContext.Tags.FirstOrDefaultAsync(f => f.Id == tag.Id);
         entity.Should().BeNull();
 
         // Cleanup
@@ -51,25 +51,26 @@ public class DeleteFieldTests
 
 
     [Fact]
-    public async Task ShouldReturnNotFound_WhenFieldDoesNotExist()
+    public async Task ShouldReturnNotFound_WhenTagDoesNotExist()
     {
         // Arrange
         var userId = await Login();
-        var nonExistentFieldId = Guid.NewGuid();
+        var nonExistentTagId = Guid.Empty;
 
         // Act
-        var response = await _client.DeleteAsync($"fields/{nonExistentFieldId}");
+        var response = await _client.DeleteAsync($"tags/{nonExistentTagId}");
         var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var expected = new ProblemDetails
         {
-            Title = "FieldDelete: Field with the given id was not found!",
+            Title = "Tag Delete: Tag was not found ",
             Status = StatusCodes.Status400BadRequest,
-            Detail = $"Field with id '{nonExistentFieldId}' was not found",
+            Detail = $"Tag with tagId {nonExistentTagId} was not found."
         };
-        expected.Extensions.Add("code", "10.40.30.10");
+        expected.Extensions.Add("code", "10.20.30.10");
+
         problemDetails.Should().NotBeNull();
 
 
@@ -82,10 +83,10 @@ public class DeleteFieldTests
     public async Task ShouldReturnUnauthorized_WhenUserIsNotAuthenticated()
     {
         // Arrange
-        var fieldId = Guid.NewGuid();
+        var tagId = Guid.NewGuid();
 
         // Act
-        var response = await _client.DeleteAsync($"fields/{fieldId}");
+        var response = await _client.DeleteAsync($"tags/{tagId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

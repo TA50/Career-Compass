@@ -29,6 +29,7 @@ public static class TagErrorCode
     {
         private static readonly string _prefix = $"{_tagErrorPrefix}.{30}";
         public static string TagNotFound => $"{_prefix}.10";
+        public static string OperationFailed => $"{_prefix}.20";
     }
 }
 
@@ -88,6 +89,33 @@ public static class TagErrors
         };
         return Error.NotFound(TagErrorCode.Read.TagNotFound,
             $"Tag with  userId {userId} and tagId {tagId} was not found.", metadata);
+    }
+
+    #endregion
+
+    #region Delete
+
+    public static Error TagDelete_TagNotFound(TagId tagId)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            { "TagId", tagId.ToString() },
+            { ErrorMetaDataKey.Title, "Tag Delete: Tag was not found " }
+        };
+        return Error.Validation(TagErrorCode.Delete.TagNotFound,
+            $"Tag with tagId {tagId} was not found.", metadata);
+    }
+
+
+    public static Error TagDelete_OperationFailed(TagId tagId)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            { "TagId", tagId.ToString() },
+            { ErrorMetaDataKey.Title, "Tag Delete: Failed to delete tag " }
+        };
+        return Error.Validation(TagErrorCode.Delete.OperationFailed,
+            $"Failed to delete tag with tagId {tagId}.", metadata);
     }
 
     #endregion

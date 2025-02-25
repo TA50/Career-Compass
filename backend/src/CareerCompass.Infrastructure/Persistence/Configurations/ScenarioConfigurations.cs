@@ -1,6 +1,7 @@
 using CareerCompass.Core.Common;
 using CareerCompass.Core.Fields;
 using CareerCompass.Core.Scenarios;
+using CareerCompass.Core.Tags;
 using CareerCompass.Core.Users;
 using CareerCompass.Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +80,7 @@ internal class ScenarioConfigurations : IEntityTypeConfiguration<Scenario>
 
 
             tib.HasKey("Id");
+            tib.Property<int>("Id"); // Define the shadow property
 
             tib.Property(t => t.Value)
                 .HasColumnName("ScenarioTagId")
