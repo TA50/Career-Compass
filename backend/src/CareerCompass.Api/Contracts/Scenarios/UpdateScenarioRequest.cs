@@ -7,7 +7,7 @@ using CareerCompass.Core.Users;
 
 namespace CareerCompass.Api.Contracts.Scenarios;
 
-public class UpdateScenarioFieldDto
+public class UpdateScenarioFieldRequest
 {
     public string FieldId { get; set; }
     public string Value { get; set; }
@@ -18,14 +18,14 @@ public class UpdateScenarioFieldDto
     }
 }
 
-public record UpdateScenarioDto
+public record UpdateScenarioRequest
 {
     public string Id { get; set; }
     public string Title { get; set; }
     public IList<string> TagIds { get; set; }
 
     public DateTime? Date { get; set; }
-    public IList<UpdateScenarioFieldDto> ScenarioFields { get; set; }
+    public IList<UpdateScenarioFieldRequest> ScenarioFields { get; set; }
 
     public UpdateScenarioCommand ToUpdateScenarioCommand(UserId userId)
     {

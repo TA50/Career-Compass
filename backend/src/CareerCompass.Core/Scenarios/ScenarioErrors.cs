@@ -36,6 +36,13 @@ public static class ScenarioErrorCode
         public static readonly string UserNotFound = $"{Prefix}.{40}";
         public static readonly string ModificationFailed = $"{Prefix}.{50}";
     }
+
+    public static class Deletion
+    {
+        private static readonly string Prefix = $"{ScenarioErrorPrefix}.{40}";
+        public static readonly string ScenarioNotFound = $"{Prefix}.{10}";
+        public static readonly string DeletionFailed = $"{Prefix}.{20}";
+    }
 }
 
 public static class ScenarioErrors
@@ -148,7 +155,7 @@ public static class ScenarioErrors
                 "Scenario Modification Validation: The provided user id for this scenario does not exist"
             }
         };
-        return Error.Validation(ScenarioErrorCode.Creation.UserNotFound,
+        return Error.Validation(ScenarioErrorCode.Modification.UserNotFound,
             $"User with id {userId} does not exist", metadata);
     }
 
@@ -199,7 +206,6 @@ public static class ScenarioErrors
             $"User with id {userId} does not exist", metadata);
     }
 
-    #endregion
 
     public static Error ScenarioRead_ScenarioNotFound(ScenarioId id)
     {
@@ -214,4 +220,40 @@ public static class ScenarioErrors
         return Error.NotFound(ScenarioErrorCode.Read.ScenarioNotFound,
             $"Scenario with id {id} does not exist", metadata);
     }
+
+    #endregion
+
+
+    #region Deletion
+
+    public static Error ScenarioDeletion_ScenarioNotFound(ScenarioId scenarioId)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            { "ScenarioId", scenarioId.ToString() },
+            {
+                ErrorMetaDataKey.Title,
+                "Scenario Deletion Validation: scenario with the provided id does not exist"
+            }
+        };
+        return Error.Validation(ScenarioErrorCode.Deletion.ScenarioNotFound,
+            $"Scenario with id {scenarioId} does not exist", metadata);
+    }
+
+    public static Error ScenarioDeletion_DeletionFailed(ScenarioId scenarioId)
+    {
+        var metadata = new Dictionary<string, object>
+        {
+            {
+                ErrorMetaDataKey.Title,
+                "Scenario Deletion failed"
+            },
+            { "ScenarioId", scenarioId.ToString() }
+        };
+
+        return Error.Failure(ScenarioErrorCode.Deletion.DeletionFailed,
+            $"The deletion of the scenario with ScenarioId: {scenarioId} failed", metadata);
+    }
+
+    #endregion
 }

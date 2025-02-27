@@ -1,6 +1,7 @@
 using CareerCompass.Api.Contracts.Scenarios;
 using CareerCompass.Api.Extensions;
 using CareerCompass.Core.Scenarios;
+using CareerCompass.Core.Scenarios.Commands.Delete;
 using CareerCompass.Core.Scenarios.Queries.GetScenarioByIdQuery;
 using CareerCompass.Core.Scenarios.Queries.GetScenariosQuery;
 using CareerCompass.Core.Users;
@@ -32,9 +33,9 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
 
 
     [HttpPut]
-    public async Task<ActionResult<ScenarioDto>> Update([FromBody] UpdateScenarioDto dto)
+    public async Task<ActionResult<ScenarioDto>> Update([FromBody] UpdateScenarioRequest request)
     {
-        var input = dto.ToUpdateScenarioCommand(CurrentUserId);
+        var input = request.ToUpdateScenarioCommand(CurrentUserId);
         var result = await Context.Sender.Send(input);
 
         return result.Match(
@@ -70,5 +71,20 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
             error => error.ToProblemDetails()
                 .ToActionResult<IList<ScenarioDto>>()
         );
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var command = new DeleteScenarioCommand(ScenarioId.Create(id), CurrentUserId);
+
+        var result = await Context.Sender.Send(command);
+
+        if (result.IsError)
+        {
+            return result.ErrorsOrEmptyList.ToProblemDetails().ToActionResult();
+        }
+
+        return NoContent();
     }
 }

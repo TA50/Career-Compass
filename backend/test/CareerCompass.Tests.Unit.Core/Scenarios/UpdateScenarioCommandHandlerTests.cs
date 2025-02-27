@@ -9,12 +9,12 @@ using CareerCompass.Core.Tags;
 using CareerCompass.Core.Users;
 using FluentAssertions;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 
 
 namespace CareerCompass.Tests.Unit.Core.Scenarios;
 
 public class UpdateScenarioCommandHandlerTests
-
 {
     private readonly IScenarioRepository _scenarioRepository = Substitute.For<IScenarioRepository>();
     private readonly ITagRepository _tagRepository = Substitute.For<ITagRepository>();
@@ -32,165 +32,172 @@ public class UpdateScenarioCommandHandlerTests
             _scenarioRepository,
             _tagRepository,
             _fieldRepository,
-            _userRepository, _logger
+            _userRepository,
+            _logger
         );
     }
 
-
-    [Fact(DisplayName = "Handle: Should return updated scenario when input is valid",
-        Skip = "Use case is Not implemented")]
+    [Fact(DisplayName = "Handle: Should return updated scenario when input is valid")]
     public async Task Handle_ShouldReturnUpdatedScenario_WhenInputIsValid()
     {
         // Arrange
+        var scenarioId = ScenarioId.CreateUnique();
         var tagId = TagId.CreateUnique();
         var fieldId = FieldId.CreateUnique();
-        var title = "Test Scenario";
         var userId = UserId.CreateUnique();
-        var scenarioId = ScenarioId.CreateUnique();
-        var input = new UpdateScenarioCommand(
-            Id: scenarioId,
-            Title: title,
-            TagIds: [tagId],
-            ScenarioFields:
-            [
-                new(fieldId, "Test Field 1"),
-            ],
-            UserId: userId,
-            Date: DateTime.UtcNow
-        );
-        var expectedScenario = Scenario.Create(
-            title: input.Title,
-            userId: input.UserId,
-            date: input.Date
+        var title = "Updated Scenario";
+        var date = DateTime.UtcNow;
+
+        var request = new UpdateScenarioCommand(
+            scenarioId,
+            title,
+            new List<TagId> { tagId },
+            new List<UpdateScenarioFieldCommand> { new(fieldId, "Updated Value") },
+            userId,
+            date
         );
 
-
-        _tagRepository.Exists(new GetTagByIdSpecification(tagId, userId), Arg.Any<CancellationToken>()).Returns(true);
-        _fieldRepository.Exists(new GetFieldByIdSpecification(fieldId, userId), Arg.Any<CancellationToken>())
-            .Returns(true);
+        var scenario = Scenario.Create("Original Scenario", userId, DateTime.UtcNow);
+        _scenarioRepository.Get(scenarioId, true, Arg.Any<CancellationToken>()).Returns(scenario);
+        _tagRepository.Exists(Arg.Any<GetTagByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(true);
+        _fieldRepository.Exists(Arg.Any<GetFieldByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(true);
         _userRepository.Exists(userId, Arg.Any<CancellationToken>()).Returns(true);
-        _scenarioRepository.Get(expectedScenario.Id, true, Arg.Any<CancellationToken>())
-            .Returns(expectedScenario);
+        _scenarioRepository.Save(Arg.Any<CancellationToken>()).Returns(new RepositoryResult());
 
         // Act
-        var result = await _sut.Handle(input, CancellationToken.None);
+        var result = await _sut.Handle(request, CancellationToken.None);
 
         // Assert
+        _logger.Received(1).LogInformation("Updating scenario {@ScenarioId}", scenarioId);
+        _logger.Received(1).LogInformation("Scenario {@ScenarioId} updated successfully", scenarioId);
+
         result.IsError.Should().BeFalse();
-
-        // result.Value.Should().BeEquivalentTo(expectedScenario);
+        result.Value.Should().BeEquivalentTo(scenario);
     }
-
-    [Fact(DisplayName = "Handle: Should return ScenarioModification_TagNotFound errors when tags do not exist",
-        Skip = "Use case is Not implemented")]
-    public async Task Handle__ShouldReturnScenarioModification_TagNotFound_WhenTagDontExist()
-    {
-        // Arrange
-        var inValidTagId = TagId.CreateUnique();
-        var secondInValidTagId = TagId.CreateUnique();
-        var validTagId = TagId.CreateUnique();
-        const string title = "Test Scenario";
-        var scenarioId = ScenarioId.CreateUnique();
-        var input = new UpdateScenarioCommand(
-            Id: scenarioId,
-            Title: title,
-            TagIds: [inValidTagId, validTagId, secondInValidTagId],
-            ScenarioFields: [],
-            UserId: UserId.CreateUnique(),
-            Date: DateTime.UtcNow
-        );
-
-        _tagRepository.Exists(Arg.Is(validTagId), Arg.Any<CancellationToken>()).Returns(true);
-        _tagRepository.Exists(Arg.Is(inValidTagId), Arg.Any<CancellationToken>()).Returns(false);
-        _tagRepository.Exists(Arg.Is(secondInValidTagId), Arg.Any<CancellationToken>()).Returns(false);
-        _userRepository.Exists(Arg.Any<UserId>(), Arg.Any<CancellationToken>()).Returns(true);
-        _fieldRepository.Exists(Arg.Any<FieldId>(), Arg.Any<CancellationToken>()).Returns(true);
-
-
-        // Act
-        var result = await _sut.Handle(input, CancellationToken.None);
-
-        // Assert
-        result.IsError.Should().BeTrue();
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioModification_TagNotFound(inValidTagId));
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioModification_TagNotFound(secondInValidTagId));
-        result.Errors.Should().HaveCount(2); // 2 errors
-    }
-
-    [Fact(DisplayName = "Handle: Should return ScenarioModification_FieldNotFound errors when fields do not exist",
-        Skip = "Use case is Not implemented")]
-    public async Task Handle__ShouldReturnScenarioModification_FieldNotFound_WhenFieldsDontExist()
-    {
-        // Arrange
-        var inValidFieldId = FieldId.CreateUnique();
-        var secondInValidFieldId = FieldId.CreateUnique();
-        var validFieldId = FieldId.CreateUnique();
-        const string title = "Test Scenario";
-        var userId = UserId.CreateUnique();
-        var scenarioId = ScenarioId.CreateUnique();
-        var input = new UpdateScenarioCommand(
-            Id: scenarioId,
-            Title: title,
-            TagIds: [],
-            ScenarioFields:
-            [
-                new(inValidFieldId, "Test Field 1"),
-                new(validFieldId, "Test Field 2"),
-                new(secondInValidFieldId, "Test Field 3"),
-            ],
-            UserId: userId,
-            Date: DateTime.UtcNow
-        );
-
-
-        _fieldRepository.Exists(new GetFieldByIdSpecification(validFieldId, userId), Arg.Any<CancellationToken>())
-            .Returns(true);
-        _fieldRepository.Exists(new GetFieldByIdSpecification(inValidFieldId, userId), Arg.Any<CancellationToken>())
-            .Returns(false);
-        _fieldRepository
-            .Exists(new GetFieldByIdSpecification(secondInValidFieldId, userId), Arg.Any<CancellationToken>())
-            .Returns(false);
-        _userRepository.Exists(userId, Arg.Any<CancellationToken>()).Returns(true);
-
-
-        // Act
-        var result = await _sut.Handle(input, CancellationToken.None);
-
-        // Assert
-        result.IsError.Should().BeTrue();
-        result.Errors.Should().ContainEquivalentOf(ScenarioErrors.ScenarioModification_FieldNotFound(inValidFieldId));
-        result.Errors.Should()
-            .ContainEquivalentOf(ScenarioErrors.ScenarioModification_FieldNotFound(secondInValidFieldId));
-        result.Errors.Count.Should().Be(2); // 2 errors
-    }
-
 
     [Fact(DisplayName =
-            "Handle: Should return `ScenarioModification_UserNotFound` Error when user does not exist",
-        Skip = "Use case is Not implemented")]
-    public async Task Handle__ShouldReturnScenarioModification_UserNotFoundError__WhenUserDoesntExist()
+        "Handle: Should return ScenarioModification_ScenarioNotFound error when scenario does not exist")]
+    public async Task Handle_ShouldReturnScenarioModification_ScenarioNotFound_WhenScenarioDoesNotExist()
     {
-        var invalidUserId = UserId.CreateUnique();
-        const string title = "Test Scenario User Not Found";
+        // Arrange
         var scenarioId = ScenarioId.CreateUnique();
-        var input = new UpdateScenarioCommand(
-            Id: scenarioId,
-            Title: title, TagIds: [], ScenarioFields: [],
-            UserId: invalidUserId,
-            Date: DateTime.UtcNow
+        var userId = UserId.CreateUnique();
+        var request = new UpdateScenarioCommand(
+            scenarioId,
+            "Updated Scenario",
+            [],
+            [],
+            userId,
+            DateTime.UtcNow
         );
 
-
-        _tagRepository.Exists(Arg.Any<TagId>(), Arg.Any<CancellationToken>()).Returns(true);
-        _fieldRepository.Exists(Arg.Any<FieldId>(), Arg.Any<CancellationToken>()).Returns(true);
-        _userRepository.Exists(invalidUserId, Arg.Any<CancellationToken>()).Returns(false);
+        _userRepository.Exists(userId, Arg.Any<CancellationToken>()).Returns(true);
+        _scenarioRepository.Get(scenarioId, true, Arg.Any<CancellationToken>()).ReturnsNull();
 
         // Act
-        var result = await _sut.Handle(input, CancellationToken.None);
+        var result = await _sut.Handle(request, CancellationToken.None);
 
         // Assert
+        _logger.Received(1).LogInformation("Updating scenario {@ScenarioId}", scenarioId);
+
         result.IsError.Should().BeTrue();
-        result.Errors.Should().HaveCount(1);
-        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioModification_UserNotFound(invalidUserId));
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioModification_ScenarioNotFound(scenarioId));
+    }
+
+    [Fact(DisplayName = "Handle: Should return ScenarioModification_ModificationFailed error when update fails")]
+    public async Task Handle_ShouldReturnScenarioModification_ModificationFailed_WhenUpdateFails()
+    {
+        // Arrange
+        var scenarioId = ScenarioId.CreateUnique();
+        var tagId = TagId.CreateUnique();
+        var fieldId = FieldId.CreateUnique();
+        var userId = UserId.CreateUnique();
+        var title = "Updated Scenario";
+        var date = DateTime.UtcNow;
+        const string errorMessage = "Update failed";
+
+        var request = new UpdateScenarioCommand(
+            scenarioId,
+            title,
+            new List<TagId> { tagId },
+            new List<UpdateScenarioFieldCommand> { new(fieldId, "Updated Value") },
+            userId,
+            date
+        );
+
+        var scenario = Scenario.Create("Original Scenario", userId, DateTime.UtcNow);
+        _scenarioRepository.Get(scenarioId, true, Arg.Any<CancellationToken>()).Returns(scenario);
+        _tagRepository.Exists(Arg.Any<GetTagByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(true);
+        _fieldRepository.Exists(Arg.Any<GetFieldByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(true);
+        _userRepository.Exists(userId, Arg.Any<CancellationToken>()).Returns(true);
+        _scenarioRepository.Save(Arg.Any<CancellationToken>()).Returns(new RepositoryResult(errorMessage));
+
+        // Act
+        var result = await _sut.Handle(request, CancellationToken.None);
+
+        // Assert
+        _logger.Received(1).LogInformation("Updating scenario {@ScenarioId}", scenarioId);
+        _logger.Received(1).LogError("Failed to update scenario {@Scenario}. Reason: {@message}", scenario,
+            errorMessage);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioModification_ModificationFailed(title));
+    }
+
+    [Fact(DisplayName = "Handle: Should return ScenarioModification_TagNotFound error when tag does not exist")]
+    public async Task Handle_ShouldReturnScenarioModification_TagNotFound_WhenTagDoesNotExist()
+    {
+        // Arrange
+        var scenarioId = ScenarioId.CreateUnique();
+        var tagId = TagId.CreateUnique();
+        var userId = UserId.CreateUnique();
+        var request = new UpdateScenarioCommand(
+            scenarioId,
+            "Updated Scenario",
+            new List<TagId> { tagId },
+            new List<UpdateScenarioFieldCommand>(),
+            userId,
+            DateTime.UtcNow
+        );
+
+        _tagRepository.Exists(Arg.Any<GetTagByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(false);
+
+        // Act
+        var result = await _sut.Handle(request, CancellationToken.None);
+
+        // Assert
+        _logger.Received(1).LogInformation("Updating scenario {@ScenarioId}", scenarioId);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioModification_TagNotFound(tagId));
+    }
+
+    [Fact(DisplayName = "Handle: Should return ScenarioModification_FieldNotFound error when field does not exist")]
+    public async Task Handle_ShouldReturnScenarioModification_FieldNotFound_WhenFieldDoesNotExist()
+    {
+        // Arrange
+        var scenarioId = ScenarioId.CreateUnique();
+        var fieldId = FieldId.CreateUnique();
+        var userId = UserId.CreateUnique();
+        var request = new UpdateScenarioCommand(
+            scenarioId,
+            "Updated Scenario",
+            new List<TagId>(),
+            new List<UpdateScenarioFieldCommand> { new(fieldId, "Updated Value") },
+            userId,
+            DateTime.UtcNow
+        );
+
+        _tagRepository.Exists(Arg.Any<GetTagByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(true);
+        _fieldRepository.Exists(Arg.Any<GetFieldByIdSpecification>(), Arg.Any<CancellationToken>()).Returns(false);
+
+        // Act
+        var result = await _sut.Handle(request, CancellationToken.None);
+
+        // Assert
+        _logger.Received(1).LogInformation("Updating scenario {@ScenarioId}", scenarioId);
+
+        result.IsError.Should().BeTrue();
+        result.FirstError.ShouldBeEquivalentTo(ScenarioErrors.ScenarioModification_FieldNotFound(fieldId));
     }
 }

@@ -46,6 +46,19 @@ public class Scenario : AggregateRoot<ScenarioId>
         );
     }
 
+
+    public void SetTitle(string title)
+    {
+        Title = title;
+        Updated();
+    }
+
+    public void SetDate(DateTime? date)
+    {
+        Date = date;
+        Updated();
+    }
+
     public void AddScenarioField(FieldId fieldId, string value)
     {
         var sf = ScenarioField.Create(fieldId, value);
