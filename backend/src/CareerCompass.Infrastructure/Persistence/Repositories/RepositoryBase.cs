@@ -81,6 +81,13 @@ internal abstract class RepositoryBase<TEntity, TId>(AppDbContext dbContext)
         return set.AnyAsync(e => e.Id == id, cancellationToken ?? CancellationToken.None);
     }
 
+    public Task<int> Count(ISpecification<TEntity, TId> specification, CancellationToken? cancellationToken = null)
+    {
+        var set = GetSet(false);
+        return specification.Apply(set)
+            .CountAsync(cancellationToken ?? CancellationToken.None);
+    }
+
     public async Task<RepositoryResult> Delete(TId id, CancellationToken? cancellationToken = null)
     {
         try

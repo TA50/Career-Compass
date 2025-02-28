@@ -30,7 +30,8 @@ public class TagDeletedScenarioHandlerTests
     {
         // Arrange
         var tagId = TagId.CreateUnique();
-        var spec = new GetScenarioHavingTagsSpecification([tagId]);
+        var spec = new GetScenariosSpecification();
+        spec.WithTags([tagId]);
         var scenario = Scenario.Create(
             "Test Scenario",
             UserId.CreateUnique(),

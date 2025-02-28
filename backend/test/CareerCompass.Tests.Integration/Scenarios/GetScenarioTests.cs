@@ -1,15 +1,19 @@
 using System.Net;
 using System.Net.Http.Json;
+using AutoMapper;
 using Bogus;
 using CareerCompass.Api.Contracts.Scenarios;
 using CareerCompass.Api.Contracts.Users;
+using CareerCompass.Core.Common.Models;
 using CareerCompass.Core.Scenarios;
+using CareerCompass.Core.Tags;
 using CareerCompass.Core.Users;
 using CareerCompass.Tests.Fakers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CareerCompass.Tests.Integration.Scenarios;
 
@@ -28,6 +32,8 @@ public class GetScenarioTests
         _faker = new Faker();
     }
 
+    #region List Scenarios
+
     [Fact]
     public async Task ShouldGetAllUserScenarios_WhenAuthenticated()
     {
@@ -37,15 +43,15 @@ public class GetScenarioTests
 
         // Act
         var response = await _client.GetAsync("scenarios");
-        var content = await response.Content.ReadFromJsonAsync<List<ScenarioDto>>();
+        var content = await response.Content.ReadFromJsonAsync<PaginationResult<ScenarioDto>>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().NotBeNull();
-        content.Should().HaveCount(3);
-
-        var dtos = scenarios.Select(x => new ScenarioDto(x.Id.ToString(), x.Title, x.Date, [], []));
-        content.Should().BeEquivalentTo(dtos);
+        var mapper = _factory.Services.GetRequiredService<IMapper>();
+        var dtos = scenarios.Select(mapper.Map<ScenarioDto>).ToList();
+        var result = new PaginationResult<ScenarioDto>(dtos, 3, 10, 1);
+        content.Should().BeEquivalentTo(result);
 
         // Cleanup
 
@@ -62,16 +68,78 @@ public class GetScenarioTests
 
         // Act
         var response = await _client.GetAsync("scenarios");
-        var content = await response.Content.ReadFromJsonAsync<List<ScenarioDto>>();
+        var content = await response.Content.ReadFromJsonAsync<PaginationResult<ScenarioDto>>();
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().NotBeNull();
-        content.Should().BeEmpty();
+        content.Items.Should().BeEmpty();
 
         // Cleanup
         await _factory.RemoveUser(userId);
     }
+
+
+    [Fact]
+    public async Task ShouldGetScenariosByTag_WhenTagExists()
+    {
+        // Arrange
+        var userId = await Login();
+        var tag = Tag.Create(userId, "Test Tag");
+        var scenario = Scenario.Create("Test Scenario", userId, DateTime.UtcNow);
+        scenario.AddTag(tag.Id);
+
+        _factory.DbContext.Tags.Add(tag);
+        _factory.DbContext.Scenarios.Add(scenario);
+        await _factory.DbContext.SaveChangesAsync();
+
+        // Act
+        var response = await _client.GetAsync($"scenarios?TagIds={tag.Id}");
+        var content = await response.Content.ReadFromJsonAsync<PaginationResult<ScenarioDto>>();
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        content.Should().NotBeNull();
+        content.Items.Should().HaveCount(1);
+        content.Items.First().Title.Should().Be(scenario.Title);
+
+        // Cleanup
+        await _factory.DbContext.Scenarios.Where(s => s.Id == scenario.Id).ExecuteDeleteAsync();
+        await _factory.DbContext.Tags.Where(t => t.Id == tag.Id).ExecuteDeleteAsync();
+        await _factory.RemoveUser(userId);
+    }
+
+    [Fact]
+    public async Task ShouldGetPaginatedScenarios_WhenPageAndPageSizeAreSpecified()
+    {
+        // Arrange
+        var userId = await Login();
+        var scenarios = await CreateTestScenarios(userId, 5);
+        const int page = 1;
+        const int pageSize = 2;
+        // Act
+        var response = await _client.GetAsync($"scenarios?Page={page}&PageSize={pageSize}");
+        var content = await response.Content.ReadFromJsonAsync<PaginationResult<ScenarioDto>>();
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        content.Should().NotBeNull();
+        var mapper = _factory.Services.GetRequiredService<IMapper>();
+        var expectedScenarios = scenarios.Skip((page - 1) * page)
+            .Take(pageSize)
+            .Select(mapper.Map<ScenarioDto>)
+            .ToList();
+        var expected = new PaginationResult<ScenarioDto>(expectedScenarios, 5, pageSize, page);
+        content.Should().BeEquivalentTo(expected);
+        // Cleanup
+        var scenarioIds = scenarios.Select(s => s.Id);
+        await _factory.DbContext.Scenarios.Where(s => scenarioIds.Contains(s.Id)).ExecuteDeleteAsync();
+        await _factory.RemoveUser(userId);
+    }
+
+    #endregion
+
+    #region Get By ID
 
     [Fact]
     public async Task ShouldGetSpecificScenario_WhenScenarioExists()
@@ -135,6 +203,9 @@ public class GetScenarioTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+
+    #endregion
+
 
     private async Task<UserId> Login()
     {

@@ -15,7 +15,8 @@ public class FieldDeletedScenarioHandler(
         logger.LogInformation("Handling {EventName} for field with id: {FieldId}", notification.GetType().Name,
             notification.FieldId);
 
-        var spec = new GetScenarioHavingField(notification.FieldId);
+        var spec = new GetScenariosSpecification();
+        spec.WithFields([notification.FieldId]);
         var scenarios = await scenarioRepository.Get(spec, true, cancellationToken);
 
         foreach (var scenario in scenarios)

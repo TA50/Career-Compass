@@ -15,8 +15,8 @@ public class TagDeletedScenarioHandler(
         logger.LogInformation("Handling {EventName} for field with id: {TagId}", notification.GetType().Name,
             notification.TagId);
 
-
-        var spec = new GetScenarioHavingTagsSpecification([notification.TagId]);
+        var spec = new GetScenariosSpecification();
+        spec.WithTags([notification.TagId]);
         var scenarios = await scenarioRepository.Get(spec, true, cancellationToken);
 
 

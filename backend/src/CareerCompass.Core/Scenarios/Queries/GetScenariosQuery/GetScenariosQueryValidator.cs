@@ -8,5 +8,13 @@ public class GetScenariosQueryValidator : AbstractValidator<GetScenariosQuery>
     {
         RuleFor(x => x.UserId)
             .NotEmpty();
+        
+        RuleFor(x => x.PageSize)
+            .NotEmpty()
+            .When(x => x.Page.HasValue);
+
+        RuleFor(x => x.Page)
+            .NotEmpty()
+            .When(x => x.PageSize.HasValue);
     }
 }

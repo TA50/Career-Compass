@@ -9,7 +9,6 @@ public class ScenarioMappingProfile : Profile
     public ScenarioMappingProfile()
     {
         CreateMap<Scenario, ScenarioDto>();
-
         // ScenarioField  < - >  ScenarioFieldDto
 
         CreateMap<ScenarioField, ScenarioFieldDto>()

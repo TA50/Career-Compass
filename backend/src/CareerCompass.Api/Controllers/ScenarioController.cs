@@ -1,9 +1,11 @@
 using CareerCompass.Api.Contracts.Scenarios;
 using CareerCompass.Api.Extensions;
+using CareerCompass.Core.Common.Models;
 using CareerCompass.Core.Scenarios;
 using CareerCompass.Core.Scenarios.Commands.Delete;
 using CareerCompass.Core.Scenarios.Queries.GetScenarioByIdQuery;
 using CareerCompass.Core.Scenarios.Queries.GetScenariosQuery;
+using CareerCompass.Core.Tags;
 using CareerCompass.Core.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -60,16 +62,25 @@ public class ScenarioController(ApiControllerContext context) : ApiController(co
     }
 
     [HttpGet]
-    public async Task<ActionResult<IList<ScenarioDto>>> Get()
+    public async Task<ActionResult<PaginationResult<ScenarioDto>>> Get([FromQuery] ListScenarioQuery query)
     {
-        var query = new GetScenariosQuery(CurrentUserId);
+        var request = new GetScenariosQuery(
+            UserId: CurrentUserId,
+            TagIds: query.TagIds?.Select(TagId.Create).ToList(),
+            Page: query.Page,
+            PageSize: query.PageSize
+        );
 
-        var result = await Context.Sender.Send(query);
+        var result = await Context.Sender.Send(request);
 
         return result.Match(
-            value => Ok(Context.Mapper.Map<IList<ScenarioDto>>(value)),
+            value =>
+            {
+                var dto = PaginationResult<ScenarioDto>.Map(value, Context.Mapper.Map<ScenarioDto>);
+                return Ok(dto);
+            },
             error => error.ToProblemDetails()
-                .ToActionResult<IList<ScenarioDto>>()
+                .ToActionResult<PaginationResult<ScenarioDto>>()
         );
     }
 

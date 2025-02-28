@@ -30,7 +30,8 @@ public class FieldDeletedScenarioHandlerTests
     {
         // Arrange
         var fieldId = FieldId.CreateUnique();
-        var spec = new GetScenarioHavingField(fieldId);
+        var spec = new GetScenariosSpecification();
+        spec.WithFields([fieldId]);
         var scenario = Scenario.Create(
             "Test Scenario",
             UserId.CreateUnique(),
@@ -51,7 +52,7 @@ public class FieldDeletedScenarioHandlerTests
         // Assert
 
         scenario.GetScenarioField(fieldId).Should().BeNull();
-        
+
         _logger.Received(1).LogInformation("Handling {EventName} for field with id: {FieldId}",
             notification.GetType().Name,
             notification.FieldId);

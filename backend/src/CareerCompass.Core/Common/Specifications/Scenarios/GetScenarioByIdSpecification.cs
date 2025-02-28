@@ -4,7 +4,7 @@ using CareerCompass.Core.Users;
 namespace CareerCompass.Core.Common.Specifications.Scenarios;
 
 public class GetScenarioByIdSpecification(ScenarioId scenarioId, UserId userId)
-    : EquatableModel<GetUserScenariosSpecification>, ISpecification<Scenario, ScenarioId>
+    : EquatableModel<GetScenariosSpecification>, ISpecification<Scenario, ScenarioId>
 {
     public IQueryable<Scenario> Apply(IQueryable<Scenario> query)
     {
