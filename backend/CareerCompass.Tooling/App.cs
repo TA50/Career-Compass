@@ -1,3 +1,6 @@
+using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Infrastructure.Persistence;
+using CareerCompass.Tooling.Importers;
 using CareerCompass.Tooling.Seeders;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,15 +12,27 @@ partial class App
 
     private async Task Main()
     {
-        var userSeeder = ServiceProvider.GetRequiredService<UserSeeder>();
-        var tagSeeder = ServiceProvider.GetRequiredService<TagSeeder>();
-        var fieldSeeder = ServiceProvider.GetRequiredService<FieldSeeder>();
-        var scenarioSeeder = ServiceProvider.GetRequiredService<ScenarioSeeder>();
+        var csvImporter = ServiceProvider.GetRequiredService<CsvImporter>();
+        var logger = ServiceProvider.GetRequiredService<ILoggerAdapter<App>>();
+        logger.LogInformation("Starting the application");
+        string? filePath = Configuration["DataFile"];
+        if (filePath is not null)
+        {
+            await csvImporter.Import(filePath);
+        }
+        else
+        {
+            logger.LogError("DataFile configuration is missing");
+        }
+    }
 
-
-        await userSeeder.SeedAsync(10);
-        await tagSeeder.SeedAsync(10);
-        await fieldSeeder.SeedAsync(4);
-        await scenarioSeeder.SeedAsync(5);
+    private async Task ClearDatabase()
+    {
+        var dbContext = ServiceProvider.GetRequiredService<AppDbContext>();
+        var logger = ServiceProvider.GetRequiredService<ILoggerAdapter<App>>();
+        logger.LogInformation("Clearing the database");
+        await dbContext.Database.EnsureDeletedAsync();
+        await dbContext.Database.EnsureCreatedAsync();
+        logger.LogInformation("Database cleared");
     }
 }

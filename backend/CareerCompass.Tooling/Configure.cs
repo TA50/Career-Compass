@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using CareerCompass.Api;
 using CareerCompass.Core.Common.Abstractions;
 using CareerCompass.Core.Common.Abstractions.Crypto;
@@ -9,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Options;
+using CareerCompass.Tooling.Importers;
 
 namespace CareerCompass.Tooling;
 
@@ -18,9 +16,12 @@ partial class App
 {
     public App()
     {
+        var baseDir = Directory.GetCurrentDirectory();
+        var confiFilePath = baseDir + "/../../../appsettings.Development.json";
         var services = new ServiceCollection();
         var configurationBuilder = new ConfigurationBuilder()
             .AddUserSecrets<ApiMarker>()
+            .AddJsonFile(confiFilePath)
             .AddEnvironmentVariables();
         Configuration = configurationBuilder.Build();
         services.AddSingleton(Configuration);
@@ -37,17 +38,20 @@ partial class App
     {
         var loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
         services.AddSingleton(loggerFactory);
-        var dbConnectionString = configuration.GetConnectionString("TestConnection");
+        var dbConnectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.LogTo(_ => { });
+            options.UseLoggerFactory(LoggerFactory.Create(builder => { }));
             options.UseSqlServer(dbConnectionString);
-        });
+            options.LogTo(Console.WriteLine, LogLevel.None);
+            options.EnableSensitiveDataLogging(false);
+        }, ServiceLifetime.Transient);
         services.AddTransient<UserSeeder>();
         services.AddTransient<TagSeeder>();
         services.AddTransient<FieldSeeder>();
         services.AddTransient<ScenarioSeeder>();
         services.AddTransient<ICryptoService, CryptoService>();
+        services.AddTransient<CsvImporter>();
         services.AddTransient(typeof(ILoggerAdapter<>), typeof(ToolingLoggerAdapter<>));
     }
 }
