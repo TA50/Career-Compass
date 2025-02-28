@@ -125,11 +125,14 @@ public class GetScenarioTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         content.Should().NotBeNull();
         var mapper = _factory.Services.GetRequiredService<IMapper>();
-        var expectedScenarios = scenarios.Skip((page - 1) * page)
+        var expectedScenarios = await _factory.DbContext.Scenarios
+            .AsNoTracking()
+            .Skip((page - 1) * page)
             .Take(pageSize)
-            .Select(mapper.Map<ScenarioDto>)
-            .ToList();
-        var expected = new PaginationResult<ScenarioDto>(expectedScenarios, 5, pageSize, page);
+            .ToListAsync();
+
+        var dtos = expectedScenarios.Select(mapper.Map<ScenarioDto>).ToList();
+        var expected = new PaginationResult<ScenarioDto>(dtos, 5, pageSize, page);
         content.Should().BeEquivalentTo(expected);
         // Cleanup
         var scenarioIds = scenarios.Select(s => s.Id);
