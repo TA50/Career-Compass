@@ -1,4 +1,5 @@
 using CareerCompass.Core.Common.Abstractions;
+using CareerCompass.Core.Users;
 using CareerCompass.Infrastructure.Persistence;
 using CareerCompass.Tooling.Importers;
 using CareerCompass.Tooling.Seeders;
@@ -12,8 +13,15 @@ partial class App
 
     private async Task Main()
     {
+        // await ClearDatabase();
+        
         var csvImporter = ServiceProvider.GetRequiredService<CsvImporter>();
         var logger = ServiceProvider.GetRequiredService<ILoggerAdapter<App>>();
+        var dbContext = ServiceProvider.GetRequiredService<AppDbContext>();
+
+
+        var user = User.Create("test@test.com", "password", "test", "user");
+        await dbContext.Users.AddAsync(user);
         logger.LogInformation("Starting the application");
         string? filePath = Configuration["DataFile"];
         if (filePath is not null)

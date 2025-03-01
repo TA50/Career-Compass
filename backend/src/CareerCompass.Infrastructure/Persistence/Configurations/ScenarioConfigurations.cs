@@ -78,13 +78,13 @@ internal class ScenarioConfigurations : IEntityTypeConfiguration<Scenario>
             tib.WithOwner()
                 .HasForeignKey("ScenarioId");
 
-
-            tib.HasKey("Id");
-            tib.Property<int>("Id"); // Define the shadow property
-
             tib.Property(t => t.Value)
                 .HasColumnName("ScenarioTagId")
                 .ValueGeneratedNever();
+            
+            tib.HasKey("Id");
+            tib.Property<int>("Id")
+                .ValueGeneratedOnAdd();
         });
 
         var nav = builder.Metadata.FindNavigation(nameof(Scenario.TagIds));

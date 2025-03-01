@@ -40,10 +40,11 @@ class CsvImporter(AppDbContext dbContext, ILoggerAdapter<CsvImporter> logger, IC
                 result: result);
 
             dbContext.Scenarios.Add(scenario);
+            await dbContext.SaveChangesAsync();
         }
 
-        await dbContext.SaveChangesAsync();
-        logger.LogInformation("Added {count} scenarios", records.Count);
+        var scenarios = await dbContext.Scenarios.ToListAsync();
+        logger.LogInformation("Added {count} scenarios", scenarios.Count);
     }
 
     private Scenario CreateScenario(CsvRecord record, List<Tag> allTags,
@@ -54,7 +55,8 @@ class CsvImporter(AppDbContext dbContext, ILoggerAdapter<CsvImporter> logger, IC
         var tags = allTags.Where(t => providedTags.Contains(t.Name)).ToList();
         foreach (var tag in tags)
         {
-            scenario.AddTag(tag.Id);
+            var newInstanceTagId = TagId.Create(tag.Id.Value);
+            scenario.AddTag(newInstanceTagId);
         }
 
         scenario.AddScenarioField(situation.Id, record.Situation);
