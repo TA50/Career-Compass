@@ -14,11 +14,11 @@ partial class App
     private async Task Main()
     {
         // await ClearDatabase();
-        
+
         var csvImporter = ServiceProvider.GetRequiredService<CsvImporter>();
         var logger = ServiceProvider.GetRequiredService<ILoggerAdapter<App>>();
         var dbContext = ServiceProvider.GetRequiredService<AppDbContext>();
-
+        await dbContext.Database.EnsureCreatedAsync();
 
         var user = User.Create("test@test.com", "password", "test", "user");
         await dbContext.Users.AddAsync(user);
@@ -33,6 +33,8 @@ partial class App
             logger.LogError("DataFile configuration is missing");
         }
     }
+    
+    
 
     private async Task ClearDatabase()
     {

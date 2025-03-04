@@ -1,0 +1,35 @@
+﻿services:
+  careercompass.api:
+    image: careercompass.api
+    build: .
+    ports:
+      - "5001:8081"
+      - "5000:8080"
+    environment:
+#      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=Test1234!
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/cert.pfx
+      - ASPNETCORE_Environment=Production
+      - ConnectionString__DefaultConnection=Server=db,1433;Database=Career_Compass_Default;User Id=SA;Password=${SA_PASSWORD};TrustServerCertificate=True;
+      - SmtpSettings__Host=${SMTP_HOST}
+      - SmtpSettings__Port=${SMTP_PORT}
+      - SmtpSettings__EnableSsl=${SMTP_ENABLE_SSL}
+      - SmtpSettings__UserName=${SMTP_USERNAME}
+      - SmtpSettings__Password=${SMTP_PASSWORD}
+    depends_on:
+      db:
+        condition: service_started
+  
+  
+  db:
+    image: mcr.microsoft.com/mssql/server
+    container_name: sqlserver
+    ports:
+      - "7433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+    volumes:
+      - .containers/mssql_data:/var/opt/mssql
+    
+    restart: unless-stopped

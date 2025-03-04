@@ -277,3 +277,5 @@ __pycache__/
 **/appsettings.Development.json
 
 mock-data
+.containers
+.env
