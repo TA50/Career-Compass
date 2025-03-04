@@ -38,7 +38,8 @@ partial class App
     {
         var loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
         services.AddSingleton(loggerFactory);
-        var dbConnectionString = configuration.GetConnectionString("DefaultConnection");
+        var dbConnectionString = configuration.GetConnectionString("FalconNgrokDockerForwarded");
+
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseLoggerFactory(LoggerFactory.Create(builder => { }));

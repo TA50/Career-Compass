@@ -3,6 +3,7 @@ using CareerCompass.Core.Users;
 using CareerCompass.Infrastructure.Persistence;
 using CareerCompass.Tooling.Importers;
 using CareerCompass.Tooling.Seeders;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CareerCompass.Tooling;
@@ -18,8 +19,7 @@ partial class App
         var csvImporter = ServiceProvider.GetRequiredService<CsvImporter>();
         var logger = ServiceProvider.GetRequiredService<ILoggerAdapter<App>>();
         var dbContext = ServiceProvider.GetRequiredService<AppDbContext>();
-        await dbContext.Database.EnsureCreatedAsync();
-
+        await CreateDatabase();
         var user = User.Create("test@test.com", "password", "test", "user");
         await dbContext.Users.AddAsync(user);
         logger.LogInformation("Starting the application");
@@ -33,8 +33,7 @@ partial class App
             logger.LogError("DataFile configuration is missing");
         }
     }
-    
-    
+
 
     private async Task ClearDatabase()
     {
@@ -44,5 +43,14 @@ partial class App
         await dbContext.Database.EnsureDeletedAsync();
         await dbContext.Database.EnsureCreatedAsync();
         logger.LogInformation("Database cleared");
+    }
+
+    private async Task CreateDatabase()
+    {
+        var dbContext = ServiceProvider.GetRequiredService<AppDbContext>();
+        var logger = ServiceProvider.GetRequiredService<ILoggerAdapter<App>>();
+        logger.LogInformation("Creating the database");
+        await dbContext.Database.EnsureCreatedAsync();
+        logger.LogInformation("Database created");
     }
 }
