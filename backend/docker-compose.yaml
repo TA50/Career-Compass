@@ -11,7 +11,7 @@
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/cert.pfx
       - ASPNETCORE_Environment=Production
       - API_URL=${API_URL}
-      - ConnectionString__DefaultConnection=Server=db,1433;Database=Career_Compass_Default;User Id=SA;Password=${SA_PASSWORD};TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=Career_Compass_Default;User Id=SA;Password=${SA_PASSWORD};TrustServerCertificate=True;
       - SmtpSettings__Host=${SMTP_HOST}
       - SmtpSettings__Port=${SMTP_PORT}
       - SmtpSettings__EnableSsl=${SMTP_ENABLE_SSL}
