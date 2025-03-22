@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { rubik } from './fonts';
+import clsx from 'clsx';
+import { ScreenWidth } from '@/ui/components/screen-width';
 
 export const metadata: Metadata = {
   title: "Career Compass",
@@ -15,9 +17,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${rubik.className} antialiased`}
+        className={
+          clsx(rubik.className, 'antialiased', 'bg-background')
+        }
       >
         {children}
+
+        <ScreenWidth />
       </body>
     </html>
   );
