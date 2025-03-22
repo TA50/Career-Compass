@@ -7,6 +7,8 @@ import Link from "next/link"
 function Logo() {
     return <div className='lg:size-48 size-36 sm:mt-16 mt-2 mb-4'>
         <LogoSVG
+            role='img'
+            aria-label='Career Compass Logo'
             fill='hsl(var(--primary))' />
     </div>
 }

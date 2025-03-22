@@ -1,0 +1,323 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Should match the snapshot 1`] = `
+<div>
+  <main
+    class="p-4 lg:px-8"
+  >
+    <section
+      class="flex flex-col items-center justify-start w-full h-[100vh]"
+      id="call-to-action"
+    >
+      <div
+        class="lg:size-48 size-36 sm:mt-16 mt-2 mb-4"
+      >
+        <svg
+          aria-label="Career Compass Logo"
+          fill="hsl(var(--primary))"
+          role="img"
+          version="1.1"
+          viewBox="-3 -3 36.00 36.00"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
+          <g
+            id="SVGRepo_bgCarrier"
+            stroke-width="0"
+          />
+          <g
+            id="SVGRepo_tracerCarrier"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <g
+            id="SVGRepo_iconCarrier"
+          >
+            <title>
+              compass
+            </title>
+            <desc>
+              Created with Sketch Beta.
+            </desc>
+            <defs />
+            <g
+              fill="none"
+              fill-rule="evenodd"
+              id="Page-1"
+              stroke="none"
+              stroke-width="1"
+            >
+              <g
+                fill="hsl(var(--primary))"
+                id="Icon-Set"
+                transform="translate(-465.000000, -360.000000)"
+              >
+                <path
+                  d="M478.951,373.451 L482.475,370.348 L481.549,374.951 L483.281,375.951 L484.597,366.673 L477.219,372.451 L478.951,373.451 L478.951,373.451 Z M480,388 C472.819,388 467,382.181 467,375 C467,367.82 472.819,362 480,362 C487.181,362 493,367.82 493,375 C493,382.181 487.181,388 480,388 L480,388 Z M480.006,360.012 C471.725,360.012 465.012,366.726 465.012,375.006 C465.012,383.287 471.725,390 480.006,390 C488.287,390 495,383.287 495,375.006 C495,366.726 488.287,360.012 480.006,360.012 L480.006,360.012 Z M481,375.5 C481,374.672 480.328,374 479.5,374 C478.672,374 478,374.672 478,375.5 C478,376.328 478.672,377 479.5,377 C480.328,377 481,376.328 481,375.5 L481,375.5 Z M476.525,380.652 L477.451,376.049 L475.719,375.049 L474.404,384.327 L481.781,378.549 L480.049,377.549 L476.525,380.652 L476.525,380.652 Z"
+                  id="compass"
+                />
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <h1
+        class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-primary capitalize text-center"
+      >
+        Shape your future
+      </h1>
+      <h2
+        class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0 text-primary capitalize text-center"
+      >
+        Begin your jouney today
+      </h2>
+      <p
+        class="text-xl text-center mt-16"
+      >
+        Career Compass helps you track your journey, showcase achievements, and prepare for the future with confidence.
+      </p>
+      <a
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-8 mt-6 md:mt-8"
+        href="/login"
+      >
+        Get Started
+      </a>
+    </section>
+    <section
+      class="flex flex-col items-center justify-start w-full  h-[100vh]"
+      id="problem-statement"
+    >
+      <h1
+        class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-primary text-center"
+      >
+        Don‘t Let Your Achievements 
+        <br
+          class="md:hidden"
+        />
+         Fade Away
+      </h1>
+      <div
+        class="flex  mt-16 flex-col md:flex-row  items-center justify-center"
+      >
+        <div
+          class="md:w-1/2"
+        >
+          <p
+            class="text-xl text-center md:text-left"
+          >
+            Tracking your professional growth is challenging. You achieve great things, boosting productivity, solving problems, and driving success, but over time, those accomplishments fade from memory.
+          </p>
+        </div>
+        <div
+          class="md:w-1/2"
+        >
+          <div
+            class="flex flex-row justify-end"
+          >
+            <img
+              alt="Problem Statement"
+              class="w-[500px] hidden sm:block"
+              data-nimg="1"
+              decoding="async"
+              height="2000"
+              loading="lazy"
+              src="/_next/image?url=%2Fimages%2Flanding-page%2Fjournaling.png&w=3840&q=75"
+              srcset="/_next/image?url=%2Fimages%2Flanding-page%2Fjournaling.png&w=2048&q=75 1x, /_next/image?url=%2Fimages%2Flanding-page%2Fjournaling.png&w=3840&q=75 2x"
+              style="color: transparent;"
+              width="2000"
+            />
+            <img
+              alt="Problem Statement"
+              class="w-[280px] block sm:hidden"
+              data-nimg="1"
+              decoding="async"
+              height="1000"
+              loading="lazy"
+              src="/_next/image?url=%2Fimages%2Flanding-page%2Fjournaling-small.png&w=2048&q=75"
+              srcset="/_next/image?url=%2Fimages%2Flanding-page%2Fjournaling-small.png&w=1080&q=75 1x, /_next/image?url=%2Fimages%2Flanding-page%2Fjournaling-small.png&w=2048&q=75 2x"
+              style="color: transparent;"
+              width="1000"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-row flex-wrap justify-between gap-1"
+      >
+        <div
+          class="rounded-xl border bg-card text-card-foreground shadow w-full md:w-[45%] mt-4 border-b-8 border-accent"
+        >
+          <div
+            class="flex flex-col space-y-1.5 p-6"
+          >
+            <svg
+              class="w-16 h-16"
+              fill="hsl(var(--accent))"
+              height="64"
+              viewBox="0 0 64 64"
+              width="64"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M59.2 19H58V21H59.2C59.7 21 60 21.4 60 21.8V34C60 34.5 60.5 35 61 35C61.5 35 62 34.5 62 34V21.8C62 20.3 60.7 19 59.2 19ZM13.7 18.3L21 13L12 16C12.8 16.6 13.4 17.4 13.7 18.3Z"
+                fill="hsl(var(--accent))"
+              />
+              <path
+                d="M36 5V4.1C36 3.5 35.5 3 34.9 3H3.1C2.5 3 2 3.5 2 4.1V51.9C2 52.5 2.5 53 3.1 53H4V8.1C4 6.4 5.4 5 7.1 5H36Z"
+                fill="hsl(var(--accent))"
+              />
+              <path
+                d="M27 9H40V8.1C40 7.5 39.5 7 38.9 7H7.1C6.5 7 6 7.5 6 8.1V55.9C6 56.5 6.5 57 7.1 57H8V16C8 15.3 8.7 15.1 8.7 15L27 9ZM11 11H10V12C10 12.5 9.5 13 9 13C8.5 13 8 12.5 8 12V10C8 9.5 8.5 9 9 9H11C11.5 9 12 9.5 12 10C12 10.5 11.5 11 11 11ZM17 11H15C14.5 11 14 10.5 14 10C14 9.5 14.5 9 15 9H17C17.5 9 18 9.5 18 10C18 10.5 17.5 11 17 11Z"
+                fill="hsl(var(--accent))"
+              />
+              <path
+                d="M43 11H27.3L13.6 20.8C13.4 20.9 13.2 21.2 12.6 20.9C12.2 20.7 12 20.4 12 20C12 18.7 11.2 17.6 10 17.2V60C10 60.6 10.5 61 11 61H43C43.6 61 44 60.5 44 60V12C44 11.5 43.5 11 43 11ZM41 59H13C12.5 59 12 58.5 12 58C12 57.5 12.5 57 13 57H41C41.5 57 42 57.5 42 58C42 58.5 41.5 59 41 59ZM41 53H13C12.5 53 12 52.5 12 52C12 51.5 12.5 51 13 51H41C41.5 51 42 51.5 42 52C42 52.5 41.5 53 41 53ZM41 47H13C12.5 47 12 46.5 12 46C12 45.5 12.5 45 13 45H41C41.5 45 42 45.5 42 46C42 46.5 41.5 47 41 47ZM41 41H13C12.5 41 12 40.5 12 40C12 39.5 12.5 39 13 39H41C41.5 39 42 39.5 42 40C42 40.5 41.5 41 41 41ZM41 35H13C12.5 35 12 34.5 12 34C12 33.5 12.5 33 13 33H41C41.5 33 42 33.5 42 34C42 34.5 41.5 35 41 35ZM41 29H13C12.5 29 12 28.5 12 28C12 27.5 12.5 27 13 27H41C41.5 27 42 27.5 42 28C42 28.5 41.5 29 41 29ZM41 23H17C16.5 23 16 22.5 16 22C16 21.5 16.5 21 17 21H41C41.5 21 42 21.5 42 22C42 22.5 41.5 23 41 23ZM41 17H25C24.5 17 24 16.5 24 16C24 15.5 24.5 15 25 15H41C41.5 15 42 15.5 42 16C42 16.5 41.5 17 41 17ZM53 60.1C53.6 59.1 54 58.1 54.5 57H51.6C52 58.1 52.4 59.1 53 60.1ZM50 48.8C50 50.9 50.3 53 50.9 55H55.2C55.8 53 56.1 50.9 56.1 48.8V41H50.1V48.8H50ZM50 37H56V39H50V37ZM50 19H56V35H50V19ZM54 14C54 13.5 53.5 13 53 13C52.5 13 52 13.5 52 14V17H54V14Z"
+                fill="hsl(var(--accent))"
+              />
+            </svg>
+            <div
+              class="font-semibold leading-none tracking-tight text-accent"
+            >
+              <p
+                class="text-lg"
+              >
+                Unstructured Career Reflection
+              </p>
+            </div>
+          </div>
+          <div
+            class="p-6 pt-0"
+          >
+            <p
+              class="leading-7 [&:not(:first-child)]:mt-6"
+            >
+              You've grown, but without documentation, tracking progress is difficult.
+            </p>
+          </div>
+        </div>
+        <div
+          class="rounded-xl border bg-card text-card-foreground shadow w-full md:w-[45%] mt-4 border-b-8 border-primary-light"
+        >
+          <div
+            class="flex flex-col space-y-1.5 p-6"
+          >
+            <svg
+              class="w-16 h-16"
+              fill="hsl(var(--primary-light))"
+              height="45"
+              viewBox="0 0 48 45"
+              width="48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M46.1846 2.87121C44.6685 2.20561 42.423 2.70481 40.448 4.15705C39.4303 4.97482 38.5784 5.95318 37.9321 7.0464V6.22951H10.0684V7.0464C9.40987 5.95012 8.5439 4.97156 7.51154 4.15705C5.5529 2.70481 3.30741 2.20561 1.77491 2.87121C1.27108 3.1189 0.856752 3.49721 0.582991 3.95953C0.309231 4.42186 0.187994 4.94801 0.234219 5.47314C0.234219 18.1953 12.1172 20.3813 14.3873 20.6838C16.0994 22.5414 18.2728 23.9894 20.7222 24.9044V31.9462H14.4201V33.459H16.8786L15.5674 39.51H14.166C13.9487 39.51 13.7402 39.5897 13.5865 39.7315C13.4329 39.8734 13.3465 40.0657 13.3465 40.2663V43.2918C13.3465 43.4924 13.4329 43.6848 13.5865 43.8267C13.7402 43.9685 13.9487 44.0482 14.166 44.0482H33.8345C34.0518 44.0482 34.2603 43.9685 34.414 43.8267C34.5677 43.6848 34.654 43.4924 34.654 43.2918V40.2663C34.654 40.0657 34.5677 39.8734 34.414 39.7315C34.2603 39.5897 34.0518 39.51 33.8345 39.51H32.4577L31.1465 33.459H33.605V31.9462H27.2783V24.9044C29.7277 23.9894 31.9011 22.5414 33.6132 20.6838C35.8833 20.3813 47.7663 18.1953 47.7663 5.47314C47.8088 4.94399 47.6815 4.41501 47.4002 3.95226C47.1189 3.48951 46.6961 3.11351 46.1846 2.87121ZM1.87326 5.47314C1.87326 4.52767 2.36497 4.30832 2.52887 4.24025C3.34839 3.89232 4.92187 4.15705 6.51173 5.33699C8.54414 6.84974 9.96191 10.1097 10.4536 11.2745C10.827 13.9617 11.7355 16.562 13.1334 18.9442C9.56854 18.1802 1.87326 15.3816 1.87326 5.47314ZM34.8671 18.9366C36.266 16.5575 37.1746 13.9595 37.5469 11.2745C38.0386 10.1097 39.4564 6.83461 41.4888 5.33699C43.0787 4.15705 44.6931 3.89232 45.4717 4.24025C45.6356 4.30832 46.1273 4.52767 46.1273 5.47314C46.1273 15.3514 38.432 18.1651 34.8671 18.9366Z"
+                fill="hsl(var(--primary-light))"
+              />
+              <path
+                d="M37.932 0.934841C37.932 0.734238 37.8457 0.541851 37.692 0.400004C37.5383 0.258156 37.3298 0.178467 37.1125 0.178467H10.8879C10.6705 0.178467 10.4621 0.258156 10.3084 0.400004C10.1547 0.541851 10.0684 0.734238 10.0684 0.934841V4.71671H37.932V0.934841Z"
+                fill="hsl(var(--primary-light))"
+              />
+            </svg>
+            <div
+              class="font-semibold leading-none tracking-tight text-primary-light"
+            >
+              <p
+                class="text-lg"
+              >
+                Forgetting Key Achievements
+              </p>
+            </div>
+          </div>
+          <div
+            class="p-6 pt-0"
+          >
+            <p
+              class="leading-7 [&:not(:first-child)]:mt-6"
+            >
+              You improved feature delivery time by 10%, but months later, you forget the details.
+            </p>
+          </div>
+        </div>
+        <div
+          class="rounded-xl border bg-card text-card-foreground shadow w-full md:w-[45%] mt-4 border-b-8 border-primary"
+        >
+          <div
+            class="flex flex-col space-y-1.5 p-6"
+          >
+            <svg
+              class="w-16 h-16"
+              fill="hsl(var(--primary))"
+              height="71"
+              viewBox="0 0 70 71"
+              width="70"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M69.7545 14.4604C69.3673 12.069 68.5307 9.79186 67.2977 7.77364C66.0646 5.75542 64.4622 4.04017 62.592 2.73676C60.7219 1.43335 58.6249 0.570259 56.4341 0.202273C54.2433 -0.165713 52.0067 -0.0305556 49.8661 0.599166C47.7256 1.22889 45.7279 2.33942 43.9998 3.86026C42.2718 5.38111 40.8512 7.27904 39.8281 9.43359C38.8051 11.5881 38.202 13.9522 38.0571 16.3758C37.9122 18.7994 38.2287 21.2295 38.9865 23.5119L34.2076 33.2099L33.4996 34.5677L22.3783 56.7115C21.7804 57.85 21.6 59.195 21.874 60.4738C22.1479 61.7526 22.8555 62.8692 23.8533 63.5972L24.2368 63.8558L22.3193 65.4398L21.7883 65.86C20.1953 67.1531 19.1334 67.9289 17.7174 67.7027C17.0187 67.5412 16.374 67.1724 15.8537 66.6365C15.3334 66.1005 14.9576 65.4182 14.7674 64.6639C13.9334 61.5163 13.5747 58.2404 13.7055 54.9659V54.8366C13.7641 53.7039 13.5876 52.5713 13.189 51.5242C12.7904 50.4771 12.1803 49.5427 11.4045 48.7915C10.472 48.1554 9.42498 47.7481 8.33527 47.5974C7.24556 47.4468 6.139 47.5563 5.0916 47.9186C4.36377 48.0895 3.62318 48.1869 2.87913 48.2096C2.87913 47.9833 2.43664 46.5286 5.35709 39.3844C5.45096 39.1892 5.50737 38.975 5.52283 38.755C5.5383 38.535 5.51249 38.3138 5.44701 38.1051C5.38152 37.8965 5.27774 37.7047 5.14207 37.5417C5.00639 37.3787 4.84169 37.2478 4.65811 37.1571C4.47452 37.0665 4.27595 37.018 4.07462 37.0147C3.87329 37.0113 3.67346 37.0532 3.48745 37.1377C3.30144 37.2221 3.13319 37.3475 2.99305 37.5059C2.85292 37.6644 2.74388 37.8526 2.67264 38.059C-0.0708167 45.1385 -0.631307 48.3712 0.666671 50.1492C1.96465 51.9272 3.91162 51.4423 5.71109 51.119C7.51056 50.7957 8.83803 50.5371 9.66402 51.2806C10.3893 52.2872 10.7374 53.5587 10.6375 54.8366V55.2245C10.5074 58.8205 10.9261 62.4151 11.8765 65.86C12.2432 67.1927 12.9483 68.3836 13.9094 69.2937C14.8705 70.2038 16.0479 70.7956 17.3044 71H18.1894C20.1775 70.8424 22.0589 69.954 23.5288 68.4785L24.0303 68.0583C24.9743 67.3147 25.8592 66.5389 26.7737 65.7631C27.7904 66.4997 29.0256 66.7829 30.2265 66.5545C31.4274 66.3262 32.5033 65.6036 33.2341 64.5346L47.6889 44.686L48.6329 43.4252L54.8278 34.9233C57.221 34.8069 59.56 34.1048 61.6733 32.8685C63.7866 31.6323 65.6205 29.8933 67.0406 27.779C68.2711 25.8643 69.1443 23.702 69.61 21.4164C70.0758 19.1308 70.1249 16.7669 69.7545 14.4604ZM30.9037 62.692C30.6382 63.0858 30.2428 63.3503 29.8018 63.4288C29.3608 63.5073 28.9093 63.3937 28.5437 63.1123L25.5938 60.8817C25.2223 60.6049 24.9608 60.1838 24.8622 59.7035C24.7636 59.2233 24.8353 58.72 25.0628 58.2956L35.5646 37.2831C36.9017 38.6633 38.3424 39.9177 39.8715 41.033C41.412 42.1405 43.0296 43.1133 44.7094 43.9424L30.9037 62.692ZM46.5089 41.324C44.723 40.5181 43.0137 39.5219 41.4055 38.3499C39.8012 37.1816 38.3088 35.8386 36.9511 34.3414L40.904 26.5829C43.7319 30.2484 47.4422 32.9701 51.6123 34.4384L46.5089 41.324ZM64.9756 25.4838C64.878 25.6742 64.7696 25.8578 64.6511 26.0334C63.4496 27.8205 61.8869 29.2787 60.0855 30.2937C58.2841 31.3088 56.2927 31.8533 54.2673 31.8845C49.2531 30.7032 44.8353 27.4795 41.907 22.8654C41.1179 20.706 40.8184 18.3691 41.0342 16.0551C41.25 13.741 41.9746 11.5189 43.146 9.57903C45.315 13.986 48.4851 17.705 52.3498 20.3762C56.0852 23.2503 60.4338 25.0206 64.9756 25.5162V25.4838ZM66.3621 22.2511C61.9068 22.1069 57.5966 20.4836 54.0018 17.5961C50.1804 15.0562 47.1553 11.3014 45.3289 6.83125C47.4949 4.7076 50.2427 3.43167 53.1416 3.20351C56.0405 2.97535 58.9265 3.80785 61.3471 5.5705C62.8044 6.66138 64.0428 8.06715 64.9864 9.7015C65.9299 11.3359 66.5587 13.1643 66.8341 15.0746C67.239 17.4932 67.0766 19.9848 66.3621 22.3158V22.2511Z"
+                fill="hsl(var(--primary))"
+              />
+            </svg>
+            <div
+              class="font-semibold leading-none tracking-tight text-primary"
+            >
+              <p
+                class="text-lg"
+              >
+                Interview Struggles
+              </p>
+            </div>
+          </div>
+          <div
+            class="p-6 pt-0"
+          >
+            <p
+              class="leading-7 [&:not(:first-child)]:mt-6"
+            >
+              When asked about past successes, recalling specifics is tough.
+            </p>
+          </div>
+        </div>
+        <div
+          class="rounded-xl border bg-card text-card-foreground shadow w-full md:w-[45%] mt-4 border-b-8 border-success"
+        >
+          <div
+            class="flex flex-col space-y-1.5 p-6"
+          >
+            <svg
+              class="w-16 h-16"
+              fill="hsl(var(--success))"
+              height="52"
+              viewBox="0 0 63 52"
+              width="63"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M52.1194 51.6616C54.5373 51.6616 56.4179 49.9696 56.4179 47.9393C56.4179 45.9089 54.5373 44.2169 52.1194 44.2169H54.403C56.8209 44.2169 58.7015 42.5249 58.7015 40.4946C58.7015 38.4642 56.8209 36.7722 54.403 36.7722H56.8209C59.2388 36.7722 61.1194 35.0803 61.1194 33.0499C61.1194 31.0195 59.2388 29.3275 56.8209 29.3275H58.7015C61.1194 29.3275 63 27.6356 63 25.6052C63 23.5748 61.1194 21.8829 58.7015 21.8829H40.9701L42.4478 20.1909C48.2239 13.6486 46.4776 7.10629 46.7463 4.39913C46.7463 2.03037 44.4627 0 41.6418 0C39.6269 0 37.7463 1.12798 36.9403 2.70716C35.0597 5.52711 33.7164 13.8742 23.2388 18.1605L18.9403 19.8525V48.9544C26.3284 50.4208 30.3582 52 37.6119 52H52.1194V51.6616ZM6.71642 51.8872H13.7015C15.1791 51.8872 16.3881 50.872 16.3881 49.6312V18.6117C16.3881 17.3709 15.1791 16.3557 13.7015 16.3557H6.71642C2.95522 16.3557 0 18.8373 0 21.9957V46.1345C0 49.2928 2.95522 51.8872 6.71642 51.8872Z"
+                fill="hsl(var(--success))"
+              />
+            </svg>
+            <div
+              class="font-semibold leading-none tracking-tight text-success"
+            >
+              <p
+                class="text-lg"
+              >
+                Struggling To Showcase Your Impact
+              </p>
+            </div>
+          </div>
+          <div
+            class="p-6 pt-0"
+          >
+            <p
+              class="leading-7 [&:not(:first-child)]:mt-6"
+            >
+              You've done great work, but proving your value during reviews or promotions is challenging.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+`;
